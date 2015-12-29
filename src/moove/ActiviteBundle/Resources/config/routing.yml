@@ -1,0 +1,3 @@
+moove_activite_homepage:
+    path:     /hello/{name}
+    defaults: { _controller: mooveActiviteBundle:Default:index }
