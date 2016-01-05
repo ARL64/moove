@@ -1,0 +1,26 @@
+moove\ActiviteBundle\Entity\Activite:
+    type: entity
+    table: null
+    repositoryClass: moove\ActiviteBundle\Entity\ActiviteRepository
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        dateHeureRDV:
+            type: datetime
+        duree:
+            type: time
+        nbPlaces:
+            type: integer
+        description:
+            type: text
+        dateCreation:
+            type: datetime
+        dateFermeture:
+            type: datetime
+        estTerminee:
+            type: boolean
+    lifecycleCallbacks: {  }
