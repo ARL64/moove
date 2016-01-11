@@ -1,3 +1,16 @@
-moove_activite_homepage:
-    path:     /activites
-    defaults: { _controller: mooveActiviteBundle:Default:index }
+# https://moove-arl64.c9users.io/web/app_dev.php/activites
+#moove_activite_homepage:
+#    path:     /activites/{name}
+#    defaults: { _controller: mooveActiviteBundle:Default:index }
+
+# https://moove-arl64.c9users.io/web/app_dev.php/toto/historique/1
+moove_activite_historiqueActivite:
+    path:   /{name}/historique/{page}
+    defaults: { _controller: mooveActiviteBundle:Activites:historique }
+    
+# https://moove-arl64.c9users.io/web/app_dev.php/toto/activites/1
+moove_activite_enCoursActivite:
+    path:   /{name}/activites/{page}
+    defaults: { _controller: mooveActiviteBundle:Activites:enCours }
+    
+    

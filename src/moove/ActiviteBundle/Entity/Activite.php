@@ -1,54 +1,79 @@
 <?php
+// src/moove/ActiviteBundle/Entity/Activite.php
 
 namespace moove\ActiviteBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Activite
+ * @ORM\Entity
+ * @ORM\Table(name="activite")
  */
 class Activite
 {
     /**
      * @var integer
+     * 
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
      * @var \DateTime
+     * 
+     * @ORM\Column(name="dateHeureRDV", type="datetime")
      */
     private $dateHeureRDV;
 
     /**
      * @var \DateTime
+     * 
+     * @ORM\Column(name="duree", type="time")
      */
     private $duree;
 
     /**
      * @var integer
+     * 
+     * @ORM\Column(name="nbPlaces", type="integer")
+
      */
     private $nbPlaces;
 
     /**
      * @var string
+     * 
+     * @ORM\Column(name="description", type="text")
      */
     private $description;
 
     /**
      * @var \DateTime
+     * 
+     * @ORM\Column(name="dateCreation", type="datetime")
      */
     private $dateCreation;
 
     /**
      * @var \DateTime
+     * 
+     * @ORM\Column(name="dateFermeture", type="datetime")
      */
     private $dateFermeture;
 
     /**
      * @var boolean
+     * 
+     * @ORM\Column(name="estTerminee", type="boolean")
      */
     private $estTerminee;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Utilisateur")
+     */
+    private $organisateur;
 
     /**
      * Get id
