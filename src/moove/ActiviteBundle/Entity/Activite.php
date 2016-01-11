@@ -74,7 +74,17 @@ class Activite
      * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Utilisateur")
      */
     private $organisateur;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Niveau")
+     */
+    private $niveauRequis;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Sport")
+     */
+    private $sportPratique;
+     
     /**
      * Get id
      *

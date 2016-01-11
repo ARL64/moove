@@ -8,7 +8,7 @@ class ActivitesController extends Controller
 {
     public function historiqueAction($name, $page)
     {   // Liste des activitées finies
-        //$listeDesActivites = getListeActiviteForUser($nomUtilisateur, true);
+        $listeDesActivites = this->getListeActiviteForUser($nomUtilisateur, true);
         return $this->render('mooveActiviteBundle:Accueil:listActiviteUtilisateur.html.twig', array('name' => $name));
     }
     
