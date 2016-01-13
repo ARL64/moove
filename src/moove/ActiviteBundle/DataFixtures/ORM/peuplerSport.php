@@ -22,6 +22,7 @@ class PeuplerSport implements FixtureInterface
 		$randonne   ->setNom("Randonné")
 		            ->setUrlPictogramme("A_CHANGER");
         $manager->persist($randonne);
+        
         $ski = new Sport();
 		$ski    ->setNom("Ski")
 		        ->setUrlPictogramme("A_CHANGER");

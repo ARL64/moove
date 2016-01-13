@@ -1,0 +1,42 @@
+{# https://moove-arl64.c9users.io/web/app_dev.php/historique #}
+{% extends "mooveActiviteBundle:Accueil:tableauDeBord.html.twig" %}
+
+{% block activeHistorique %}active{% endblock %}
+{% block bodyTableau %}
+    <br>
+    <h3>Liste de toutes les activités auxquelles vous avez participé ou que vous avez organisé.</h3>
+    <br><br>
+    <table class="table table-striped table-hover ">
+      <thead>
+        <tr>
+          <th>Sport</th>
+          <th>Départ</th>
+          <th>Arrivée</th>
+          <th>Date</th>
+          <th>Participants</th>
+          <th>Organisateur</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Ski</td>
+          <td>Chamonix</td>
+          <td>Chalet </td>
+          <td>13/01/16</td>
+          <td>2/10</td>
+          <td>Antoine Vauthey</td>
+          <td><a href="#" class="btn btn-primary btn-xs">Détails</a></td>
+        </tr>
+        <tr>
+          <td>Randonnée</td>
+          <td>Hendaye</td>
+          <td>Banyuls</td>
+          <td>22/12/15</td>
+          <td>5/5</td>
+          <td>Jean-Maxime Pichon</td>
+          <td><a href="#" class="btn btn-primary btn-xs">Détails</a></td>
+        </tr>
+      </tbody>
+    </table>
+{% endblock %}

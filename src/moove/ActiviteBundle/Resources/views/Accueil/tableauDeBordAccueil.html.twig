@@ -1,0 +1,35 @@
+{% extends "mooveActiviteBundle:Accueil:tableauDeBord.html.twig" %}
+
+{% block activeAccueil %}active{% endblock %}
+{% block bodyTableau %}
+    <br>
+    <div class="col-md-12">
+        <ul class="list-inline">
+          <li><h4><span class="label label-success">xx participations</span></h4></li>
+          <li><h4><span class="label label-primary">xx organisations</span></h4></li>
+          <li><h4><span class="label label-danger">xx demande d'acception en attente</span></h4></li>
+          <li><h4><span class="label label-warning">xx demande de participation en attente</span></h4></li>
+        </ul>
+    </div>
+    <br>
+    <div class="col-md-6">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+            <h3 class="panel-title">Mes demandes de participations</h3>
+          </div>
+          <div class="panel-body">
+            Panel content
+          </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="panel panel-success">
+          <div class="panel-heading">
+            <h3 class="panel-title">Demandes de participations à vos activités</h3>
+          </div>
+          <div class="panel-body">
+            Panel content
+          </div>
+        </div>
+    </div>
+{% endblock %}

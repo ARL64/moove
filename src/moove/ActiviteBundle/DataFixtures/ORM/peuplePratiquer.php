@@ -14,7 +14,6 @@ class PeuplerPratiquer implements FixtureInterface
         $manager->persist($cyclisme);*/
 
         
-        
         $manager->flush();
     }
 }

@@ -3,14 +3,23 @@
 #    path:     /activites/{name}
 #    defaults: { _controller: mooveActiviteBundle:Default:index }
 
-# https://moove-arl64.c9users.io/web/app_dev.php/toto/historique/1
+# https://moove-arl64.c9users.io/web/app_dev.php/historique/1
 moove_activite_historiqueActivite:
-    path:   /{name}/historique/{page}
-    defaults: { _controller: mooveActiviteBundle:Activites:historique }
+    path:   /historique/{page}
+    defaults: { _controller: mooveActiviteBundle:Activites:historique, page: 1 }
     
-# https://moove-arl64.c9users.io/web/app_dev.php/toto/activites/1
+# https://moove-arl64.c9users.io/web/app_dev.php/activites/1
 moove_activite_enCoursActivite:
-    path:   /{name}/activites/{page}
-    defaults: { _controller: mooveActiviteBundle:Activites:enCours }
+    path:   /activites/{page}
+    defaults: { _controller: mooveActiviteBundle:Activites:enCours, page: 1 }
     
+# https://moove-arl64.c9users.io/web/app_dev.php/accueil
+moove_activite_tableauDeBord:
+    path:   /accueil
+    defaults: { _controller: mooveActiviteBundle:Activites:tableauDeBord }
     
+moove_activite_detailsActivite:
+    path:   /activite/{idActivite}
+    defaults: { _controller: mooveActiviteBundle:Activites:detailsActivite }
+    requirements:
+        idActivite: \d+

@@ -3,7 +3,24 @@
 {% block title %}Tableau de Bord{% endblock %}
 
 {% block body %} 
-    {# METTRE ICI LE CODE DE GENERATION DE LA PAGE #}
-   
-   
+    <!-- Titre de la page -->
+    <section class="content-header">
+      <h1>Tableau de bord</h1>
+    </section>
+    
+    <!-- Contenu principal -->
+    <section class="content">
+      <div class="row">
+        <div class="col-md-12">
+            <ul class="nav nav-pills">
+              <li role="" class="{% block activeAccueil %}{% endblock %}"><a href="{{ path('moove_activite_tableauDeBord') }}">Accueil</a></li>
+              <li role="" class="{% block activeActivites %}{% endblock %}"><a href="{{ path('moove_activite_enCoursActivite') }}">Activités</a></li>
+              <li role="" class="{% block activeHistorique %}{% endblock %}"><a href="{{ path('moove_activite_historiqueActivite') }}">Historique</a></li>
+            </ul>
+        </div>
+        <div class="col-md-12">
+            {% block bodyTableau %}{% endblock %}
+        </div>
+      </div><!-- /.row -->
+    </section><!-- /.content -->
 {% endblock %}

@@ -17,9 +17,13 @@ class PeuplerNiveau implements FixtureInterface
         $intermediaire->setLibelle("Intermédiaire");
         $manager->persist($intermediaire);
         
-        $avance = new Niveau();
-        $avance->setLibelle("Avancé");
-        $manager->persist($avance);
+        $confirme = new Niveau();
+        $confirme->setLibelle("Confirmé");
+        $manager->persist($confirme);
+        
+        $expert = new Niveau();
+        $expert->setLibelle("Expert");
+        $manager->persist($expert);
         
         $manager->flush();
     }

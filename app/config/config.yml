@@ -83,3 +83,4 @@ fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
     firewall_name: main
     user_class: moove\ActiviteBundle\Entity\Utilisateur
+    use_username_form_type: false

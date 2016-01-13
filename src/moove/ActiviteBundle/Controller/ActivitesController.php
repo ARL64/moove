@@ -6,40 +6,59 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class ActivitesController extends Controller
 {
-    public function historiqueAction($name, $page)
-    {   // Liste des activitées finies
-        //$listeDesActivites = getListeActiviteForUser($nomUtilisateur, true);
-        return $this->render('mooveActiviteBundle:Accueil:listActiviteUtilisateur.html.twig', array('name' => $name));
-    }
     
-    public function enCoursAction($name, $page)
-    {   // Liste des activitées en approche
-    
-        return $this->render('mooveActiviteBundle:Accueil:listActiviteUtilisateur.html.twig', array('name' => $name));
-    }
-    
-    
-    
-    protected function getListeActiviteForUser($nomUtilisateur, $terminer)
+    public function tableauDeBordAction()
     {
-        // On prend le manager & le dossier des Utilisateur
-        $manager = $this->getDoctrine()->getManager();
-		$repUtilisateur = $manager->getRepository('MooveActiviteBundle:Utilisateur');
+        return $this->render('mooveActiviteBundle:Accueil:tableauDeBordAccueil.html.twig');
+    }
+    
+    public function detailsActiviteAction($idActivite)
+    {
+        $repActivite = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Activite');
+        $activite = $repActivite->find($idActivite);
+        return $this->render('mooveActiviteBundle:Accueil:detailsActivite.html.twig', array('activite' => $activite));
+    }
+    
+    public function historiqueAction($page)
+    {   // Liste des activitées finies
+        $tabActivites = $this->getListeActiviteForUser(true, $page);
+        return $this->render('mooveActiviteBundle:Accueil:tableauDeBordHistorique.html.twig', array('tabActivites' => $tabActivites));
+    }
+    
+    public function enCoursAction($page)
+    {   // Liste des activitées en approche
+        $tabActivites = $this->getListeActiviteForUser(false, $page);
+        return $this->render('mooveActiviteBundle:Accueil:tableauDeBordActivites.html.twig', array('tabActivites' => $tabActivites));
+    }
+    
+    
+    
+    protected function getListeActiviteForUser($terminer, $page)
+    {
+        
+        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) 
+        { 
+            throw $this->createAccessDeniedException(); 
+        }
+        $utilisateur = $this->getUser();
 
-        // On recherche la seul occurence portant le pseudo donner
-		$utilisateur = $repUtilisateur->findOneByNom($nomUtilisateur);
-		
+
+        // On prend le manager & le dossier des Participants
+		$repParticiper = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Participer');
+		//$repActivite = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Activite');
+
 		// On récupère la liste des activités liés à cette personne
-		$listeEntiereActivite = $utilisateur->getListeActivites();
+		$nbResultatPage = 20;
+		$listeEntiereActivite = $repParticiper->findBy(array('idUtilisateur'=>$utilisateur));
 		
-		// pour chaque activité dans la liste
-		foreach ($listeEntiereActivite as $i) {
-		    // on vérifie si l'activité est terminée ou non et on génère la liste en fonction
-		    // si $terminer = true, alors seules les activités terminées apparaitrons, et inversement. (équivalent a "$i.getEstTerminee == $terminer")
-		    if($i.getEstTerminee() && $terminer)
-		        $listeActivite[] = $i;
-		}
-
-		return $listeActivite;
+		/*$listeEntiereActivite = $repParticiper->findBy(
+                                    array('idUtilisateur' => $utilisateur), // Critere
+                                    null,        // Tri
+                                    $nbResultatPage,                              // Limite
+                                    ($page-1)*$nbResultatPage                     // Offset
+        );*/
+		//$tabActivites = $listeEntiereActivite->findBy(array('estTermine' => $terminer));
+		
+		return $listeEntiereActivite;
     }
 }
