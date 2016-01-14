@@ -255,4 +255,76 @@ class Activite
     {
         return $this->estTerminee;
     }
+
+    /**
+     * Set organisateur
+     *
+     * @param \moove\ActiviteBundle\Entity\Utilisateur $organisateur
+     * @return Activite
+     */
+    public function setOrganisateur(\moove\ActiviteBundle\Entity\Utilisateur $organisateur = null)
+    {
+        $this->organisateur = $organisateur;
+
+        return $this;
+    }
+    
+    
+    
+
+    /**
+     * Get organisateur
+     *
+     * @return \moove\ActiviteBundle\Entity\Utilisateur 
+     */
+    public function getOrganisateur()
+    {
+        return $this->organisateur;
+    }
+
+    /**
+     * Set niveauRequis
+     *
+     * @param \moove\ActiviteBundle\Entity\Niveau $niveauRequis
+     * @return Activite
+     */
+    public function setNiveauRequis(\moove\ActiviteBundle\Entity\Niveau $niveauRequis = null)
+    {
+        $this->niveauRequis = $niveauRequis;
+
+        return $this;
+    }
+
+    /**
+     * Get niveauRequis
+     *
+     * @return \moove\ActiviteBundle\Entity\Niveau 
+     */
+    public function getNiveauRequis()
+    {
+        return $this->niveauRequis;
+    }
+
+    /**
+     * Set sportPratique
+     *
+     * @param \moove\ActiviteBundle\Entity\Sport $sportPratique
+     * @return Activite
+     */
+    public function setSportPratique(\moove\ActiviteBundle\Entity\Sport $sportPratique = null)
+    {
+        $this->sportPratique = $sportPratique;
+
+        return $this;
+    }
+
+    /**
+     * Get sportPratique
+     *
+     * @return \moove\ActiviteBundle\Entity\Sport 
+     */
+    public function getSportPratique()
+    {
+        return $this->sportPratique;
+    }
 }

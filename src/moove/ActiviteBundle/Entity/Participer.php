@@ -13,6 +13,8 @@ use Doctrine\ORM\Mapping as ORM;
 class Participer
 {
     /**
+     * @var integer
+     * 
      * @ORM\Id
      * @ORM\Column(name="idUtilisateur", type="integer")
      * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Utilisateur")
@@ -20,6 +22,8 @@ class Participer
     private $idUtilisateur;
     
     /**
+     * @var integer
+     * 
      * @ORM\Id
      * @ORM\Column(name="idActivite", type="integer")
      * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Activite")
@@ -53,7 +57,7 @@ class Participer
     public function setEstAccepte($estAccepte)
     {
         $this->estAccepte = $estAccepte;
-
+        
         return $this;
     }
 

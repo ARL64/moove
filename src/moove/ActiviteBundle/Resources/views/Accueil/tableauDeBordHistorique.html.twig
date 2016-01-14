@@ -20,24 +20,19 @@
           </tr>
         </thead>
         <tbody>
+          {% for activite in tabActivites %}
           <tr>
-            <td>Ski</td>
-            <td>Chamonix</td>
-            <td>Chalet </td>
-            <td>13/01/16</td>
-            <td>2/10</td>
-            <td>Antoine Vauthey</td>
-            <td><a href="#" class="btn btn-primary btn-xs">Détails</a></td>
+            <td>{{ activite.sportPratique.nom }}</td>
+            <td>{# Lieu #}</td>
+            <td>{# Lieu #}</td>
+            <td>{{ activite.dateHeureRDV | date("d/m/y") }}</td>
+            <td>{{ tabNbParticipants[loop.index0] ~ "/" ~ activite.nbPlaces }}</td>
+            <td>{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</td>
+            <td><a href="{{ path('moove_activite_detailsActivite', {idActivite: activite.id}) }}" class="btn btn-primary btn-xs">Détails</a></td>
           </tr>
-          <tr>
-            <td>Randonnée</td>
-            <td>Hendaye</td>
-            <td>Banyuls</td>
-            <td>22/12/15</td>
-            <td>5/5</td>
-            <td>Jean-Maxime Pichon</td>
-            <td><a href="#" class="btn btn-primary btn-xs">Détails</a></td>
-          </tr>
+          {% else %}
+            <h2>Aucune activité</h2>
+          {% endfor %}
         </tbody>
       </table>
     </div>
