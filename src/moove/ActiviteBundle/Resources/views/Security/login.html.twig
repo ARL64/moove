@@ -1,0 +1,31 @@
+{% extends "mooveActiviteBundle::layout.html.twig" %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block boutons %}
+<a href="{{ path('fos_user_registration_register') }}"><button class="btn btn-primary-outline" type="button">Inscription</button></a>
+{% endblock %}
+
+{% block fos_user_content %}
+{% if error %}
+    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+{% endif %}
+  <form id="form-login" class="form-signin" action="{{ path("fos_user_security_check") }}" method="post">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+    <h2 class="form-signin-heading">Connectez-vous</h2>
+    <label for="username" class="sr-only">Adresse email</label>
+    <input type="text" id="username" name="_username" value="{{ last_username }}" class="form-control" placeholder="Adresse email" required="required" autofocus>
+    <label for="password" class="sr-only">Mot de passe</label>
+    <input type="password" id="password" name="_password" required="required" class="form-control" placeholder="Mot de passe" required="required" />
+    <div class="checkbox">
+      <label for="remember_me" class="c-input c-checkbox">
+        <input type="checkbox" id="remember_me" name="_remember_me" value="on" checked="true"> Se souvenir de moi
+        <span class="c-indicator"></span>
+      </label>
+    </div>
+    <div class="forgot">
+      <a href="{{ path('fos_user_resetting_request') }}"><i class="fa fa-info-circle"></i> Mot de passe oublié</a>
+    </div>
+    <button type="submit" id="_submit" class="btn btn-lg btn-primary-outline btn-block" >Se connecter</button>
+  </form>
+{% endblock %}

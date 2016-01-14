@@ -1,0 +1,36 @@
+/* FORMULAIRE D'INSCRIPTION
+-------------------------------------------------- */
+.form-signin .form-signin-heading,
+.form-signin .radios {
+  margin-bottom: 10px;
+}
+.form-signin .radios {
+  font-weight: normal;
+  margin-top: 10px;
+  text-align: center;
+}
+.form-signin .form-control:focus {
+  z-index: 3;
+}
+.form-signin input[id="inputFirstName"],
+.form-signin input[id="inputLastName"],
+.form-signin input[id="inputEmail"],
+.form-signin input[id="inputPassword"],
+.form-signin input[id="inputPasswordConfirmation"]
+ {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[id="inputLastName"],
+.form-signin input[id="inputEmail"],
+.form-signin input[id="inputPassword"],
+.form-signin input[id="inputPasswordConfirmation"],
+.form-signin input[id="inputBirthday"] {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.form-signin .input-group-addon {
+  border-top-right-radius: 0;
+}

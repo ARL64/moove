@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Moove - {% block title %}{% endblock %}</title>
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap4.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/styleLogin.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/login.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('css/animate.css') }}">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+        <link rel="author" href="humans.txt">
+    </head>
+    <body>
+      <nav id="header" class="navbar navbar-light bg-faded">
+        <button class="navbar-toggler hidden-sm-up" type="button" data-toggle="collapse" data-target="#exCollapsingNavbar2">
+          &#9776;
+        </button>
+        <div class="collapse navbar-toggleable-xs" id="exCollapsingNavbar2">
+          <a class="navbar-brand" href="{{ path('fos_user_security_login') }}">Moove</a>
+          <ul class="nav navbar-nav">
+            <li class="nav-item active">
+              <a class="nav-link" href="{{ path('fos_user_security_login') }}">Accueil <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link scrollTo" href="#marketing">Fonctionnalités</a>
+            </li>
+            <form class="form-inline navbar-form pull-right">
+              {% block boutons %}{% endblock %}
+            </form>
+          </ul>
+        </div>
+      </nav>
+
+      <div class="section">
+        {% block fos_user_content %}{% endblock %}
+        <a class="scrollTo" href="#marketing"><div class="arrow"></div></a>
+      </div>
+        <!-- FONCTIONNALITES -->
+
+      <div id="marketing" class="container marketing">
+        <div class="row">
+          <div class="col-lg-4">
+            <img class="img-circle animated rubberBand" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
+            <h2>Participez.</h2>
+            <p>Rejoingnez des sportifs qui recherchent à faire de nouvelles rencontres, qu'ils correspondent à votre niveau ou pas.</p>
+          </div><!-- /.col-lg-4 -->
+          <div class="col-lg-4">
+            <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
+            <h2>Proposez.</h2>
+            <p></p>
+          </div><!-- /.col-lg-4 -->
+          <div class="col-lg-4">
+            <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
+            <h2>Prévoyez.</h2>
+            <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+          </div><!-- /.col-lg-4 -->
+        </div><!-- /.row -->
+
+
+        <!-- DEBUT FONCTIONNALITES DETAILLEES -->
+
+        <hr class="featurette-divider">
+
+        <div class="row featurette">
+          <div class="col-md-7">
+            <h2 class="featurette-heading">First featurette heading. <span class="text-muted">It'll blow your mind.</span></h2>
+            <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+          </div>
+          <div class="col-md-5">
+            <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
+          </div>
+        </div>
+
+        <hr class="featurette-divider">
+
+        <div class="row featurette">
+          <div class="col-md-7 col-md-push-5">
+            <h2 class="featurette-heading">Oh yeah, it's that good. <span class="text-muted">See for yourself.</span></h2>
+            <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+          </div>
+          <div class="col-md-5 col-md-pull-7">
+            <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
+          </div>
+        </div>
+
+        <hr class="featurette-divider">
+
+        <div class="row featurette">
+          <div class="col-md-7">
+            <h2 class="featurette-heading">And lastly, this one. <span class="text-muted">Checkmate.</span></h2>
+            <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+          </div>
+          <div class="col-md-5">
+            <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
+          </div>
+        </div>
+
+        <hr class="featurette-divider">
+
+        <!-- /FIN FONCTIONNALITES -->
+
+        <!-- FOOTER -->
+        <footer>
+          <p class="pull-right"><a class="scrollTo" href="#header">Revenir en haut</a></p>
+          <p>&copy; 2015 Moove, IUT Bayonne &middot; <a href="#">A propos</a> &middot; <a href="#">Conditions d'utilisation</a></p>
+        </footer>
+
+      </div><!-- /.container -->
+      <script src="{{ asset('js/jquery-2.1.4.min.js') }}"></script>
+      <script src="{{ asset('js/holder.min.js') }}"></script>
+      <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+      <script src="{{ asset('js/main.js') }}"></script>
+    </body>
+</html>
