@@ -84,7 +84,24 @@ class Activite
      * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Sport")
      */
     private $sportPratique;
-     
+
+    /**
+     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Lieu")
+     */    
+    private $lieuRDV;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Lieu")
+     */
+    private $lieuDepart;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Lieu")
+     */
+    private $lieuArrivee;
+
+
+    /* /!\ Début des get & set /!\ */
     /**
      * Get id
      *
@@ -326,5 +343,74 @@ class Activite
     public function getSportPratique()
     {
         return $this->sportPratique;
+    }
+
+    /**
+     * Set lieuRDV
+     *
+     * @param \moove\ActiviteBundle\Entity\Lieu $lieuRDV
+     * @return Activite
+     */
+    public function setLieuRDV(\moove\ActiviteBundle\Entity\Lieu $lieuRDV = null)
+    {
+        $this->lieuRDV = $lieuRDV;
+
+        return $this;
+    }
+
+    /**
+     * Get lieuRDV
+     *
+     * @return \moove\ActiviteBundle\Entity\Lieu 
+     */
+    public function getLieuRDV()
+    {
+        return $this->lieuRDV;
+    }
+
+    /**
+     * Set lieuDepart
+     *
+     * @param \moove\ActiviteBundle\Entity\Lieu $lieuDepart
+     * @return Activite
+     */
+    public function setLieuDepart(\moove\ActiviteBundle\Entity\Lieu $lieuDepart = null)
+    {
+        $this->lieuDepart = $lieuDepart;
+
+        return $this;
+    }
+
+    /**
+     * Get lieuDepart
+     *
+     * @return \moove\ActiviteBundle\Entity\Lieu 
+     */
+    public function getLieuDepart()
+    {
+        return $this->lieuDepart;
+    }
+
+    /**
+     * Set lieuArrivee
+     *
+     * @param \moove\ActiviteBundle\Entity\Lieu $lieuArrivee
+     * @return Activite
+     */
+    public function setLieuArrivee(\moove\ActiviteBundle\Entity\Lieu $lieuArrivee = null)
+    {
+        $this->lieuArrivee = $lieuArrivee;
+
+        return $this;
+    }
+
+    /**
+     * Get lieuArrivee
+     *
+     * @return \moove\ActiviteBundle\Entity\Lieu 
+     */
+    public function getLieuArrivee()
+    {
+        return $this->lieuArrivee;
     }
 }

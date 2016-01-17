@@ -4,13 +4,14 @@
 {% block activeHistorique %}active{% endblock %}
 {% block bodyTableau %}
     <br>
-    <h3>Liste de toutes les activités auxquelles vous avez participé ou que vous avez organisé.</h3>
+    <h3>Liste de toutes les activités auxquelles vous avez participées ou que vous avez organisées.</h3>
     <br>
     <div class="table-responsive">
       <table class="table table-striped table-hover ">
         <thead>
           <tr>
             <th>Sport</th>
+            <th>Rendez-vous</th>
             <th>Départ</th>
             <th>Arrivée</th>
             <th>Date</th>
@@ -23,8 +24,9 @@
           {% for activite in tabActivites %}
           <tr>
             <td>{{ activite.sportPratique.nom }}</td>
-            <td>{# Lieu #}</td>
-            <td>{# Lieu #}</td>
+            <td>{% if activite.lieuRDV is not null%}{{ activite.lieuRDV.nom }}{% endif %}</td>
+            <td>{% if activite.lieuDepart is not null%}{{ activite.lieuDepart.nom }}{% endif %}</td>
+            <td>{% if activite.lieuArrivee is not null%}{{ activite.lieuArrivee.nom }}{% endif %}</td>
             <td>{{ activite.dateHeureRDV | date("d/m/y") }}</td>
             <td>{{ tabNbParticipants[loop.index0] ~ "/" ~ activite.nbPlaces }}</td>
             <td>{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</td>
@@ -36,4 +38,40 @@
         </tbody>
       </table>
     </div>
+{% endblock %}    
+   
+{% block navTableau %}
+<nav>
+  <ul class="pagination">
+    {% if page > 1 %}
+        <li><a href="{{ path('moove_activite_historiqueActivite', {page: 1}) }}">&laquo;</a></li>
+    {% else %}
+        <li class="disabled"><a aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+    {% endif %}
+    {% if page > 1 %}
+        <li><a href="{{ path('moove_activite_historiqueActivite', {page: page - 1}) }}">&lsaquo;</a></li>
+    {% else %}
+        <li class="disabled"><a aria-label="Previous"><span aria-hidden="true">&lsaquo;</span></a></li>
+    {% endif %}
+
+    {% for i in 1..nbPage %}
+      {% if i != page %}
+        <li><a href="{{ path('moove_activite_historiqueActivite', {page: i}) }}">{{i}}</a></li>
+      {% else %}
+        <li class="active"><a aria-label=""><span aria-hidden="true">{{page}}</span></a></li>
+      {% endif %}
+    {% endfor %}
+
+    {% if page < nbPage %}
+      <li><a href="{{ path('moove_activite_historiqueActivite', {page: page + 1}) }}">&rsaquo;</a></li>
+    {% else %}
+      <li class="disabled"><a aria-label=""><span aria-hidden="true">&rsaquo;</span></a></li>
+    {% endif %}
+    {% if page < nbPage %}
+      <li><a href="{{ path('moove_activite_historiqueActivite', {page: nbPage}) }}">&raquo;</a></li>
+    {% else %}
+      <li class="disabled"><a aria-label=""><span aria-hidden="true">&raquo;</span></a></li>
+    {% endif %}
+  </ul>
+</nav>
 {% endblock %}

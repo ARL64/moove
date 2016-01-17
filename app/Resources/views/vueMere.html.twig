@@ -1,4 +1,4 @@
-{# moove/Resources/views/vueMere.html.twig #}
+{# app/Resources/views/vueMere.html.twig #}
 <!DOCTYPE html>
 <html>
   <head>
@@ -86,7 +86,7 @@
             </div>
             <div class="pull-left info">
               <p>{{ app.user.prenom ~ " " ~ app.user.nom }}</p>
-              <span>Bayonne {# {{ app.user.ville }} #}</span>
+              <span>{{ app.user.lieuResidence.ville }}</span>
             </div>
           </div>
           <ul class="sidebar-menu">

@@ -5,25 +5,30 @@
     <br>
     <div class="col-md-12">
         <ul class="list-inline">
-          <li><h4><span class="label label-success">xx participations</span></h4></li>
-          <li><h4><span class="label label-primary">xx organisations</span></h4></li>
-          <li><h4><span class="label label-danger">xx demande d'acception en attente</span></h4></li>
-          <li><h4><span class="label label-warning">xx demande de participation en attente</span></h4></li>
+          <li><h4><span class="label label-success"> {{ nbParticipations }} participation(s)</span></h4></li>
+          <li><h4><span class="label label-primary"> {{ nbOrganisations }} organisation(s)</span></h4></li>
+          <li><h4><span class="label label-danger"> {{ nbDemandesEnAttente }} demande(s) d'acception en attente</span></h4></li>
+          <li><h4><span class="label label-warning"> {{ listeDemandesEnAttenteOrganisateur }} demande(s) de participation en attente</span></h4></li>
         </ul>
     </div>
     <br>
     <div class="col-md-6">
-        <div class="panel panel-primary">
+        <div class="panel panel-danger">
           <div class="panel-heading">
             <h3 class="panel-title">Mes demandes de participations</h3>
           </div>
           <div class="panel-body">
-            Panel content
+            
+            {% for liste in listeDemandesEnAttente.listeDemande %}
+              <p>Votre demande de participation à l'activite {{ liste.sportPratique.nom | lower }}  de {{ liste.organisateur.prenom ~ " " ~ liste.organisateur.nom }} est toujours en attente.</p>
+            {% else %}
+              Vous n'avez pas de demandes en attente.
+            {% endfor %}
           </div>
         </div>
     </div>
     <div class="col-md-6">
-        <div class="panel panel-success">
+        <div class="panel panel-warning">
           <div class="panel-heading">
             <h3 class="panel-title">Demandes de participations à vos activités</h3>
           </div>

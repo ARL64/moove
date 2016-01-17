@@ -20,7 +20,7 @@
                 <div class="media-body">
                   <h4 class="media-heading">{{activite.organisateur.prenom ~ " " ~ activite.organisateur.nom}}</h4></br>
                      {{activite.organisateur.dateNaissance | date("d/m/y")}} </br>
-                     {# Niveau : {{activite.organisateur.niveau.libelle}} #}
+                     {{ niveauOrganisateur }}
                 </div>
               </div>
         </div>
@@ -46,35 +46,49 @@
             </div>
           </div>
           <div class="col-md-4">
-            <p> {{activite.sportPratique.nom}}</p>
-            <p> A compléter quand l'entité lieu sera créé</p>
-            <p> A compléter quand l'entité lieu sera créé</p>
-            <p> A compléter quand l'entité lieu sera créé</p>
-            <p> {{activite.dateHeureRDV | date("d/m/y H:i") }}</p>
-            <p> {{activite.dateFermeture | date("d/m/y H:i")}}</p>
-            <p> {{activite.duree | date ("H:i")}}</p>
-            <p> {{activite.nbPlaces}}</p>
+            <p> {{ activite.sportPratique.nom }}</p>
+            <p>{{ activite.lieuRDV.nom }}</p>
+            <p>{% if activite.lieuDepart is not null  %}{{ activite.lieuDepart.nom }}{% else %}</BR>{% endif %}</p>
+            <p>{% if activite.lieuArrivee is not null  %}{{ activite.lieuArrivee.nom }}{% else %}</BR>{% endif %}</p>
+            <p> {{ activite.dateHeureRDV | date("d/m/y H:i") }}</p>
+            <p> {{ activite.dateFermeture | date("d/m/y H:i") }}</p>
+            <p> {{ activite.duree | date ("H:i") }}</p>
+            <p> {{ activite.nbPlaces }}</p>
             <p> Annonce publiée le {{activite.dateCreation | date("d/m/y")}}</p>
           </div>
           <div class="col-md-4">
-            <p>  Participants : (blblbl places restantes)</p>
-            <p>
+            <p>  Participants : ({{ activite.nbPlaces - nbParticipants }} places restantes)</p>
+            <p> 
               {% for participantCourant in tabParticipants %}
                 <div class="media">
                   <div class="media-left">
                       <img class="media-object" src="{{asset('img/user1-128x128.jpg')}}" alt="phot de l'utilisateur" width="75" height="75">
                   </div>
                   <div class="media-body">
-                    <h4 class="media-heading">{{participantCourant.prenom ~ " " ~ participantCourant.nom}}</h4></br>
-                        {{participantCourant.dateNaissance | date("d/m/y")}} </br>
-                       {# Niveau : {{activite.organisateur.niveau.libelle}} #}
+                    <h4 class="media-heading">{{participantCourant.prenom ~ " " ~ participantCourant.nom}}</h4>
+                    <p>{{participantCourant.dateNaissance | date("d/m/y")}}</p>
+                    <p>Niveau : {# niveauOrganisateur #}</p>
                   </div>
                 </div>
               {% endfor %}
             </p>
-            <button type="button" class="btn btn-primary btn-lg">Je veux participer</button>
+            {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) and estAccepte %}
+              <button type="button" class="btn btn-primary btn-lg disabled">Activité terminée</button>
+            {% endif %}
+            {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and not estParticipant %}
+              <button type="button" class="btn btn-primary btn-lg">Je veux participer</button>
+            {% endif %}
+            {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and estAccepte and estParticipant %}
+              <button type="button" class="btn btn-primary btn-lg">Quitter l'activité</button>
+            {% endif %}
+            {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and not estAccepte and estParticipant %}
+              <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyé</button>
+            {% endif %}
+            {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) and not estAccepte and estParticipant %}
+              <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyé</button>
+            {% endif %}
           </div>
-      </div>
+      </div> 
                                                      
     </section>
     

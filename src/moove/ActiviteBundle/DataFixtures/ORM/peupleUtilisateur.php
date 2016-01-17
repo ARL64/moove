@@ -43,6 +43,7 @@ class PeuplerUtilisatueur extends AbstractFixture implements FixtureInterface, C
                 ->setEnabled(true)
                 ->setPlainPassword('azerty') 
                 //->setRoles(new array())
+                ->setLieuResidence($this->getReference('lieu-001'));
                 ;
         $userManager->updateUser($jodge, true);
         $this->addReference('utilisateur-jsarie', $jodge);
@@ -57,6 +58,7 @@ class PeuplerUtilisatueur extends AbstractFixture implements FixtureInterface, C
                     ->setEnabled(true)
                     ->setPlainPassword('qsdfgh') 
                     //->setRoles(new array())
+                    ->setLieuResidence($this->getReference('lieu-002'));
                     ;
         $userManager->updateUser($avauthey, true);
         $this->addReference('utilisateur-avauthey', $avauthey);
@@ -71,6 +73,7 @@ class PeuplerUtilisatueur extends AbstractFixture implements FixtureInterface, C
                     ->setEnabled(true)
                     ->setPlainPassword('anepasretenir') 
                      //->setRoles(new array())
+                    ->setLieuResidence($this->getReference('lieu-003'));
                     ;
         $userManager->updateUser($jmpichon, true);
         $this->addReference('utilisateur-jmpichon', $jmpichon);
@@ -85,6 +88,7 @@ class PeuplerUtilisatueur extends AbstractFixture implements FixtureInterface, C
                     ->setEnabled(true)
                     ->setPlainPassword('test') 
                     //->setRoles(new array())
+                    ->setLieuResidence($this->getReference('lieu-004'));
                     ;
         $userManager->updateUser($fdartigues, true);
         $this->addReference('utilisateur-fdartigues', $fdartigues);

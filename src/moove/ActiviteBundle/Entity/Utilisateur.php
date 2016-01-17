@@ -42,6 +42,12 @@ class Utilisateur extends BaseUser
      */
     private $URLAvatar;
     
+    /**
+     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Lieu")
+     */
+    private $lieuResidence;
+    
+    /* /!\ Début des get & set /!\ */
      /**
      * @var \DateTime
      * 
@@ -155,5 +161,28 @@ class Utilisateur extends BaseUser
     public function getDateNaissance()
     {
         return $this->dateNaissance;
+    }
+
+    /**
+     * Set lieuResidence
+     *
+     * @param \moove\ActiviteBundle\Entity\Lieu $lieuResidence
+     * @return Utilisateur
+     */
+    public function setLieuResidence(\moove\ActiviteBundle\Entity\Lieu $lieuResidence = null)
+    {
+        $this->lieuResidence = $lieuResidence;
+
+        return $this;
+    }
+
+    /**
+     * Get lieuResidence
+     *
+     * @return \moove\ActiviteBundle\Entity\Lieu 
+     */
+    public function getLieuResidence()
+    {
+        return $this->lieuResidence;
     }
 }
