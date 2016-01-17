@@ -126,7 +126,6 @@
         <strong>Copyright &copy; 2015-2016 &middot; <a href="http://iutbayonne.univ-pau.fr" target="_blank">IUT Bayonne</a> &middot;</strong> Tous droits réservés.
       </footer>
     </div><!-- ./wrapper -->
-    {% block javascripts %}
       <!-- jQuery 2.1.4 -->
       <script src="{{ asset('plugins/jQuery/jQuery-2.1.4.min.js') }}"></script>
       <!-- Bootstrap 3.3.5 -->
@@ -137,6 +136,7 @@
       <script src="{{ asset('plugins/slimScroll/jquery.slimscroll.min.js') }}"></script>
       <!-- App -->
       <script src="{{ asset('js/app.js') }}"></script>
+    {% block javascripts %}
     {% endblock %}
   </body>
 </html>

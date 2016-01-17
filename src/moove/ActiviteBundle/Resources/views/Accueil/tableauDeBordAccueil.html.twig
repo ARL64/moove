@@ -33,7 +33,17 @@
             <h3 class="panel-title">Demandes de participations à vos activités</h3>
           </div>
           <div class="panel-body">
-            Panel content
+             {% for listeOrganisations in listeDesDemandesDeParticipationsAMesActivites.listeOrganisations %}
+                {% for listeDemande in listeDesDemandesDeParticipationsAMesActivites.listeDemandes[0] %}
+                  <p>{{ listeDemande.nom ~ " " ~ listeDemande.prenom}}  demande à participer à l'activite {{listeOrganisations.sportPratique.nom | lower }} du {{listeOrganisations.DateHeureRDV | date("d/m/y") }}.
+                    <button type="button" class="btn btn-success btn-xs ">Accepter</button>
+                    <button type="button" class="btn btn-danger btn-xs">Refuser</button>
+                  </p>
+          
+                {% endfor %}
+              {% else %}
+              Vous n'avez pas de demandes en attente.
+            {% endfor %}
           </div>
         </div>
     </div>

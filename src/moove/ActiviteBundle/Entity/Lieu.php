@@ -66,14 +66,14 @@ class Lieu
     /**
      * @var string
      *
-     * @ORM\Column(name="latitude", type="decimal", precision=18,scale=14, nullable=true)
+     * @ORM\Column(name="latitude", type="decimal", precision=10, scale=7, nullable=true)
      */
     private $latitude;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="longitude", type="decimal", precision=18,scale=14, nullable=true)
+     * @ORM\Column(name="longitude", type="decimal", precision=10, scale=7, nullable=true)
      */
     private $longitude;
 

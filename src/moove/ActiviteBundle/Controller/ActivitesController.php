@@ -20,12 +20,14 @@ class ActivitesController extends Controller
         $nbDemandesEnAttente = $this->nbDemandesEnAttente();
         $nbDemandesParticipationsActiviteEnAttente = $this->nbDemandesParticipationsActiviteEnAttente();
         $listeDesDemandesEnAttente = $this->listeDesDemandesDeParticipations();
+        $listeDesDemandesDeParticipationsEnAttente = $this->listeDesDemandesDeParticipationsAMesActivites();
         return $this->render('mooveActiviteBundle:Accueil:tableauDeBordAccueil.html.twig', 
                             array(  'nbParticipations' => $nbParticipations, 
                                     'nbOrganisations' => $nbOrganisations, 
                                     'nbDemandesEnAttente' => $nbDemandesEnAttente, 
                                     'listeDemandesEnAttente' => $listeDesDemandesEnAttente,
-                                    'listeDemandesEnAttenteOrganisateur' => $nbDemandesParticipationsActiviteEnAttente));
+                                    'listeDemandesEnAttenteOrganisateur' => $nbDemandesParticipationsActiviteEnAttente,
+                                    'listeDesDemandesDeParticipationsAMesActivites' => $listeDesDemandesDeParticipationsEnAttente));
     }
     
     public function detailsActiviteAction($idActivite)
@@ -354,7 +356,7 @@ class ActivitesController extends Controller
         $utilisateur = $this->getUser()->getId();
         
         // On récupère le nombre de demandes en attente
-        $nbDemandesEnAttente= $this->nbDemandesEnAttente();
+        $nbDemandesEnAttente = $this->nbDemandesEnAttente();
         
         //On récupère le manager & repository des participations
         $repParticipations = $this->getRepository('Participer');
@@ -380,6 +382,46 @@ class ActivitesController extends Controller
     }
     
     /**
+     * retourne un tableau contenant le nombre de demande à mes activités que je propose et le tableau de toute les activités
+     * 
+     * @return array<integer, array<Activite>>
+     */
+     protected function listeDesDemandesDeParticipationsAMesActivites()
+     {
+          //On récupère l'utilisateur
+        $organisateur = $this->getUser();
+        
+        //On récupère le manager & le repository des activités
+        $repActivite = $this->getRepository('Activite');
+        
+        //On crée un tableau contenant toutes les activités dont je suis organisateur
+        $listeActivitesOrganisateur = $repActivite->findBy(array('organisateur' => $organisateur));
+        
+        //On récupère le manager & le repository des participations
+        $repParticipations = $this->getRepository('Participer');
+        
+        $repUtilisateurs = $this->getRepository('Utilisateur');
+        $listeParticipants = array();
+        $listeUtilisateurs = array();
+        
+        //On parcourt le tableau contenant toutes les activités de l'utilisateur en tant qu'organisateur
+        foreach($listeActivitesOrganisateur as $activite)
+        {
+            $participation = $repParticipations->findBy(array( 'idActivite' => $activite->getId(), 'estAccepte' => false));
+            //on récupère la liste des participations où le booléen est à faux
+            $listeParticipants[] = $participation;
+        }
+        
+        foreach($listeParticipants[0] as $participant)
+        {
+            $listeUtilisateurs[] = $repUtilisateurs->findBy(array('id' => $participant->getIdUtilisateur()));
+        }
+        
+        $tabDemandesDeParticipationsAMesActivites = array('listeDemandes' => $listeUtilisateurs, 'listeOrganisations' => $listeActivitesOrganisateur);
+        return $tabDemandesDeParticipationsAMesActivites;
+     }
+    
+    /**
      * Retourne un booléen permettant d'indiquer si l'utilisateur connecté participe à l'activité $idActivite
      * 
      * @param $idActivite
@@ -398,6 +440,11 @@ class ActivitesController extends Controller
         return (!empty($listeParticipant));
     }
     
+    /**
+     * 
+     * @param $activite (integer) id de l'activité souhaite
+     * @return boolean true si l'utilisateur actuel est accepté, false sinon
+     */
     protected function estAccepte($activite)
     {
         // On récupère l'utilisateur connecté
@@ -411,6 +458,5 @@ class ActivitesController extends Controller
                                                          'estAccepte' => true));
         return (!empty($listeParticipant));
     }
-    
     
 } // fin de "class ActivitesController extends Controller"

@@ -5,21 +5,20 @@
 {% block body %} 
     <!-- Titre de la page -->
     <section class="content-header">
-      <h1>Détails de l'activité {{activite.id}} </h1>
+      <h1><h2><span class="label label-primary"> {{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }} propose une activité {{ activite.sportPratique.nom | lower }}</span></h2></h1>
     </section>
      
     <!-- Contenu principal -->
     <section class="content">
       <div class="row">
         <div class="col-md-12">
-            <h2> <span class="label label-primary"> {{activite.organisateur.prenom ~ " " ~ activite.organisateur.nom}} propose une activité {{activite.sportPratique.nom}}</span> </h2>
             <div class="media">
                 <div class="media-left">
-                    <img class="media-object" src="{{asset('img/user1-128x128.jpg')}}" alt="phot de l'utilisateur" width="75" height="75">
+                    <img class="media-object" src="{{ asset('img/user1-128x128.jpg') }}" alt="phot de l'utilisateur" width="75" height="75">
                 </div>
                 <div class="media-body">
-                  <h4 class="media-heading">{{activite.organisateur.prenom ~ " " ~ activite.organisateur.nom}}</h4></br>
-                     {{activite.organisateur.dateNaissance | date("d/m/y")}} </br>
+                  <h4 class="media-heading">{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</h4></br>
+                     {{activite.organisateur.dateNaissance | date("d/m/y") }} </br>
                      {{ niveauOrganisateur }}
                 </div>
               </div>
@@ -36,17 +35,17 @@
             <p> Date et heure de fermeture de l'activité :</p>
             <p> Temps estimé :</p>
             <p> Nombre de places :</p>
+            <div class="panel panel-default">
             <div class="panel-heading">
               <h3 class="panel-title">Informations :</h3>
             </div>
-            <div class="panel panel-default">
               <div class="panel-body">
                 {{activite.description}}
               </div>
             </div>
           </div>
           <div class="col-md-4">
-            <p> {{ activite.sportPratique.nom }}</p>
+            <p>{{ activite.sportPratique.nom }}</p>
             <p>{{ activite.lieuRDV.nom }}</p>
             <p>{% if activite.lieuDepart is not null  %}{{ activite.lieuDepart.nom }}{% else %}</BR>{% endif %}</p>
             <p>{% if activite.lieuArrivee is not null  %}{{ activite.lieuArrivee.nom }}{% else %}</BR>{% endif %}</p>
@@ -54,7 +53,7 @@
             <p> {{ activite.dateFermeture | date("d/m/y H:i") }}</p>
             <p> {{ activite.duree | date ("H:i") }}</p>
             <p> {{ activite.nbPlaces }}</p>
-            <p> Annonce publiée le {{activite.dateCreation | date("d/m/y")}}</p>
+            <p> Annonce publiée le {{ activite.dateCreation | date("d/m/y") }}</p>
           </div>
           <div class="col-md-4">
             <p>  Participants : ({{ activite.nbPlaces - nbParticipants }} places restantes)</p>
@@ -62,12 +61,12 @@
               {% for participantCourant in tabParticipants %}
                 <div class="media">
                   <div class="media-left">
-                      <img class="media-object" src="{{asset('img/user1-128x128.jpg')}}" alt="phot de l'utilisateur" width="75" height="75">
+                      <img class="media-object" src="{{ asset('img/user1-128x128.jpg') }}" alt="phot de l'utilisateur" width="75" height="75">
                   </div>
                   <div class="media-body">
-                    <h4 class="media-heading">{{participantCourant.prenom ~ " " ~ participantCourant.nom}}</h4>
-                    <p>{{participantCourant.dateNaissance | date("d/m/y")}}</p>
-                    <p>Niveau : {# niveauOrganisateur #}</p>
+                    <h4 class="media-heading">{{ participantCourant.prenom ~ " " ~ participantCourant.nom }}</h4>
+                    <p>{{ participantCourant.dateNaissance | date("d/m/y") }}</p>
+                    <p>Niveau : {# niveau de chaque participant #}</p>
                   </div>
                 </div>
               {% endfor %}
@@ -88,8 +87,149 @@
               <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyé</button>
             {% endif %}
           </div>
-      </div> 
-                                                     
+          
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <div id="map" style="height: 500px;"></div>
+        </div>
+      </div>
     </section>
     
+{% endblock %}
+{% block javascripts %}
+  <script>
+    function initMap() {
+      var lieuRDV = {lat: {{ activite.lieuRDV.latitude }}, lng: {{ activite.lieuRDV.longitude }}};
+      {% if activite.lieuDepart is not null %}
+        var lieuDepart = {lat: {{ activite.lieuDepart.latitude }}, lng: {{ activite.lieuDepart.longitude }}};
+        var lieuArrivee_place_id = null;
+      {% endif %}
+      {% if activite.lieuArrivee is not null %}
+        var lieuArrivee = {lat: {{ activite.lieuArrivee.latitude }}, lng: {{ activite.lieuArrivee.longitude }}};
+        var lieuArrivee_place_id = null;
+      {% endif %}
+      
+      // Transposer les longitudes et latitudes en place_id et vice-versa
+      var geocoder = new google.maps.Geocoder;
+      
+      // Créé un objet map et indique dans quel id de div elle sera affichée
+      var map = new google.maps.Map(document.getElementById('map'), {
+        center: lieuRDV,
+        scrollwheel: true,
+        zoom: 15
+      });
+      
+      var directionsService = new google.maps.DirectionsService;
+      var directionsDisplay = new google.maps.DirectionsRenderer;
+      directionsDisplay.setMap(map);
+
+      
+      var infoLieuRDV = 'Lieu de rendez-vous';
+      
+      // Créé une fenêtre avec les informations sur le lieu de rendez-vous
+      var infoWindowLieuRDV = new google.maps.InfoWindow({
+        content: infoLieuRDV
+      });
+    
+      // Créé un marker sur la carte et le positionne à l'adresse du lieu de rendez-vous
+      var markerLieuRDV = new google.maps.Marker({
+        map: map,
+        position: lieuRDV,
+        title: 'Lieu de rendez-vous'
+      });
+      
+      // Lorsqu'on clique sur le marker affiche la fenêtre infoWindowLieuRDV
+      markerLieuRDV.addListener('click', function(){
+        infoWindowLieuRDV.open(map, markerLieuRDV);
+      });
+      
+      {% if activite.lieuDepart is not null %}
+      
+        // Créé un marker sur la carte et le positionne à l'adresse du lieu de départ
+        var markerLieuDepart = new google.maps.Marker({
+          map: map,
+          position: lieuDepart,
+          title: 'Lieu de départ'
+        });
+        // Créé une fenêtre avec les informations sur le lieu de rendez-vous
+        var infoWindowLieuDepart = new google.maps.InfoWindow();
+        var lieuDepart_place_id;
+        geocoder.geocode({'location': lieuDepart}, function(resultLieuDepart, status) {
+          if (status === google.maps.GeocoderStatus.OK) {
+            if (resultLieuDepart[1]) {
+              lieuDepart_place_id = resultLieuDepart[1];
+              infoWindowLieuDepart.setContent('<div><strong>Lieu de départ : </strong><br>' +
+                                        lieuDepart_place_id.formatted_address + '</div>');
+              infoWindowLieuDepart.open(map, markerLieuDepart);
+            } else {
+              window.alert('Aucun résultat trouvé.');
+            }
+          } else {
+            window.alert('Geocoder a échoué à cause de : ' + status);
+          }
+        });
+        
+        // Lorsqu'on clique sur le marker affiche la fenêtre infoWindowLieuRDV
+        markerLieuDepart.addListener('click', function(){
+          infoWindowLieuDepart.open(map, markerLieuDepart);
+        });
+      {% endif %}
+      
+      {% if activite.lieuArrivee is not null %}
+        // Créé un marker sur la carte et le positionne à l'adresse du lieu d'arrivée
+        var markerLieuArrivee = new google.maps.Marker({
+          map: map,
+          position: lieuArrivee,
+          title: 'Lieu de d\'arrivée'
+        });
+        
+        // Créé une fenêtre avec les informations sur le lieu d'arrivée
+        var infoWindowLieuArrivee = new google.maps.InfoWindow();
+        geocoder.geocode({'location': lieuArrivee}, function(resultLieuArrivee, status) {
+          if (status === google.maps.GeocoderStatus.OK) {
+            if (resultLieuArrivee[1]) {
+              lieuArrivee_place_id = resultLieuArrivee[1].place_id;
+              infoWindowLieuArrivee.setContent('<div><strong>Lieu d\'arrivée : </strong><br>' +
+                                        resultLieuArrivee[1].formatted_address + '</div>');
+              infoWindowLieuArrivee.open(map, markerLieuArrivee);
+            } else {
+              window.alert('Aucun résultat trouvé.');
+            }
+          } else {
+            window.alert('Geocoder a échoué à cause de : ' + status);
+          }
+        });
+        
+        // Lorsqu'on clique sur le marker affiche la fenêtre infoWindowLieuArrivee
+        markerLieuArrivee.addListener('click', function(){
+          infoWindowLieuArrivee.open(map, markerLieuArrivee);
+        });
+      {% endif %}
+      
+      calculateAndDisplayRoute(directionsService, directionsDisplay);
+    }
+      {% if activite.lieuDepart is not null and activite.lieuArrivee is not null %}
+        function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+          // Mettre sur le mode marche
+          var travel_mode = google.maps.TravelMode.WALKING;
+          directionsService.route({
+            origin: {lat: {{ activite.lieuDepart.latitude }}, lng: {{ activite.lieuDepart.longitude }}},
+            destination: {lat: {{ activite.lieuArrivee.latitude }}, lng: {{ activite.lieuArrivee.longitude }}},
+            // Note that Javascript allows us to access the constant
+            // using square brackets and a string value as its
+            // "property."
+            travelMode: google.maps.TravelMode[travel_mode]
+          }, function(response, status) {
+            if (status == google.maps.DirectionsStatus.OK) {
+              directionsDisplay.setDirections(response);
+            } else {
+              window.alert('Requête de trajet a échoué à cause de : ' + status);
+            }
+          });
+        }
+      {% endif %}
+
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDmo1B7t569caLPAVZZNdcoH97JCnHRqNM&libraries=places&callback=initMap"></script>
 {% endblock %}
