@@ -30,6 +30,11 @@ class ActivitesController extends Controller
                                     'listeDesDemandesDeParticipationsAMesActivites' => $listeDesDemandesDeParticipationsEnAttente));
     }
     
+    
+    /**
+     * Renvoie à la page "http://moove-arl64.c9users.io/web/app_dev.php/activite/{idActivite}"
+     * 
+     */
     public function detailsActiviteAction($idActivite)
     {
         $this->checkAuthorization();
@@ -69,12 +74,15 @@ class ActivitesController extends Controller
         // On indique si l'utilisateur accédant au détails de l'activité est participant ou non
         $estParticipant = $this->estParticipantDeActivite($activite);
         $estAccepte = $this->estAccepte($activite);
+        $estOrganisateur = $this->estOrganisateur($activite);
 
-        return $this->render('mooveActiviteBundle:Activite:detailsActivite.html.twig', array('activite' => $activite, 'tabParticipants' => $tabParticipants,
+        return $this->render('mooveActiviteBundle:Activite:detailsActivite.html.twig', array('activite' => $activite, 
+                                                                                            'tabParticipants' => $tabParticipants,
                                                                                             'niveauOrganisateur' => $niveauOrganisateur,
                                                                                             'nbParticipants' => $nbParticipants,
                                                                                             'estParticipant' => $estParticipant,
-                                                                                            'estAccepte' => $estAccepte));
+                                                                                            'estAccepte' => $estAccepte,
+                                                                                            'estOrganisateur' => $estOrganisateur));
     }
     
     /**
@@ -113,8 +121,15 @@ class ActivitesController extends Controller
         $tabActivites = $this->getListeParticipationForUser(false, $page, $nbRsultatParPage, $nbPage);
         /** liste du nombre de participant pour chaque activité en corélation avec $tabActivite */
         $tabNbParticipants = $this->getNbParticipantsParActivite($tabActivites);
+        $tabEstAccepte = [];
+        foreach($tabActivites as $activite)
+        {
+            $tabEstAccepte[] = $this->estAccepte($activite);
+        }
+        
         return $this->render('mooveActiviteBundle:Accueil:tableauDeBordActivites.html.twig', 
-                            array('tabActivites' => $tabActivites, 'tabNbParticipants' => $tabNbParticipants, 'page'=>$page, 'nbPage'=>$nbPage));
+                            array('tabActivites' => $tabActivites, 'tabNbParticipants' => $tabNbParticipants, 'page'=>$page, 'nbPage'=>$nbPage,
+                                'tabEstAccepte' => $tabEstAccepte));
     }
     // /!\ Fin actions métier
     
@@ -457,6 +472,18 @@ class ActivitesController extends Controller
                                                          'idUtilisateur' => $utilisateur,
                                                          'estAccepte' => true));
         return (!empty($listeParticipant));
+    }
+    
+    protected function estOrganisateur($activite)
+    {
+        // On récupère l'utilisateur connecté
+        $utilisateur = $this->getUser();
+        
+        // On récupère le repository Activite
+        $repActivite = $this->getRepository('Activite');
+        $organisateur = $repActivite->find($activite)->getOrganisateur();
+        
+        return ($organisateur == $utilisateur);
     }
     
 } // fin de "class ActivitesController extends Controller"

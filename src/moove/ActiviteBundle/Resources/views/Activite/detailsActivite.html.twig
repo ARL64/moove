@@ -1,5 +1,4 @@
 {% extends "::vueMere.html.twig" %}
-
 {% block title %}Détails activité {{activite.id}} {% endblock %}
 
 {% block body %} 
@@ -71,26 +70,36 @@
                 </div>
               {% endfor %}
             </p>
-            {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) and estAccepte %}
-              <button type="button" class="btn btn-primary btn-lg disabled">Activité terminée</button>
-            {% endif %}
-            {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and not estParticipant %}
-              <button type="button" class="btn btn-primary btn-lg">Je veux participer</button>
-            {% endif %}
-            {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and estAccepte and estParticipant %}
-              <button type="button" class="btn btn-primary btn-lg">Quitter l'activité</button>
-            {% endif %}
-            {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and not estAccepte and estParticipant %}
-              <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyé</button>
-            {% endif %}
-            {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) and not estAccepte and estParticipant %}
-              <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyé</button>
+            {% if estOrganisateur %}
+              {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) %}
+                <button type="button" class="btn btn-primary btn-lg disabled">Activité terminée</button>
+              {% endif %}
+              {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) %}
+                <button type="button" class="btn btn-primary btn-lg">Modifier l'activité</button>
+              {% endif %}
+            {% else %}
+              {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) and estAccepte %}
+                <button type="button" class="btn btn-primary btn-lg disabled">Activité terminée</button>
+              {% endif %}
+              {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and not estParticipant %}
+                <button type="button" class="btn btn-primary btn-lg">Je veux participer</button>
+              {% endif %}
+              {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and estAccepte and estParticipant %}
+                <button type="button" class="btn btn-primary btn-lg">Quitter l'activité</button>
+              {% endif %}
+              {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and not estAccepte and estParticipant %}
+                <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyé</button>
+              {% endif %}
+              {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) and not estAccepte and estParticipant %}
+                <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyé</button>
+              {% endif %}
             {% endif %}
           </div>
           
       </div>
       <div class="row">
         <div class="col-md-12">
+          <h1>Carte</h1>
           <div id="map" style="height: 500px;"></div>
         </div>
       </div>
@@ -120,16 +129,26 @@
         zoom: 15
       });
       
+      // Variables pour créer le trajet
       var directionsService = new google.maps.DirectionsService;
       var directionsDisplay = new google.maps.DirectionsRenderer;
       directionsDisplay.setMap(map);
 
-      
-      var infoLieuRDV = 'Lieu de rendez-vous';
-      
       // Créé une fenêtre avec les informations sur le lieu de rendez-vous
-      var infoWindowLieuRDV = new google.maps.InfoWindow({
-        content: infoLieuRDV
+      var infoWindowLieuRDV = new google.maps.InfoWindow();
+      
+      // Ouvrir la fenêtre du marker et y insérer l'adresse récupérée grâce à la longitude et latitude
+      geocoder.geocode({'location': lieuRDV}, function(resultLieuRDV, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+          if (resultLieuRDV[1]) {
+            infoWindowLieuRDV.setContent('<div><strong>Lieu de rendez-vous : </strong><br>' +
+                                      resultLieuRDV[1].formatted_address + '</div>');
+          } else {
+            window.alert('Aucun résultat trouvé.');
+          }
+        } else {
+          window.alert('Geocoder a échoué à cause de : ' + status);
+        }
       });
     
       // Créé un marker sur la carte et le positionne à l'adresse du lieu de rendez-vous

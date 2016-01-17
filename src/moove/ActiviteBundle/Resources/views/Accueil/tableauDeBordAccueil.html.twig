@@ -1,15 +1,31 @@
 {% extends "mooveActiviteBundle:Accueil:tableauDeBord.html.twig" %}
-
+{% block stylesheets %}
+  <link rel="stylesheet" href="{{ asset('css/detailsActivite/style.css') }}">
+{% endblock %}
 {% block activeAccueil %}active{% endblock %}
 {% block bodyTableau %}
     <br>
-    <div class="col-md-12">
-        <ul class="list-inline">
-          <li><h4><span class="label label-success"> {{ nbParticipations }} participation(s)</span></h4></li>
-          <li><h4><span class="label label-primary"> {{ nbOrganisations }} organisation(s)</span></h4></li>
-          <li><h4><span class="label label-danger"> {{ nbDemandesEnAttente }} demande(s) d'acception en attente</span></h4></li>
-          <li><h4><span class="label label-warning"> {{ listeDemandesEnAttenteOrganisateur }} demande(s) de participation en attente</span></h4></li>
-        </ul>
+    <div class="row">
+      <div class="col-md-12">
+          <ul class="db-btn">
+            <li>
+              <a class="btn btn-lg btn-success" href="#">
+              <i class="fa fa-heartbeat fa-3x"></i><span>{{ nbParticipations }}<br><small>participation(s)</small></span></a> 
+            </li>
+            <li>
+              <a class="btn btn-lg btn-primary" href="#">
+              <i class="fa fa-star fa-3x"></i><span>{{ nbOrganisations }}<br><small>organisation(s)</small></span></a> 
+            </li>
+            <li>
+              <a class="btn btn-lg btn-danger" href="#">
+              <i class="fa fa-group fa-3x"></i><span>{{ nbDemandesEnAttente }}<br><small>demande(s) d'acception en attente</small></span></a> 
+            </li>
+            <li>
+              <a class="btn btn-lg btn-warning" href="#">
+              <i class="fa fa-reply fa-3x"></i><span>{{ listeDemandesEnAttenteOrganisateur }}<br><small>demande(s) de participation en attente</small></span></a> 
+            </li>
+          </ul>
+      </div>
     </div>
     <br>
     <div class="col-md-6">
@@ -27,24 +43,26 @@
           </div>
         </div>
     </div>
-    <div class="col-md-6">
-        <div class="panel panel-warning">
-          <div class="panel-heading">
-            <h3 class="panel-title">Demandes de participations à vos activités</h3>
+    <div class="row">
+      <div class="col-md-6">
+          <div class="panel panel-warning">
+            <div class="panel-heading">
+              <h3 class="panel-title">Demandes de participations à vos activités</h3>
+            </div>
+            <div class="panel-body">
+               {% for listeOrganisations in listeDesDemandesDeParticipationsAMesActivites.listeOrganisations %}
+                  {% for listeDemande in listeDesDemandesDeParticipationsAMesActivites.listeDemandes[0] %}
+                    <p>{{ listeDemande.nom ~ " " ~ listeDemande.prenom}}  demande à participer à l'activite {{listeOrganisations.sportPratique.nom | lower }} du {{listeOrganisations.DateHeureRDV | date("d/m/y") }}.
+                      <button type="button" class="btn btn-success btn-xs ">Accepter</button>
+                      <button type="button" class="btn btn-danger btn-xs">Refuser</button>
+                    </p>
+            
+                  {% endfor %}
+                {% else %}
+                Vous n'avez pas de demandes en attente.
+              {% endfor %}
+            </div>
           </div>
-          <div class="panel-body">
-             {% for listeOrganisations in listeDesDemandesDeParticipationsAMesActivites.listeOrganisations %}
-                {% for listeDemande in listeDesDemandesDeParticipationsAMesActivites.listeDemandes[0] %}
-                  <p>{{ listeDemande.nom ~ " " ~ listeDemande.prenom}}  demande à participer à l'activite {{listeOrganisations.sportPratique.nom | lower }} du {{listeOrganisations.DateHeureRDV | date("d/m/y") }}.
-                    <button type="button" class="btn btn-success btn-xs ">Accepter</button>
-                    <button type="button" class="btn btn-danger btn-xs">Refuser</button>
-                  </p>
-          
-                {% endfor %}
-              {% else %}
-              Vous n'avez pas de demandes en attente.
-            {% endfor %}
-          </div>
-        </div>
+      </div>
     </div>
 {% endblock %}

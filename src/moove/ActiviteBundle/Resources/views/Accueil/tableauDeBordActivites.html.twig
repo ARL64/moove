@@ -17,21 +17,29 @@
             <th>Date</th>
             <th>Participants</th>
             <th>Organisateur</th>
+            <th>Etat</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           {% for activite in tabActivites %}
-          <tr>
-            <td>{{ activite.sportPratique.nom }}</td>
-            <td>{{ activite.lieuRDV.nom }}</td>
-            <td>{% if activite.lieuDepart is not null%}{{ activite.lieuDepart.nom }}{% endif %}</td>
-            <td>{% if activite.lieuArrivee is not null%}{{ activite.lieuArrivee.nom }}{% endif %}</td>
-            <td>{{ activite.dateHeureRDV | date("d/m/y") }}</td>
-            <td>{{ tabNbParticipants[loop.index0] ~ "/" ~ activite.nbPlaces }}</td>
-            <td>{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</td>
-            <td><a href="{{ path('moove_activite_detailsActivite', {idActivite: activite.id}) }}" class="btn btn-primary btn-xs">Détails</a></td>
-          </tr>
+          <a href="{{ path('moove_activite_detailsActivite', {idActivite: activite.id}) }}">
+            <tr>
+              <td>{{ activite.sportPratique.nom }}</td>
+              <td>{{ activite.lieuRDV.nom }}</td>
+              <td>{% if activite.lieuDepart is not null%}{{ activite.lieuDepart.nom }}{% endif %}</td>
+              <td>{% if activite.lieuArrivee is not null%}{{ activite.lieuArrivee.nom }}{% endif %}</td>
+              <td>{{ activite.dateHeureRDV | date("d/m/y") }}</td>
+              <td>{{ tabNbParticipants[loop.index0] ~ "/" ~ activite.nbPlaces }}</td>
+              <td>{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</td>
+              {% if tabEstAccepte[loop.index0] %}
+                <td><p><span class="label label-success">Participant</span></p></td>
+              {% else %}
+                <td><p><span class="label label-warning">En attente</span></p></td>
+              {% endif %}
+              <td><a href="{{ path('moove_activite_detailsActivite', {idActivite: activite.id}) }}" class="btn btn-primary btn-xs">Détails</a></td>
+            </tr>
+          </a>
           {% else %}
             <h2>Aucune activité</h2>
           {% endfor %}
