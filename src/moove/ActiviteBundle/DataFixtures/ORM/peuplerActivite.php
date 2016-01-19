@@ -125,13 +125,13 @@ class PeuplerActivite extends AbstractFixture implements FixtureInterface, Order
         $this->addReference('activite-006', $activite006);  
         // -------------------------------------------------------------------------------------        
         $activite007 = new Activite();
-		$activite007->setDateHeureRDV(new \DateTime('2015-12-02 7:00:00'))
+		$activite007->setDateHeureRDV(new \DateTime('2016-12-02 7:00:00'))
 		            ->setDuree(new \DateTime('4:00:00'))
 		            ->setNbPLaces(4)
 		            ->setDescription("Ski Pro - La Mongie")
 		            ->setDateCreation($dateActuel)
-		            ->setDateFermeture(new \DateTime('2015-12-01 6:00:00'))
-		            ->setEstTerminee(true)
+		            ->setDateFermeture(new \DateTime('2016-12-01 6:00:00'))
+		            ->setEstTerminee(false)
 		            ->setOrganisateur($this->getReference('utilisateur-jsarie'))
 		            ->setNiveauRequis($this->getReference('niveau-expert'))
 		            ->setSportPratique($this->getReference('sport-ski'))

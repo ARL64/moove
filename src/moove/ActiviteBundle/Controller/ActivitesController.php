@@ -27,7 +27,7 @@ class ActivitesController extends Controller
                                     'nbDemandesEnAttente' => $nbDemandesEnAttente, 
                                     'listeDemandesEnAttente' => $listeDesDemandesEnAttente,
                                     'listeDemandesEnAttenteOrganisateur' => $nbDemandesParticipationsActiviteEnAttente,
-                                    'listeDesDemandesDeParticipationsAMesActivites' => $listeDesDemandesDeParticipationsEnAttente));
+                                    'ListeDemandeAValide' => $listeDesDemandesDeParticipationsEnAttente));
     }
     
     
@@ -396,14 +396,64 @@ class ActivitesController extends Controller
         return $tabDemandesEnAttente;
     }
     
+  
+  
+  
+  
+  
+    
+    protected function listeDesDemandesDeParticipationsAMesActivites()
+    {
+		//On récupère l'utilisateur
+        $organisateur = $this->getUser();
+        
+        //On récupère le manager & le repository des activités & des utilisateurs
+        $repActivite = $this->getRepository('Activite');
+		$repUtilisateurs = $this->getRepository('Utilisateur');
+		$repParticipations = $this->getRepository('Participer');
+
+		//On crée un tableau contenant toutes les activités dont je suis organisateur
+        $listeActivitesOrganisateur = $repActivite->findBy(array('organisateur' => $organisateur));
+
+		$listeUtilisateurParticipants = array();
+		$listeActiviteParticipants = array();
+		$listeParticipants = array();
+		foreach($listeActivitesOrganisateur as $activite)
+        {
+            $listeParticipations = $repParticipations->findBy(array( 'idActivite' => $activite->getId(), 'estAccepte' => false));
+            //on récupère la liste des participations où le booléen est à faux
+            if($listeParticipations != null)
+            {
+                foreach($listeParticipations as $participation)
+                {
+                    $listeParticipants[] = $participation;
+			        $listeUtilisateurParticipants[] = $repUtilisateurs->find($participation->getIdUtilisateur());
+			        $listeActiviteParticipants[] = $repActivite->find($participation->getIdActivite());
+                }
+                
+            }
+
+			
+        }
+
+		return array('listeDemandes' => $listeParticipants, 'listeUtilisateur' => $listeUtilisateurParticipants, 'listeActivite' => $listeActiviteParticipants);
+		 
+	}
+	
+	
+	
+	
+	
+	
+	
     /**
      * retourne un tableau contenant le nombre de demande à mes activités que je propose et le tableau de toute les activités
      * 
      * @return array<integer, array<Activite>>
      */
-     protected function listeDesDemandesDeParticipationsAMesActivites()
+/*     protected function listeDesDemandesDeParticipationsAMesActivites()
      {
-          //On récupère l'utilisateur
+        //On récupère l'utilisateur
         $organisateur = $this->getUser();
         
         //On récupère le manager & le repository des activités
@@ -432,9 +482,10 @@ class ActivitesController extends Controller
             $listeUtilisateurs[] = $repUtilisateurs->findBy(array('id' => $participant->getIdUtilisateur()));
         }
         
+        //$tabDemandesDeParticipationsAMesActivites = array('listeDemandes' => $listeUtilisateurs, 'listeOrganisations' => $listeActivitesOrganisateur);
         $tabDemandesDeParticipationsAMesActivites = array('listeDemandes' => $listeUtilisateurs, 'listeOrganisations' => $listeActivitesOrganisateur);
         return $tabDemandesDeParticipationsAMesActivites;
-     }
+     }*/
     
     /**
      * Retourne un booléen permettant d'indiquer si l'utilisateur connecté participe à l'activité $idActivite

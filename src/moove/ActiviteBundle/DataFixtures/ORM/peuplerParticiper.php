@@ -168,7 +168,7 @@ class PeuplerParticiper extends AbstractFixture implements FixtureInterface, Ord
         $participer010 = new Participer();
 		$participer010  ->setIdUtilisateur($this->getReference('utilisateur-fdartigues')->getId())
 		                ->setIdActivite($this->getReference('activite-007')->getId())
-		                ->setEstAccepte(true)
+		                ->setEstAccepte(false)
 		                ;
         $manager->persist($participer010);
         $this->addReference('participer-010', $participer010);
@@ -222,7 +222,6 @@ class PeuplerParticiper extends AbstractFixture implements FixtureInterface, Ord
         $this->addReference('participer-016', $participer016);
         // -------------------------------------------------------------------------------------       
 
-        
         $manager->flush();
     }
     

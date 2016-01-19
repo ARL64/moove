@@ -67,7 +67,7 @@
                 {% for liste in listeDemandesEnAttente.listeDemande %}
                   <p>Votre demande de participation à l'activite {{ liste.sportPratique.nom | lower }}  de {{ liste.organisateur.prenom ~ " " ~ liste.organisateur.nom }} est toujours en attente.</p>
                 {% else %}
-                  Vous n'avez pas de demandes en attente.
+                  Vous n'avez pas de demandes en attente pour l'activite.
                 {% endfor %}
               </div>
             </div>
@@ -78,17 +78,44 @@
               <h3 class="panel-title">Demandes de participations à vos activités</h3>
             </div>
             <div class="panel-body">
-               {% for listeOrganisations in listeDesDemandesDeParticipationsAMesActivites.listeOrganisations %}
-                  {% for listeDemande in listeDesDemandesDeParticipationsAMesActivites.listeDemandes[0] %}
-                    <p>{{ listeDemande.prenom ~ " " ~ listeDemande.nom}}  demande à participer à l'activite {{listeOrganisations.sportPratique.nom | lower }} du {{listeOrganisations.DateHeureRDV | date("d/m/y") }}.
-                      <button type="button" class="btn btn-success btn-xs ">Accepter</button>
-                      <button type="button" class="btn btn-danger btn-xs">Refuser</button>
-                    </p>
-            
-                  {% endfor %}
+      
+            {% if ListeDemandeAValide is not empty %}
+                {% for participation in ListeDemandeAValide.listeDemandes %}
+                
+                   <p>
+                        <a href="{{ path('moove_activite_detailsActivite', {idActivite: ListeDemandeAValide.listeUtilisateur[loop.index0].id}) }}">
+                       {{ ListeDemandeAValide.listeUtilisateur[loop.index0].prenom ~ " " ~ ListeDemandeAValide.listeUtilisateur[loop.index0].nom}}</a>
+                       demande à participer à l'activite 
+                        <a href="{{ path('moove_activite_detailsActivite', {idActivite: ListeDemandeAValide.listeActivite[loop.index0].id}) }}">
+                            {{ListeDemandeAValide.listeActivite[loop.index0].sportPratique.nom | lower }} du {{ListeDemandeAValide.listeActivite[loop.index0].DateHeureRDV | date("d/m/y") }}.</a>
+                        <button type="button" class="btn btn-success btn-xs ">Accepter</button>
+                        <button type="button" class="btn btn-danger btn-xs">Refuser</button>
+                        
+                {% endfor %}
+            {% endif %}
+              
+{#
+                {% set aucuneDemande = true %}
+                {% for listeOrganisations in ListeDemandeAValide.listeOrganisations %}
+                   {% if ListeDemandeAValide.listeDemandes is not empty %}
+                   {% set aucuneDemande = false %}
+                   
+                     {% for listeDemande in ListeDemandeAValide.listeDemandes[0] %}
+                        <p>{{ listeDemande.prenom ~ " " ~ listeDemande.nom}}  demande à participer à l'activite {{listeOrganisations.sportPratique.nom | lower }} du {{listeOrganisations.DateHeureRDV | date("d/m/y") }}.
+                          <button type="button" class="btn btn-success btn-xs ">Accepter</button>
+                          <button type="button" class="btn btn-danger btn-xs">Refuser</button>
+                        </p>
+                    {% endfor %}
+                    {% endif %}
                 {% else %}
-                Vous n'avez pas de demandes en attente.
+                Vous n'organisez pas d'activite.
               {% endfor %}
+              {% if aucuneDemande %}
+                  Vous n'avez aucune demandes en attente sur vos activite.
+              {% endif %}
+#}
+              
+              
             </div>
           </div>
       </div>
