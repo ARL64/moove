@@ -43,7 +43,7 @@ class ActivitesController extends Controller
         /** Repository de Activite */
         $repActivite = $this->getRepository('Activite');
         /** Repository de Utilisateur */
-        $repUtilisateur = $this->getRepository('Utilisateur');
+        $repUtilisateur = $this->getDoctrine()->getManager()->getRepository('mooveUtilisateurBundle:Utilisateur');
         /** Repository de Pratiquer */
         $repPratiquer = $this->getRepository('Pratiquer');
         /** Repository de Niveau */
@@ -385,7 +385,7 @@ class ActivitesController extends Controller
         
         //On récupère le manager & le repository des activités & des utilisateurs
         $repActivite = $this->getRepository('Activite');
-		$repUtilisateurs = $this->getRepository('Utilisateur');
+		$repUtilisateurs = $this->getDoctrine()->getManager()->getRepository('mooveUtilisateurBundle:Utilisateur');
 		$repParticipations = $this->getRepository('Participer');
 
 		//On crée un tableau contenant toutes les activités dont je suis organisateur

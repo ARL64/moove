@@ -73,7 +73,7 @@ class Activite
     private $estTerminee;
 
     /**
-     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Utilisateur")
+     * @ORM\ManyToOne(targetEntity="moove\UtilisateurBundle\Entity\Utilisateur")
      */
     private $organisateur;
     
@@ -278,10 +278,10 @@ class Activite
     /**
      * Set organisateur
      *
-     * @param \moove\ActiviteBundle\Entity\Utilisateur $organisateur
+     * @param \moove\UtilisateurBundle\Entity\Utilisateur $organisateur
      * @return Activite
      */
-    public function setOrganisateur(\moove\ActiviteBundle\Entity\Utilisateur $organisateur = null)
+    public function setOrganisateur(\moove\UtilisateurBundle\Entity\Utilisateur $organisateur = null)
     {
         $this->organisateur = $organisateur;
 
@@ -294,7 +294,7 @@ class Activite
     /**
      * Get organisateur
      *
-     * @return \moove\ActiviteBundle\Entity\Utilisateur 
+     * @return \moove\UtilisateurBundle\Entity\Utilisateur 
      */
     public function getOrganisateur()
     {

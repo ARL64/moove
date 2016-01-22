@@ -16,7 +16,7 @@ class Pratiquer
      * @var integer
      *
      * @ORM\Column(name="idUtilisateur", type="integer")
-     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Utilisateur")
+     * @ORM\ManyToOne(targetEntity="moove\UtilisateurBundle\Entity\Utilisateur")
      * @ORM\Id
      */
     private $idUtilisateur;

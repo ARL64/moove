@@ -1,3 +1,7 @@
+moove_utilisateur:
+    resource: "@mooveUtilisateurBundle/Resources/config/routing.yml"
+    prefix:   /
+
 moove_activite:
     resource: "@mooveActiviteBundle/Resources/config/routing.yml"
     prefix:   /

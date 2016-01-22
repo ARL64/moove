@@ -1,0 +1,4 @@
+services:
+#    moove_utilisateur.example:
+#        class: moove\UtilisateurBundle\Example
+#        arguments: [@service_id, "plain_value", %parameter%]

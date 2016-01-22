@@ -1,7 +1,7 @@
 <?php
-// src/moove/ActiviteBundle/Entity/Utilisateur.php
+// src/moove/UtilisateurBundle/Entity/Utilisateur.php
 
-namespace moove\ActiviteBundle\Entity;
+namespace moove\UtilisateurBundle\Entity;
 
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;

@@ -17,7 +17,7 @@ class Participer
      * 
      * @ORM\Id
      * @ORM\Column(name="idUtilisateur", type="integer")
-     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Utilisateur")
+     * @ORM\ManyToOne(targetEntity="moove\UtilisateurBundle\Entity\Utilisateur")
      */
     private $idUtilisateur;
     
