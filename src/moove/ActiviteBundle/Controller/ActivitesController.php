@@ -220,7 +220,7 @@ class ActivitesController extends Controller
         }
         
         // arrondi a l'entier supérieur du total de page nécessaire
-        $nbPage = ceil (count($repActivite->findBy(array('id'=>$listeIdActivite, 'estTerminee' => $terminer))) / $nbResultatPage);
+        $nbPage = ceil(count($repActivite->findBy(array('id'=>$listeIdActivite, 'estTerminee' => $terminer))) / $nbResultatPage);
         // si l'utilisateur n'as aucune activité (évite les bug de requête avec -X)
         if($nbPage == 0) $nbPage = 1;
         // si l'utilisateur rentre manuellement une valeur impossible
@@ -228,10 +228,12 @@ class ActivitesController extends Controller
             
         // on retourne la liste des activités, terminées ou non ($terminer), triées par ordre croissant selon la date,
         // avec une limite de $nbResultatPage activités
-		return $repActivite->findBy(array('id'=>$listeIdActivite, 'estTerminee' => $terminer), 
+		/*return $repActivite->findBy(array('id'=>$listeIdActivite, 'estTerminee' => $terminer), 
 		                            array('dateHeureRDV' => 'DESC'), 
 		                            $nbResultatPage, 
-		                            ($page-1)*$nbResultatPage);
+		                            ($page-1)*$nbResultatPage);*/
+		                            
+	    return $repActivite->findByUtilisateur($utilisateur->getId());
     }
     
     protected function nbParticipations()
@@ -333,31 +335,6 @@ class ActivitesController extends Controller
         /*Après avoir parcouru l'ensemble des activités de l'orgnisateur la variable $nbDemandesParticipationsActiviteEnAttente
         contient le nombre total des demandes de participatin encore en attente toute activité de l'organisateur confondu.*/
         return $nbDemandesParticipationsActiviteEnAttente;
-
-        
-        /* //On parcourt ce nouveau tableau dans lequel on recupérera les utilisateurs encore en attente
-                foreach($recupLesParticiperAssocies as $utilisateurs)
-                {
-                    //On récupère l'id de l'utilisateur en cours
-                    $idUtilisateurs = $utilisateurs->getIdUtilisateur();
-                    
-                    /*On récupère le nombre d'utilisateurs étant dans l'activité en cours
-                    et donc leur attribut estAccepte est à false.
-                    Cette variable ne peut prendre en fait que 2 valeurs : 0 ou 1)*/
-                    /*$utilisateurDemandeEnattente = count($repParticipations->findBy(array('idUtilisateur' => $idUtilisateurs)));
-                    
-                    //Si c'est différent de 0 alors cela signifie que l'utilisateur en cours est encore en attente d'être accepté
-                    if($utilisateurDemandeEnattente != 0)
-                    {
-                        //On incrémente le nombre de participants
-                        $nbDemandesParticipationsActiviteEnAttente++;
-                    }
-                }
-                
-        $nbDemandesParticipationsActiviteEnAttente = count($rep);
-        
-        // On récupère la liste des Participations liés à la personne connectée $utilisateur
-		$nbDemandesEnAttente = count($repParticipations->findBy(array('organisateur' => $Utilisateur)));*/
     }
     
     /**
@@ -396,12 +373,11 @@ class ActivitesController extends Controller
         return $tabDemandesEnAttente;
     }
     
-  
-  
-  
-  
-  
-    
+    /**
+     * retourne un tableau contenant le nombre de demande à mes activités que je propose et le tableau de toute les activités
+     * 
+     * @return array<integer, array<Activite>>
+     */   
     protected function listeDesDemandesDeParticipationsAMesActivites()
     {
 		//On récupère l'utilisateur
@@ -439,53 +415,6 @@ class ActivitesController extends Controller
 		return array('listeDemandes' => $listeParticipants, 'listeUtilisateur' => $listeUtilisateurParticipants, 'listeActivite' => $listeActiviteParticipants);
 		 
 	}
-	
-	
-	
-	
-	
-	
-	
-    /**
-     * retourne un tableau contenant le nombre de demande à mes activités que je propose et le tableau de toute les activités
-     * 
-     * @return array<integer, array<Activite>>
-     */
-/*     protected function listeDesDemandesDeParticipationsAMesActivites()
-     {
-        //On récupère l'utilisateur
-        $organisateur = $this->getUser();
-        
-        //On récupère le manager & le repository des activités
-        $repActivite = $this->getRepository('Activite');
-        
-        //On crée un tableau contenant toutes les activités dont je suis organisateur
-        $listeActivitesOrganisateur = $repActivite->findBy(array('organisateur' => $organisateur));
-        
-        //On récupère le manager & le repository des participations
-        $repParticipations = $this->getRepository('Participer');
-        
-        $repUtilisateurs = $this->getRepository('Utilisateur');
-        $listeParticipants = array();
-        $listeUtilisateurs = array();
-        
-        //On parcourt le tableau contenant toutes les activités de l'utilisateur en tant qu'organisateur
-        foreach($listeActivitesOrganisateur as $activite)
-        {
-            $participation = $repParticipations->findBy(array( 'idActivite' => $activite->getId(), 'estAccepte' => false));
-            //on récupère la liste des participations où le booléen est à faux
-            $listeParticipants[] = $participation;
-        }
-        
-        foreach($listeParticipants[0] as $participant)
-        {
-            $listeUtilisateurs[] = $repUtilisateurs->findBy(array('id' => $participant->getIdUtilisateur()));
-        }
-        
-        //$tabDemandesDeParticipationsAMesActivites = array('listeDemandes' => $listeUtilisateurs, 'listeOrganisations' => $listeActivitesOrganisateur);
-        $tabDemandesDeParticipationsAMesActivites = array('listeDemandes' => $listeUtilisateurs, 'listeOrganisations' => $listeActivitesOrganisateur);
-        return $tabDemandesDeParticipationsAMesActivites;
-     }*/
     
     /**
      * Retourne un booléen permettant d'indiquer si l'utilisateur connecté participe à l'activité $idActivite
@@ -536,5 +465,7 @@ class ActivitesController extends Controller
         
         return ($organisateur == $utilisateur);
     }
+    
+    
     
 } // fin de "class ActivitesController extends Controller"

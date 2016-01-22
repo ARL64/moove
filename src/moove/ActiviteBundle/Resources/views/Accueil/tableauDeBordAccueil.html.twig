@@ -81,7 +81,6 @@
       
             {% if ListeDemandeAValide is not empty %}
                 {% for participation in ListeDemandeAValide.listeDemandes %}
-                
                    <p>
                         <a href="{{ path('moove_activite_detailsActivite', {idActivite: ListeDemandeAValide.listeUtilisateur[loop.index0].id}) }}">
                        {{ ListeDemandeAValide.listeUtilisateur[loop.index0].prenom ~ " " ~ ListeDemandeAValide.listeUtilisateur[loop.index0].nom}}</a>

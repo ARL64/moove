@@ -6,8 +6,10 @@ namespace moove\ActiviteBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="activite")
+ * Activite
+ * 
+ * @ORM\Table()
+ * @ORM\Entity(repositoryClass="moove\ActiviteBundle\Entity\ActiviteRepository")
  */
 class Activite
 {

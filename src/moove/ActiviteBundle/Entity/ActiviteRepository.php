@@ -12,4 +12,16 @@ use Doctrine\ORM\EntityRepository;
  */
 class ActiviteRepository extends EntityRepository
 {
+
+    public function findByUtilisateur($idUtilisateur)
+    {
+        $requete = $this->_em   ->createQuery('SELECT a FROM mooveActiviteBundle:Activite a JOIN mooveActiviteBundle:participer p WHERE p.idUtilisateur = :idUtilisateur')
+                                ->setParameter('idUtilisateur', $idUtilisateur)
+        ;
+
+        //return $requete->getQuery()->getResult();
+        return $requete->getResult();
+    }
+        
+    
 }
