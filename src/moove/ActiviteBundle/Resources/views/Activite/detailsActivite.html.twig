@@ -1,6 +1,8 @@
 {% extends "::vueMere.html.twig" %}
 {% block title %}Détails activité {{activite.id}} {% endblock %}
-
+{% block stylesheets %}
+  <link rel="stylesheet" href="{{ asset('css/details/style.css') }}">
+{% endblock %}
 {% block body %} 
     <!-- Titre de la page -->
     <section class="content-header">
@@ -16,44 +18,56 @@
                     <img class="media-object" src="{{ asset('img/user1-128x128.jpg') }}" alt="phot de l'utilisateur" width="75" height="75">
                 </div>
                 <div class="media-body">
-                  <h4 class="media-heading">{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</h4></br>
-                     {{activite.organisateur.dateNaissance | date("d/m/y") }} </br>
-                     {{ niveauOrganisateur }}
+                  <h4 class="media-heading">{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</h4>
+                  <p>{{ niveauOrganisateur }}</p>
+                  <small>Annonce publiée le {{ activite.dateCreation | date("d/m/y") }}</small>
                 </div>
               </div>
         </div>
       </div>
       <br> <!-- A enlever plus tard et faire le positionnement en CSS -->
       <div class="row">
-          <div class="col-md-4">
-            <p>Sport :</p>
-            <p>Lieu RDV :</p>
-            <p> Départ :</p>
-            <p> Arrivée :</p>
-            <p> Date et heure de départ :</p>
-            <p> Date et heure de fermeture de l'activité :</p>
-            <p> Temps estimé :</p>
-            <p> Nombre de places :</p>
-            <div class="panel panel-default">
+        <div class="col-md-8">
+          <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">Description :</h3>
+              <h3 class="panel-title">Informations sur l'activité</h3>
+            </div>
+              <div class="panel-body">
+                <div class="infos">
+                  <p><span class="info-label text-muted">Sport</span><span class="info-valeur"><i class="fa fa-trophy"></i>{{ activite.sportPratique.nom }}</span></p>
+                </div>
+                <div class="infos">
+                  <p><span class="info-label text-muted">Lieu de rendez-vous</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#ff9800"></i>{{ activite.lieuRDV.nom }}</span></p>
+                </div>
+                <div class="infos">
+                  <p><span class="info-label text-muted">Lieu de départ</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#4caf50"></i>{% if activite.lieuDepart is not null  %}{{ activite.lieuDepart.nom }}{% else %}{% endif %}</span></p>
+                </div>
+                <div class="infos">
+                  <p><span class="info-label text-muted">Lieu d'arrivée</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#e51c23"></i>{% if activite.lieuArrivee is not null  %}{{ activite.lieuArrivee.nom }}{% else %}{% endif %}</span></p>
+                </div>
+                <div class="infos">
+                  <p><span class="info-label text-muted">Date de départ</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateHeureRDV | date("d/m/y H:i") }}</span></p>
+                </div>
+                <div class="infos">
+                  <p><span class="info-label text-muted">Date de fermeture de l'activité</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateFermeture | date("d/m/y H:i") }}</span></p>
+                </div>
+                <div class="infos">
+                  <p><span class="info-label text-muted">Temps estimé</span><span class="info-valeur"><i class="fa fa-clock-o"></i>{{ activite.duree | date ("H:i") }}</span></p>
+                </div>
+                <div class="infos">
+                  <p><span class="info-label text-muted">Nombre de places</span><span class="info-valeur"><i class="fa fa-users"></i>{{ activite.nbPlaces }} places</span></p>
+                </div>
+              </div>
+          </div>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Description</h3>
             </div>
               <div class="panel-body">
                 {{activite.description}}
               </div>
-            </div>
           </div>
-          <div class="col-md-4">
-            <p>{{ activite.sportPratique.nom }}</p>
-            <p>{{ activite.lieuRDV.nom }}</p>
-            <p>{% if activite.lieuDepart is not null  %}{{ activite.lieuDepart.nom }}{% else %}</BR>{% endif %}</p>
-            <p>{% if activite.lieuArrivee is not null  %}{{ activite.lieuArrivee.nom }}{% else %}</BR>{% endif %}</p>
-            <p> {{ activite.dateHeureRDV | date("d/m/y H:i") }}</p>
-            <p> {{ activite.dateFermeture | date("d/m/y H:i") }}</p>
-            <p> {{ activite.duree | date ("H:i") }}</p>
-            <p> {{ activite.nbPlaces }}</p>
-            <p> Annonce publiée le {{ activite.dateCreation | date("d/m/y") }}</p>
-          </div>
+        </div>
           <div class="col-md-4">
             <p>  Participants : ({% if activite.nbPlaces - nbParticipants <= 1 %}<span class="text-red">{{ activite.nbPlaces - nbParticipants }}  place restante</span>{% else %}{{ activite.nbPlaces - nbParticipants }}  places restantes{% endif %})</p>
             <p> 
@@ -65,7 +79,7 @@
                   <div class="media-body">
                     <h4 class="media-heading">{{ participantCourant.prenom ~ " " ~ participantCourant.nom }}</h4>
                     <p>{{ participantCourant.dateNaissance | date("d/m/y") }}</p>
-                    <p>Niveau : {# niveau de chaque participant #}</p>
+                    <p>Niveau : </p>
                   </div>
                 </div>
               {% endfor %}

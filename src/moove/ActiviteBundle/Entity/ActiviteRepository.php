@@ -4,6 +4,8 @@ namespace moove\ActiviteBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 
+use Doctrine\ORM\QueryBuilder;
+
 /**
  * ActiviteRepository
  *
@@ -13,15 +15,42 @@ use Doctrine\ORM\EntityRepository;
 class ActiviteRepository extends EntityRepository
 {
 
-    public function findByUtilisateur($idUtilisateur)
-    {
-        $requete = $this->_em   ->createQuery('SELECT a FROM mooveActiviteBundle:Activite a JOIN mooveActiviteBundle:participer p WHERE p.idUtilisateur = :idUtilisateur')
-                                ->setParameter('idUtilisateur', $idUtilisateur)
-        ;
 
-        //return $requete->getQuery()->getResult();
-        return $requete->getResult();
+    public function findByUtilisateur($idUtilisateur, $terminer)
+    {
+        
+        
+        $requete = $this->getAllActivityForUser($idUtilisateur);
+        
+        
+        $requete->andWhere('a.estTerminee = :fini')
+                ->setParameter('fini', $terminer)
+        ;
+        
+        $query = $requete->getQuery();
+        
+        return $query->getResult();
     }
         
-    
+
+
+    /**
+     * 
+     * @param $idUtilisateur integer de l'user
+     * @return (queryBuilder)
+     */
+    private function getAllActivityForUser($idUtilisateur)
+    {
+        $requete = $this->_em->createQueryBuilder()
+            ->select('a')
+            ->from($this->_entityName, 'a')
+            ->leftJoin('mooveActiviteBundle:participer', 'p')
+            ->where('p.idUtilisateur = :idUtilisateur')
+            ->orderBy('a.dateHeureRDV', 'DESC')
+            ->setParameter('idUtilisateur', $idUtilisateur)
+        ;
+        
+        return $requete;
+        
+    }
 }

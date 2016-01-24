@@ -1,0 +1,18 @@
+.infos {
+    line-height: 25px;
+    clear: both;
+    font-size: 16px;
+}
+
+.infos .info-label {
+    float: left;
+    width: 50%;
+}
+.infos .info-valeur {
+    width: 50%;
+    float: left;
+}
+
+.infos .info-valeur i {
+    padding: 0 12px 0 5px;
+}

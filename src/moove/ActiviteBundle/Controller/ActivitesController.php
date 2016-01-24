@@ -51,7 +51,6 @@ class ActivitesController extends Controller
         
         // On récupère l'activité par l'id de l'activite $idActivite
         $activite = $repActivite->find($idActivite);
-        
         // On récupère le un tableau composé d'un objet Pratiquer
         $tabPratiquer = $repPratiquer->findBy(array('idUtilisateur' => $activite->getOrganisateur()->getId(),
                                                   'idSport' => $activite->getSportPratique()->getId(),
@@ -251,7 +250,7 @@ class ActivitesController extends Controller
 		                            $nbResultatPage, 
 		                            ($page-1)*$nbResultatPage);*/
 		                            
-	    return $repActivite->findByUtilisateur($utilisateur->getId());
+	    return $repActivite->findByUtilisateur($utilisateur->getId(), $terminer);
     }
     
     protected function nbParticipations()
