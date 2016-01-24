@@ -1,6 +1,5 @@
 {# https://moove-arl64.c9users.io/web/app_dev.php/activites #}
 {% extends "mooveActiviteBundle:Accueil:tableauDeBord.html.twig" %}
-
 {% block activeActivites %}active{% endblock %}
 {% block bodyTableau %}
     <br>
@@ -33,7 +32,7 @@
               <td>{{ tabNbParticipants[loop.index0] ~ "/" ~ activite.nbPlaces }}</td>
               <td>{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</td>
               {% if tabEstAccepte[loop.index0] %}
-                <td><p><span class="label label-success">Participant</span></p></td>
+                <td><p><span class="label label-success">Accepté</span></p></td>
               {% else %}
                 <td><p><span class="label label-warning">En attente</span></p></td>
               {% endif %}

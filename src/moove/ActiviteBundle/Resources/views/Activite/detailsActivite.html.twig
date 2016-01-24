@@ -36,7 +36,7 @@
             <p> Nombre de places :</p>
             <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">Informations :</h3>
+              <h3 class="panel-title">Description :</h3>
             </div>
               <div class="panel-body">
                 {{activite.description}}
@@ -55,7 +55,7 @@
             <p> Annonce publiée le {{ activite.dateCreation | date("d/m/y") }}</p>
           </div>
           <div class="col-md-4">
-            <p>  Participants : ({{ activite.nbPlaces - nbParticipants }} places restantes)</p>
+            <p>  Participants : ({% if activite.nbPlaces - nbParticipants <= 1 %}<span class="text-red">{{ activite.nbPlaces - nbParticipants }}  place restante</span>{% else %}{{ activite.nbPlaces - nbParticipants }}  places restantes{% endif %})</p>
             <p> 
               {% for participantCourant in tabParticipants %}
                 <div class="media">
@@ -88,10 +88,10 @@
                 <button type="button" class="btn btn-primary btn-lg">Quitter l'activité</button>
               {% endif %}
               {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and not estAccepte and estParticipant %}
-                <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyé</button>
+                <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyée</button>
               {% endif %}
               {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) and not estAccepte and estParticipant %}
-                <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyé</button>
+                <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyée</button>
               {% endif %}
             {% endif %}
           </div>
@@ -129,11 +129,6 @@
         zoom: 15
       });
       
-      // Variables pour créer le trajet
-      var directionsService = new google.maps.DirectionsService;
-      var directionsDisplay = new google.maps.DirectionsRenderer;
-      directionsDisplay.setMap(map);
-
       // Créé une fenêtre avec les informations sur le lieu de rendez-vous
       var infoWindowLieuRDV = new google.maps.InfoWindow();
       
@@ -225,30 +220,7 @@
           infoWindowLieuArrivee.open(map, markerLieuArrivee);
         });
       {% endif %}
-      
-      calculateAndDisplayRoute(directionsService, directionsDisplay);
     }
-      {% if activite.lieuDepart is not null and activite.lieuArrivee is not null %}
-        function calculateAndDisplayRoute(directionsService, directionsDisplay) {
-          // Mettre sur le mode marche
-          var travel_mode = google.maps.TravelMode.WALKING;
-          directionsService.route({
-            origin: {lat: {{ activite.lieuDepart.latitude }}, lng: {{ activite.lieuDepart.longitude }}},
-            destination: {lat: {{ activite.lieuArrivee.latitude }}, lng: {{ activite.lieuArrivee.longitude }}},
-            // Note that Javascript allows us to access the constant
-            // using square brackets and a string value as its
-            // "property."
-            travelMode: google.maps.TravelMode[travel_mode]
-          }, function(response, status) {
-            if (status == google.maps.DirectionsStatus.OK) {
-              directionsDisplay.setDirections(response);
-            } else {
-              window.alert('Requête de trajet a échoué à cause de : ' + status);
-            }
-          });
-        }
-      {% endif %}
-
   </script>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDmo1B7t569caLPAVZZNdcoH97JCnHRqNM&libraries=places&callback=initMap"></script>
 {% endblock %}

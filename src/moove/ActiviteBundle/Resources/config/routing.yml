@@ -18,3 +18,11 @@ moove_activite_detailsActivite:
     defaults: { _controller: mooveActiviteBundle:Activites:detailsActivite }
     requirements:
         idActivite: \d+
+
+moove_activite_rechercher:
+    path:   /rechercher
+    defaults: { _controller: mooveActiviteBundle:Activites:rechercherActivite }
+
+moove_activite_proposer:
+    path:   /proposer
+    defaults: { _controller: mooveActiviteBundle:Activites:proposerActivite }

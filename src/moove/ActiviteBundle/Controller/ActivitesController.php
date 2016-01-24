@@ -26,7 +26,7 @@ class ActivitesController extends Controller
                                     'nbOrganisations' => $nbOrganisations, 
                                     'nbDemandesEnAttente' => $nbDemandesEnAttente, 
                                     'listeDemandesEnAttente' => $listeDesDemandesEnAttente,
-                                    'listeDemandesEnAttenteOrganisateur' => $nbDemandesParticipationsActiviteEnAttente,
+                                    'nbDemandesEnAttenteOrganisateur' => $nbDemandesParticipationsActiviteEnAttente,
                                     'ListeDemandeAValide' => $listeDesDemandesDeParticipationsEnAttente));
     }
     
@@ -128,8 +128,26 @@ class ActivitesController extends Controller
         }
         
         return $this->render('mooveActiviteBundle:Accueil:tableauDeBordActivites.html.twig', 
-                            array('tabActivites' => $tabActivites, 'tabNbParticipants' => $tabNbParticipants, 'page'=>$page, 'nbPage'=>$nbPage,
+                            array('tabActivites' => $tabActivites, 'tabNbParticipants' => $tabNbParticipants, 'page' => $page, 'nbPage' => $nbPage,
                                 'tabEstAccepte' => $tabEstAccepte));
+    }
+    
+    /**
+     * Renvoie à la page "http://moove-arl64.c9users.io/web/app_dev.php/rechercher"
+     * 
+     */
+    public function rechercherActiviteAction()
+    {
+        return $this->render('mooveActiviteBundle:Activite:rechercherActivites.html.twig');
+    }
+    
+    /**
+     * Renvoie à la page "http://moove-arl64.c9users.io/web/app_dev.php/proposer"
+     * 
+     */
+    public function proposerActiviteAction()
+    {
+        return $this->render('mooveActiviteBundle:Activite:proposerActivite.html.twig');
     }
     // /!\ Fin actions métier
     
