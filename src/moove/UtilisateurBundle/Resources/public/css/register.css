@@ -1,0 +1,38 @@
+/* FORMULAIRE D'INSCRIPTION
+-------------------------------------------------- */
+.form-signin .form-signin-heading,
+.form-signin .radios {
+  margin-bottom: 10px;
+}
+.form-signin .radios {
+  font-weight: normal;
+  margin-top: 10px;
+  text-align: center;
+}
+.form-signin .form-control:focus {
+  z-index: 3;
+}
+.form-signin input[id="fos_user_registration_form_prenom"],
+.form-signin input[id="fos_user_registration_form_nom"],
+.form-signin input[id="fos_user_registration_form_email"],
+.form-signin input[id="fos_user_registration_form_plainPassword_first"],
+.form-signin input[id="fos_user_registration_form_plainPassword_second"],
+.form-signin input[id="fos_user_registration_form_username"]
+ {
+  margin-bottom: -1px;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.form-signin input[id="fos_user_registration_form_nom"],
+.form-signin input[id="fos_user_registration_form_email"],
+.form-signin input[id="fos_user_registration_form_plainPassword_first"],
+.form-signin input[id="fos_user_registration_form_plainPassword_second"],
+.form-signin input[id="inputBirthday"],
+.form-signin input[id="fos_user_registration_form_username"] {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.form-signin .input-group-addon {
+  border-top-right-radius: 0;
+}

@@ -1,12 +1,12 @@
 # https://moove-arl64.c9users.io/web/app_dev.php/historique/1
 moove_activite_historiqueActivite:
-    path:   /historique/{page}
-    defaults: { _controller: mooveActiviteBundle:Activites:historique, page: 1 }
+    path:   /historique/
+    defaults: { _controller: mooveActiviteBundle:Activites:historique }
     
 # https://moove-arl64.c9users.io/web/app_dev.php/activites/1
 moove_activite_enCoursActivite:
-    path:   /activites/{page}
-    defaults: { _controller: mooveActiviteBundle:Activites:enCours, page: 1 }
+    path:   /activites/
+    defaults: { _controller: mooveActiviteBundle:Activites:enCours }
     
 # https://moove-arl64.c9users.io/web/app_dev.php/accueil
 moove_activite_tableauDeBord:

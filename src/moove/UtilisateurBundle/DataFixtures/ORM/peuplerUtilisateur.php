@@ -36,7 +36,7 @@ class PeuplerUtilisatueur extends AbstractFixture implements FixtureInterface, C
         $jodge = $userManager->createUser();
         $jodge  ->setNom("Sarie")
                 ->setPrenom("Joey")
-                //->setURLAvatar("A_CHANGER")
+                ->setURLAvatar("user1.png")
                 ->setDateNaissance(new \DateTime('1996-03-02'))
                 ->setUsername("Jodge")
                 ->setEmail("joey.sarie@gmail.com")
@@ -51,7 +51,7 @@ class PeuplerUtilisatueur extends AbstractFixture implements FixtureInterface, C
         $avauthey = $userManager->createUser();
         $avauthey   ->setNom("Vauthey")
                     ->setPrenom("Antoine")
-                    //->setURLAvatar("A_CHANGER")
+                    ->setURLAvatar("user2.jpg")
                     ->setDateNaissance(new \DateTime('1996-09-22'))
                     ->setUsername("avauthey")
                     ->setEmail("vauthey.antoine@gmail.com")
@@ -66,7 +66,7 @@ class PeuplerUtilisatueur extends AbstractFixture implements FixtureInterface, C
         $jmpichon = $userManager->createUser();
         $jmpichon   ->setNom("Pichon")
                     ->setPrenom("Jean-Maxime")
-                    //->setURLAvatar("A_CHANGER")
+                    ->setURLAvatar("user3.jpg")
                     ->setDateNaissance(new \DateTime('1996-06-03'))
                     ->setUsername("Reigarth")
                     ->setEmail("rtw@live.fr")
@@ -81,7 +81,7 @@ class PeuplerUtilisatueur extends AbstractFixture implements FixtureInterface, C
         $fdartigues = $userManager->createUser();
         $fdartigues ->setNom("Dartigues")
                     ->setPrenom("Fabien")
-                    //->setURLAvatar("A_CHANGER")
+                    ->setURLAvatar("user4.jpg")
                     ->setDateNaissance(new \DateTime('1996-05-29'))
                     ->setUsername("arl")
                     ->setEmail("fabien.dartigues@outlook.fr")

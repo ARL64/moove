@@ -5,13 +5,15 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Moove - {% block title %}{% endblock %}</title>
+        <link href="{{ asset('favicon.ico') }}" rel="shortcut icon" type="image/x-icon" />
         <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap4.min.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('css/styleLogin.css') }}">
-        <link rel="stylesheet" type="text/css" href="{{ asset('css/login.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ asset('bundles/mooveutilisateur/css/style.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('css/animate.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('css/components/alert.css') }}">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
         <link rel="author" href="humans.txt">
+        {% block stylesheets %}
+        {% endblock %}
     </head>
     <body>
       <nav id="header" class="navbar navbar-light bg-faded">
@@ -45,17 +47,17 @@
           <div class="col-lg-4">
             <img class="img-circle animated rubberBand" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
             <h2>Participez.</h2>
-            <p>Rejoingnez des sportifs qui recherchent à faire de nouvelles rencontres, qu'ils correspondent à votre niveau ou pas.</p>
+            <p>Rejoignez des sportifs qui cherchent à faire de nouvelles rencontres, qu'ils correspondent à votre niveau ou non.</p>
           </div><!-- /.col-lg-4 -->
           <div class="col-lg-4">
             <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
             <h2>Proposez.</h2>
-            <p>Créer une activité afin que d'autres sportifs puissent vous rejoindre pour passer un moment sportif et amical.</p>
+            <p>Créez une activité afin que d'autres sportifs puissent vous rejoindre pour passer un moment sportif et amical.</p>
           </div><!-- /.col-lg-4 -->
           <div class="col-lg-4">
             <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
             <h2>Prévoyez.</h2>
-            <p>Organiser des activités simplement.</p>
+            <p>Organisez des activités simplement.</p>
           </div><!-- /.col-lg-4 -->
         </div><!-- /.row -->
 

@@ -1,4 +1,5 @@
 <?php
+// src/moove/ActiviteBundle/Entity/Participer.php
 
 namespace moove\ActiviteBundle\Entity;
 
@@ -15,28 +16,31 @@ class Participer
     /**
      * @var integer
      * 
+     * @ORM\Column(name="id", type="integer")
      * @ORM\Id
-     * @ORM\Column(name="idUtilisateur", type="integer")
-     * @ORM\ManyToOne(targetEntity="moove\UtilisateurBundle\Entity\Utilisateur")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $idUtilisateur;
+    private $id; 
     
     /**
-     * @var integer
-     * 
-     * @ORM\Id
-     * @ORM\Column(name="idActivite", type="integer")
+     * @ORM\ManyToOne(targetEntity="moove\UtilisateurBundle\Entity\Utilisateur")
+     */
+    private $utilisateur;
+    
+    /**
      * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Activite")
      */
-    private $idActivite;
+    private $activite;
 
     /**
      * @var boolean
      *
-     * @ORM\Column(name="estAccepte", type="boolean")
+     * @ORM\Column(name="estAccepte", type="smallint")
      */
-    private $estAccepte;
+    private $estAccepte; // type : "boolean"
 
+
+  
 
     /**
      * Get id
@@ -51,20 +55,20 @@ class Participer
     /**
      * Set estAccepte
      *
-     * @param boolean $estAccepte
+     * @param integer $estAccepte
      * @return Participer
      */
     public function setEstAccepte($estAccepte)
     {
         $this->estAccepte = $estAccepte;
-        
+
         return $this;
     }
 
     /**
      * Get estAccepte
      *
-     * @return boolean 
+     * @return integer 
      */
     public function getEstAccepte()
     {
@@ -72,48 +76,48 @@ class Participer
     }
 
     /**
-     * Set idUtilisateur
+     * Set utilisateur
      *
-     * @param integer $idUtilisateur
+     * @param \moove\UtilisateurBundle\Entity\Utilisateur $utilisateur
      * @return Participer
      */
-    public function setIdUtilisateur($idUtilisateur)
+    public function setUtilisateur(\moove\UtilisateurBundle\Entity\Utilisateur $utilisateur = null)
     {
-        $this->idUtilisateur = $idUtilisateur;
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }
 
     /**
-     * Get idUtilisateur
+     * Get utilisateur
      *
-     * @return integer 
+     * @return \moove\UtilisateurBundle\Entity\Utilisateur 
      */
-    public function getIdUtilisateur()
+    public function getUtilisateur()
     {
-        return $this->idUtilisateur;
+        return $this->utilisateur;
     }
 
     /**
-     * Set idActivite
+     * Set activite
      *
-     * @param integer $idActivite
+     * @param \moove\ActiviteBundle\Entity\Activite $activite
      * @return Participer
      */
-    public function setIdActivite($idActivite)
+    public function setActivite(\moove\ActiviteBundle\Entity\Activite $activite = null)
     {
-        $this->idActivite = $idActivite;
+        $this->activite = $activite;
 
         return $this;
     }
 
     /**
-     * Get idActivite
+     * Get activite
      *
-     * @return integer 
+     * @return \moove\ActiviteBundle\Entity\Activite 
      */
-    public function getIdActivite()
+    public function getActivite()
     {
-        return $this->idActivite;
+        return $this->activite;
     }
 }

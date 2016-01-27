@@ -3,6 +3,7 @@
 namespace moove\ActiviteBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * ParticiperRepository
@@ -12,4 +13,28 @@ use Doctrine\ORM\EntityRepository;
  */
 class ParticiperRepository extends EntityRepository
 {
+    public function findByOrganisateur($idOrganisateur, $accepter = null)
+    {
+        $requete = $this->_em->createQueryBuilder() 
+            ->select('p')
+            ->from($this->_entityName, 'p')
+            ->leftJoin('mooveActiviteBundle:Activite', 'a', 'WITH', 'a.id = p.activite')
+            ->Where('a.organisateur = :organisateur')
+            ->setParameter('organisateur', $idOrganisateur)
+        ;
+
+        if(!is_null($accepter))
+        {
+            $requete->andWhere('p.estAccepte = :accepter')
+                    ->setParameter('accepter', $accepter)
+            ;
+        }
+        
+        // on récupère la commande DQL
+        $query = $requete->getQuery();
+        
+        // on retourne un tableau de résultat
+        return $query->getArrayResult();
+    }
+    
 }

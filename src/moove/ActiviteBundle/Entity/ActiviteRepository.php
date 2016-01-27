@@ -3,8 +3,9 @@
 namespace moove\ActiviteBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
-
 use Doctrine\ORM\QueryBuilder;
+
+use moove\UtilisateurBundle\Entity\participer;
 
 /**
  * ActiviteRepository
@@ -14,24 +15,25 @@ use Doctrine\ORM\QueryBuilder;
  */
 class ActiviteRepository extends EntityRepository
 {
-
-
-    public function findByUtilisateur($idUtilisateur, $terminer)
+    public function findByUtilisateur($idUtilisateur, $terminer = null)
     {
-        
-        
+        // on récupère la query de base de séléction des activités par utilisateur
         $requete = $this->getAllActivityForUser($idUtilisateur);
         
+        // on ajoute la condition terminer ou non
+        if(!is_null($terminer))
+        {
+            $requete->andWhere('a.estTerminee = :fini')
+                    ->setParameter('fini', $terminer)
+            ;
+        }
         
-        $requete->andWhere('a.estTerminee = :fini')
-                ->setParameter('fini', $terminer)
-        ;
-        
+        // on récupère la commande DQL
         $query = $requete->getQuery();
         
+        // on retourne un tableau de résultat
         return $query->getResult();
     }
-        
 
 
     /**
@@ -39,18 +41,19 @@ class ActiviteRepository extends EntityRepository
      * @param $idUtilisateur integer de l'user
      * @return (queryBuilder)
      */
-    private function getAllActivityForUser($idUtilisateur)
+    protected function getAllActivityForUser($idUtilisateur)
     {
+        // création de la requete de base
         $requete = $this->_em->createQueryBuilder()
             ->select('a')
             ->from($this->_entityName, 'a')
-            ->leftJoin('mooveActiviteBundle:participer', 'p')
-            ->where('p.idUtilisateur = :idUtilisateur')
+            ->leftJoin('mooveActiviteBundle:Participer', 'p', 'WITH', 'a.id = p.activite')
+            ->where('p.utilisateur = :idUtilisateur')
             ->orderBy('a.dateHeureRDV', 'DESC')
+            
             ->setParameter('idUtilisateur', $idUtilisateur)
         ;
         
         return $requete;
-        
     }
 }

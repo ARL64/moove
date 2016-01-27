@@ -39,13 +39,13 @@
             <div class="col-md-12">
                 <div class="panel panel-danger">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Vos demandes de participation</h3>
+                        <h3 class="panel-title">Mes demandes de participation</h3>
                     </div>
                     <div class="panel-body">
                         {% for liste in listeDemandesEnAttente.listeDemande %}
-                          <p>Votre demande de participation à l'activité <a href="{{ path('moove_activite_detailsActivite', {idActivite: liste.id}) }}" >{{ liste.sportPratique.nom | lower }} du {{ liste.dateHeureRDV | date("d/m/y") }}</a> de <a href="#">{{ liste.organisateur.prenom ~ " " ~ liste.organisateur.nom }}</a> est toujours en attente.</p>
+                          <p>Ma demande de participation à l'activité <a href="{{ path('moove_activite_detailsActivite', {idActivite: liste.id}) }}" >{{ liste.sportPratique.nom | lower }} du {{ liste.dateHeureRDV | date("d/m/y") }}</a> de <a href="#">{{ liste.organisateur.prenom ~ " " ~ liste.organisateur.nom }}</a> est toujours en attente.</p>
                         {% else %}
-                          Vous n'avez pas de demandes en attente. Allez rejoindre des activités en <a href="{{ path('moove_activite_rechercher') }}">recherchant des activités</a>.
+                          Je n'ai pas de demandes en attente. Allez rejoindre des activités en <a href="{{ path('moove_activite_rechercher') }}">recherchant des activités</a>.
                         {% endfor %}
                     </div>
                 </div>
@@ -83,7 +83,7 @@
             <div class="col-md-12">
             <div class="panel panel-warning">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Demandes de participation à vos activités</h3>
+                        <h3 class="panel-title">Demandes de participation à mes activités</h3>
                     </div>
                     <div class="panel-body">
                         {% if ListeDemandeAValide is not empty %}

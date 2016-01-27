@@ -89,6 +89,9 @@ class Sport
      */
     public function getUrlPictogramme()
     {
+        return "bundles/mooveactivite/images/sports/" . $this->urlPictogramme;
+
         return $this->urlPictogramme;
     }
+    
 }

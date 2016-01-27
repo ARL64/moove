@@ -1,5 +1,22 @@
 {% extends "::vueMere.html.twig" %}
 
-{% block body %}
-{% include "FOSUserBundle:Profile:show_content.html.twig" %}
-{% endblock body %}
+{% block title %}Profil{% endblock %}
+
+{% block body %} 
+    <!-- Titre de la page -->
+    <section class="content-header">
+      <h1>Mon profil</h1>
+    </section>
+    
+    <!-- Contenu principal -->
+    <section class="content">
+      <div class="row">
+        <div class="col-md-12">
+            {% block bodyFOS %}
+              {% include "FOSUserBundle:Profile:show_content.html.twig" %}
+            {% endblock bodyFOS %}
+            
+        </div>
+       </div>
+    </section>
+{% endblock %}

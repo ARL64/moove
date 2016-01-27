@@ -15,7 +15,7 @@
         <div class="col-md-12">
             <div class="media">
                 <div class="media-left">
-                    <img class="media-object" src="{{ asset('img/user1-128x128.jpg') }}" alt="phot de l'utilisateur" width="75" height="75">
+                    <img class="media-object" src="{{ asset(activite.organisateur.URLAvatar) }}" alt="photo de l'utilisateur" width="75" height="75">
                 </div>
                 <div class="media-body">
                   <h4 class="media-heading">{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</h4>
@@ -68,48 +68,80 @@
               </div>
           </div>
         </div>
-          <div class="col-md-4">
-            <p>  Participants : ({% if activite.nbPlaces - nbParticipants <= 1 %}<span class="text-red">{{ activite.nbPlaces - nbParticipants }}  place restante</span>{% else %}{{ activite.nbPlaces - nbParticipants }}  places restantes{% endif %})</p>
-            <p> 
-              {% for participantCourant in tabParticipants %}
-                <div class="media">
-                  <div class="media-left">
-                      <img class="media-object" src="{{ asset('img/user1-128x128.jpg') }}" alt="phot de l'utilisateur" width="75" height="75">
+        <div class="col-md-4">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Participants ({% if activite.nbPlaces - nbParticipants <= 1 %}<span class="text-red">{{ activite.nbPlaces - nbParticipants }}  place restante</span>{% else %}{{ activite.nbPlaces - nbParticipants }}  places restantes{% endif %})</h3>
+            </div>
+              <div class="panel-body">
+                {% for participantCourant in tabParticipants %}
+                  <div class="media">
+                    <div class="media-left">
+                        <img class="media-object" src="{{ asset(participantCourant.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
+                    </div>
+                    <div class="media-body">
+                      <h4 class="media-heading">{{ participantCourant.prenom ~ " " ~ participantCourant.nom }}</h4>
+                      <p>{{ participantCourant.dateNaissance | date("d/m/y") }}</p>
+                      <p>Niveau : </p>
+                    </div>
                   </div>
-                  <div class="media-body">
-                    <h4 class="media-heading">{{ participantCourant.prenom ~ " " ~ participantCourant.nom }}</h4>
-                    <p>{{ participantCourant.dateNaissance | date("d/m/y") }}</p>
-                    <p>Niveau : </p>
-                  </div>
-                </div>
-              {% endfor %}
-            </p>
-            {% if estOrganisateur %}
-              {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) %}
-                <button type="button" class="btn btn-primary btn-lg disabled">Activité terminée</button>
-              {% endif %}
-              {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) %}
-                <button type="button" class="btn btn-primary btn-lg">Modifier l'activité</button>
-              {% endif %}
-            {% else %}
-              {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) and estAccepte %}
-                <button type="button" class="btn btn-primary btn-lg disabled">Activité terminée</button>
-              {% endif %}
-              {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and not estParticipant %}
-                <button type="button" class="btn btn-primary btn-lg">Je veux participer</button>
-              {% endif %}
-              {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and estAccepte and estParticipant %}
-                <button type="button" class="btn btn-primary btn-lg">Quitter l'activité</button>
-              {% endif %}
-              {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and not estAccepte and estParticipant %}
-                <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyée</button>
-              {% endif %}
-              {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) and not estAccepte and estParticipant %}
-                <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyée</button>
-              {% endif %}
-            {% endif %}
+                {% endfor %}
+                {# estAccepter == 1 :> validé | estAccepter == 2 :> refusé | estAccepter == 0 :> en attente #}
+                {% if estOrganisateur %}
+                  {% if ("now" | date("Ymd") > activite.dateHeureRDV | date("Ymd")) %}
+                    <button type="button" class="btn btn-primary btn-lg disabled">Activité terminée</button>
+                  {% else %}
+                    <button type="button" class="btn btn-primary btn-lg">Modifier l'activité</button>
+                  {% endif %}
+                {% else %}
+                  {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) %}
+                    {% if estAccepte == 1 %}
+                      <button type="button" class="btn btn-primary btn-lg disabled">Activité fermée</button>
+                    {% elseif estAccepte == 2 %}
+                      <button type="button" class="btn btn-primary btn-lg disabled">Activité fermée</button>
+                    {% else %}
+                      <button type="button" class="btn btn-primary btn-lg disabled">Activité fermée</button>
+                    {% endif %}
+                  {% else %}
+                    {% if estParticipant %}
+                      {% if estAccepte == 1 %}
+                        <button type="button" class="btn btn-primary btn-lg">Quitter l'activité</button>
+                      {% elseif estAccepte == 2 %}
+                        <button type="button" class="btn btn-primary btn-lg disabled">Vous avez été refusé</button>
+                      {% else %}
+                        <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyée</button>
+                      {% endif %}
+                      
+                    {% else %}
+                      <button type="button" class="btn btn-primary btn-lg">Je veux participer</button>
+                    {% endif %}
+                  {% endif %}
+                
+                {# A VERIFIER
+                
+                {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) and estAccepte %}
+                    <button type="button" class="btn btn-primary btn-lg disabled">Activité terminée</button>
+                  {% endif %}
+                  {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and not estParticipant %}
+                    <button type="button" class="btn btn-primary btn-lg">Je veux participer</button>
+                  {% endif %}
+                  {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and estAccepte and estParticipant %}
+                    <button type="button" class="btn btn-primary btn-lg">Quitter l'activité</button>
+                  {% endif %}
+                  {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and not estAccepte and estParticipant %}
+                    <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyée</button>
+                  {% endif %}
+                  {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) and not estAccepte and estParticipant %}
+                    <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyée</button>
+                  {% endif %}
+                  
+                  #}
+                
+                
+                {% endif %}
+              </div>
           </div>
-          
+        </div>
       </div>
       <div class="row">
         <div class="col-md-12">

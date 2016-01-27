@@ -17,12 +17,12 @@ class PeuplerActivite extends AbstractFixture implements FixtureInterface, Order
 
         // -------------------------------------------------------------------------------------        
         $activite001 = new Activite();
-		$activite001->setDateHeureRDV(new \DateTime('2016-01-23 8:00:00'))
+		$activite001->setDateHeureRDV(new \DateTime('2016-02-23 8:00:00'))
 		            ->setDuree(new \DateTime('8:30:00'))
 		            ->setNbPLaces(4)
 		            ->setDescription("Etape 24 du Tour de France 2015")
 		            ->setDateCreation($dateActuel)
-		            ->setDateFermeture(new \DateTime('2016-01-20 8:00:00'))
+		            ->setDateFermeture(new \DateTime('2016-02-20 8:00:00'))
 		            ->setEstTerminee(false)
 		            ->setOrganisateur($this->getReference('utilisateur-jmpichon'))
 		            ->setNiveauRequis($this->getReference('niveau-intermediaire'))

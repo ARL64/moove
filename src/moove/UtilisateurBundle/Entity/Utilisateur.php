@@ -43,6 +43,13 @@ class Utilisateur extends BaseUser
     private $URLAvatar;
     
     /**
+     * @var string
+     * 
+     * @ORM\Column(name="sexe", type="string", length=255, nullable=true)
+     */
+    private $sexe;
+    
+    /**
      * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Lieu")
      */
     private $lieuResidence;
@@ -137,7 +144,7 @@ class Utilisateur extends BaseUser
      */
     public function getURLAvatar()
     {
-        return $this->URLAvatar;
+        return "bundles/mooveutilisateur/images/avatars/" . $this->URLAvatar;
     }
 
     /**

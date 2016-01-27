@@ -31,7 +31,7 @@ registration:
     check_email: 'Un e-mail a été envoyé à l''adresse %email%. Il contient un lien d''activation sur lequel il vous faudra cliquer afin d''activer votre compte.'
     confirmed: 'Félicitations %username%, votre compte est maintenant activé.'
     back: 'Retour à la page d''origine.'
-    submit: Enregistrer
+    submit: 'S''inscrire'
     flash:
         user_created: 'L''utilisateur a été créé avec succès'
     email:
@@ -60,8 +60,13 @@ form:
     group_name: 'Nom du groupe'
     username: 'Nom d''utilisateur'
     email: 'Adresse e-mail'
+    nom: 'Nom'
+    prenom: 'Prénom'
+    sexeH: 'Homme'
+    sexeF: 'Femme'
+    birthday: 'Date de naissance'
     current_password: 'Mot de passe actuel'
     password: 'Mot de passe'
-    password_confirmation: Vérification
+    password_confirmation: 'Confirmation du mot de passe'
     new_password: 'Nouveau mot de passe'
-    new_password_confirmation: Vérification
+    new_password_confirmation: 'Confirmation du mot de passe'

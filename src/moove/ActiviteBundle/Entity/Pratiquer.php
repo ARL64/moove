@@ -14,97 +14,105 @@ class Pratiquer
 {
     /**
      * @var integer
-     *
-     * @ORM\Column(name="idUtilisateur", type="integer")
+     * 
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $id;    
+    
+    /**
+     * 
      * @ORM\ManyToOne(targetEntity="moove\UtilisateurBundle\Entity\Utilisateur")
-     * @ORM\Id
      */
-    private $idUtilisateur;
+    private $utilisateur;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="idSport", type="integer")
      * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Sport")
-     * @ORM\Id
      */
-    private $idSport;
+    private $sport;
 
     /**
-     * @var integer
-     *
-     * @ORM\Column(name="idNiveau", type="integer")
      * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Niveau")
-     * @ORM\Id
      */
-    private $idNiveau;
+    private $niveau;
 
     /**
-     * Set idUtilisateur
+     * Get id
      *
-     * @param integer $idUtilisateur
+     * @return integer 
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set utilisateur
+     *
+     * @param \moove\UtilisateurBundle\Entity\Utilisateur $utilisateur
      * @return Pratiquer
      */
-    public function setIdUtilisateur($idUtilisateur)
+    public function setUtilisateur(\moove\UtilisateurBundle\Entity\Utilisateur $utilisateur = null)
     {
-        $this->idUtilisateur = $idUtilisateur;
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }
 
     /**
-     * Get idUtilisateur
+     * Get utilisateur
      *
-     * @return integer 
+     * @return \moove\UtilisateurBundle\Entity\Utilisateur 
      */
-    public function getIdUtilisateur()
+    public function getUtilisateur()
     {
-        return $this->idUtilisateur;
+        return $this->utilisateur;
     }
 
     /**
-     * Set idSport
+     * Set sport
      *
-     * @param integer $idSport
+     * @param \moove\ActiviteBundle\Entity\Sport $sport
      * @return Pratiquer
      */
-    public function setIdSport($idSport)
+    public function setSport(\moove\ActiviteBundle\Entity\Sport $sport = null)
     {
-        $this->idSport = $idSport;
+        $this->sport = $sport;
 
         return $this;
     }
 
     /**
-     * Get idSport
+     * Get sport
      *
-     * @return integer 
+     * @return \moove\ActiviteBundle\Entity\Sport 
      */
-    public function getIdSport()
+    public function getSport()
     {
-        return $this->idSport;
+        return $this->sport;
     }
 
     /**
-     * Set idNiveau
+     * Set niveau
      *
-     * @param integer $idNiveau
+     * @param \moove\ActiviteBundle\Entity\Niveau $niveau
      * @return Pratiquer
      */
-    public function setIdNiveau($idNiveau)
+    public function setNiveau(\moove\ActiviteBundle\Entity\Niveau $niveau = null)
     {
-        $this->idNiveau = $idNiveau;
+        $this->niveau = $niveau;
 
         return $this;
     }
 
     /**
-     * Get idNiveau
+     * Get niveau
      *
-     * @return integer 
+     * @return \moove\ActiviteBundle\Entity\Niveau 
      */
-    public function getIdNiveau()
+    public function getNiveau()
     {
-        return $this->idNiveau;
+        return $this->niveau;
     }
 }

@@ -15,10 +15,17 @@ class ActivitesController extends Controller
     public function tableauDeBordAction()
     {
         $this->checkAuthorization();
+        //on récupère l'utilisateur connecté
+        $utilisateur = $this->getUser();
+        //On récupère le manager & le repository des participations
+        $repParticipations = $this->getRepository('Participer');
+
         $nbParticipations = $this->nbParticipations();
         $nbOrganisations = $this->nbOrganisations();
         $nbDemandesEnAttente = $this->nbDemandesEnAttente();
-        $nbDemandesParticipationsActiviteEnAttente = $this->nbDemandesParticipationsActiviteEnAttente();
+       
+        $nbDemandesParticipationsActiviteEnAttente = count($repParticipations->findByOrganisateur($utilisateur, false));
+        
         $listeDesDemandesEnAttente = $this->listeDesDemandesDeParticipations();
         $listeDesDemandesDeParticipationsEnAttente = $this->listeDesDemandesDeParticipationsAMesActivites();
         return $this->render('mooveActiviteBundle:Accueil:tableauDeBordAccueil.html.twig', 
@@ -52,19 +59,19 @@ class ActivitesController extends Controller
         // On récupère l'activité par l'id de l'activite $idActivite
         $activite = $repActivite->find($idActivite);
         // On récupère le un tableau composé d'un objet Pratiquer
-        $tabPratiquer = $repPratiquer->findBy(array('idUtilisateur' => $activite->getOrganisateur()->getId(),
-                                                  'idSport' => $activite->getSportPratique()->getId(),
+        $tabPratiquer = $repPratiquer->findBy(array('utilisateur' => $activite->getOrganisateur(),
+                                                  'sport' => $activite->getSportPratique(),
                                             ));
         // On récupère le niveau de l'organisateur ayant créé l'activité
-        $niveauOrganisateur = $repNiveau->find($tabPratiquer[0]->getIdNiveau())->getLibelle();
+        $niveauOrganisateur = $repNiveau->find($tabPratiquer[0]->getNiveau())->getLibelle();
         // On récupère un tableau d'objet Participer $tabParticiper
-        $tabParticiper = $repParticiper->findBy(array('idActivite' => $idActivite, 'estAccepte' => true));
+        $tabParticiper = $repParticiper->findBy(array('activite' => $idActivite, 'estAccepte' => 1));
         // On initialise le tableau des objets Utilisateur
         $tabParticipants = [];
         // Pour chaque objet Participer on récupère l'utilisateur dans $tabParticipants
         foreach ($tabParticiper as $participer) {
             // On met dans le tableau des participants les utilisateurs
-            $tabParticipants[] = $repUtilisateur->find($participer->getIdUtilisateur());
+            $tabParticipants[] = $repUtilisateur->find($participer->getUtilisateur());
         }
         
         // On récupère le nombre de participants de l'activité
@@ -89,35 +96,29 @@ class ActivitesController extends Controller
      * 
      * @param $page (integer) numéro de la page actuel 
      */
-    public function historiqueAction($page)
+    public function historiqueAction()
     {   
         $this->checkAuthorization();
-        /** Entier définissant le nombre de résultat par page */
-        $nbRsultatParPage = 2;
-        /** Entier définissant le nombre de page nécessaire a l'affichage de tout les résultats. */
-        $nbPage;
+
         /** Liste des activitées finies, 20 résultats par page */   
-        $tabActivites = $this->getListeParticipationForUser(true, $page, $nbRsultatParPage, $nbPage);
+        $tabActivites = $this->getListeParticipationForUser(true);
         /** Liste du nombre de participations */
         $tabNbParticipants = $this->getNbParticipantsParActivite($tabActivites);
         return $this->render('mooveActiviteBundle:Accueil:tableauDeBordHistorique.html.twig',
-                            array('tabActivites' => $tabActivites, 'tabNbParticipants' => $tabNbParticipants, 'page'=>$page, 'nbPage'=>$nbPage));
+                            array('tabActivites' => $tabActivites, 'tabNbParticipants' => $tabNbParticipants));
     }
     
     /**
-     * Renvoie à la page "http://moove-arl64.c9users.io/web/app_dev.php/activites/{page}"
+     * Renvoie à la page "http://moove-arl64.c9users.io/web/app_dev.php/activites"
      * 
      * @param $page (integer) numéro de la page actuel 
      */
-    public function enCoursAction($page)
+    public function enCoursAction()
     {   
         $this->checkAuthorization();
-        /** Entier définissant le nombre de résultat par page */
-        $nbRsultatParPage = 20;
-        /** Entier définissant le nombre de page nécessaire a l'affichage de tout les résultats. */
-        $nbPage;
+
         /** liste des activités de l'utilisateur courrant*/
-        $tabActivites = $this->getListeParticipationForUser(false, $page, $nbRsultatParPage, $nbPage);
+        $tabActivites = $this->getListeParticipationForUser(false);
         /** liste du nombre de participant pour chaque activité en corélation avec $tabActivite */
         $tabNbParticipants = $this->getNbParticipantsParActivite($tabActivites);
         $tabEstAccepte = [];
@@ -127,8 +128,7 @@ class ActivitesController extends Controller
         }
         
         return $this->render('mooveActiviteBundle:Accueil:tableauDeBordActivites.html.twig', 
-                            array('tabActivites' => $tabActivites, 'tabNbParticipants' => $tabNbParticipants, 'page' => $page, 'nbPage' => $nbPage,
-                                'tabEstAccepte' => $tabEstAccepte));
+                            array('tabActivites' => $tabActivites, 'tabNbParticipants' => $tabNbParticipants, 'tabEstAccepte' => $tabEstAccepte));
     }
     
     /**
@@ -199,7 +199,7 @@ class ActivitesController extends Controller
         $listeNbParticipant = array();
 	    foreach ($tabActivites as $activite) 
 	    {
-	        $listeParticipant = $repParticiper->findByIdActivite($activite->getId());
+	        $listeParticipant = $repParticiper->findByActivite($activite->getId());
             $listeNbParticipant[] = count($listeParticipant);
         }
         
@@ -215,16 +215,17 @@ class ActivitesController extends Controller
      * @param $nbPage (&integer) variable de stockage pour le nombre de page nécessaire a l'affichage de toute les activités
      * @return array<Activite>
      */
-    protected function getListeParticipationForUser($terminer, &$page, $nbResultatPage, &$nbPage)
+    protected function getListeParticipationForUser($terminer) // $terminer, &$page, $nbResultatPage, &$nbPage
     {
         // On obtient l'utilisateur courrant
         $utilisateur = $this->getUser(); 
 
         // On récupère le manager & le repository des Participants : Participer
-		$repParticiper = $this->getRepository('Participer');
+	//	$repParticiper = $this->getRepository('Participer');
+		
 		// On récupère le manager & le repository des Activités : Activite
 		$repActivite = $this->getRepository('Activite');
-
+/*
 		// On récupère la liste des Participations liés à la personne connectée $utilisateur
 		$listeEntiereParticiper = $repParticiper->findBy(array('idUtilisateur' => $utilisateur));
 		
@@ -241,7 +242,7 @@ class ActivitesController extends Controller
         // si l'utilisateur n'as aucune activité (évite les bug de requête avec -X)
         if($nbPage == 0) $nbPage = 1;
         // si l'utilisateur rentre manuellement une valeur impossible
-        if($page > $nbPage) $page = $nbPage;
+        if($page > $nbPage) $page = $nbPage;*/
             
         // on retourne la liste des activités, terminées ou non ($terminer), triées par ordre croissant selon la date,
         // avec une limite de $nbResultatPage activités
@@ -256,13 +257,13 @@ class ActivitesController extends Controller
     protected function nbParticipations()
     {
         //On récupère l'utilisateur actuel
-        $idUtilisateur = $this->getUser();
+        $utilisateur = $this->getUser();
         
         // On récupère le manager & le repository des Participants : Participer
 		$repParticiper = $this->getRepository('Participer');
 		
 		// On compte le nombre de participation d'un utilisateur 
-		$nombreParticipations = count($repParticiper->findBy(array('idUtilisateur' => $idUtilisateur)));
+		$nombreParticipations = count($repParticiper->findBy(array('utilisateur' => $utilisateur)));
 		
 		//On renvoie le nombre de participation d'un utilisateur
         return $nombreParticipations;
@@ -296,63 +297,18 @@ class ActivitesController extends Controller
     protected function nbDemandesEnAttente()
     {
         //on récupère l'id de l'utilisateur
-        $utilisateur = $this->getUser()->getId();
+        $utilisateur = $this->getUser();
         
         //On récupère le manager & le repository des participations
         $repParticipations = $this->getRepository('Participer');
         
         // On récupère la liste des Participations liés à la personne connectée $utilisateur
-		$nbDemandesEnAttente = count($repParticipations->findBy(array('idUtilisateur' => $utilisateur, 'estAccepte' => false)));
+		$nbDemandesEnAttente = count($repParticipations->findBy(array('utilisateur' => $utilisateur, 'estAccepte' => 0)));
 		
 		//On renvoie le nombre de demandes en attente
 		return $nbDemandesEnAttente;
     }
-    
-    /**
-     * Retourne le nombre de participant qu'il reste a accepté a dans l'activité dont l'utilisateur est l'organisateur
-     * 
-     * @return integer
-     */
-    protected function nbDemandesParticipationsActiviteEnAttente()
-    {
-        //on récupère l'utilisateur connecté
-        $organisateur = $this->getUser();
-        
-        //On récupère le manager & le repository des activités
-        $repActivite = $this->getRepository('Activite');
-        
-        //On crée un tableau contenant toutes les activités dont je suis organisateur
-        $listActivitesOrganisateur = $repActivite->findBy(array('organisateur' => $organisateur));
-        
-        //On récupère le manager & le repository des participations
-        $repParticipations = $this->getRepository('Participer');
-        
-        /*On initialise la variable que l'on renverra contenant le nombre de personnes qui ont demandé à rejoindre une activité 
-        mais que l'organisateur n'a pas encore accepté*/
-        $nbDemandesParticipationsActiviteEnAttente = 0;
-        
-        $listeNbParticipant = array();
 
-        //On parcourt le tableau contenant toutes les activités de l'utilisateur en tant qu'organisateur
-        foreach($listActivitesOrganisateur as $activite)
-        {
-            //On récupère l'id de l'activité en cours
-            $idActivite = $activite->getId();
-            
-            //on compte le nombre de fois où l'on retrouve estAccepte = false dans l'activité en cours
-            $listeNbParticipant[] = count($repParticipations->findBy(array('idActivite' => $idActivite, 'estAccepte' => false)));
-            
-        }
-        
-        foreach($listeNbParticipant as $i)
-        {
-            $nbDemandesParticipationsActiviteEnAttente += $i;
-        }
-        
-        /*Après avoir parcouru l'ensemble des activités de l'orgnisateur la variable $nbDemandesParticipationsActiviteEnAttente
-        contient le nombre total des demandes de participatin encore en attente toute activité de l'organisateur confondu.*/
-        return $nbDemandesParticipationsActiviteEnAttente;
-    }
     
     /**
      * retourne un tableau contenant le nombre de demande et le tableau de toute les activités
@@ -374,14 +330,14 @@ class ActivitesController extends Controller
         $repActivite = $this->getRepository('Activite');
         
         // On récupère la liste des Participations liés à la personne connectée $utilisateur
-		$tabParticipationEnAttente = $repParticipations->findBy(array('idUtilisateur' => $utilisateur, 'estAccepte' => false));
+		$tabParticipationEnAttente = $repParticipations->findBy(array('utilisateur' => $utilisateur, 'estAccepte' => 0));
 		
 		
 
         $listeActivite = array();
 	    foreach ($tabParticipationEnAttente as $participation) 
 	    {
-	        $activite = $repActivite->find($participation->getIdActivite());
+	        $activite = $repActivite->find($participation->getActivite());
 	        
 	        $listeActivite[] = $activite;
 
@@ -413,15 +369,15 @@ class ActivitesController extends Controller
 		$listeParticipants = array();
 		foreach($listeActivitesOrganisateur as $activite)
         {
-            $listeParticipations = $repParticipations->findBy(array( 'idActivite' => $activite->getId(), 'estAccepte' => false));
+            $listeParticipations = $repParticipations->findBy(array( 'activite' => $activite->getId(), 'estAccepte' => 0));
             //on récupère la liste des participations où le booléen est à faux
             if($listeParticipations != null)
             {
                 foreach($listeParticipations as $participation)
                 {
                     $listeParticipants[] = $participation;
-			        $listeUtilisateurParticipants[] = $repUtilisateurs->find($participation->getIdUtilisateur());
-			        $listeActiviteParticipants[] = $repActivite->find($participation->getIdActivite());
+			        $listeUtilisateurParticipants[] = $repUtilisateurs->find($participation->getUtilisateur());
+			        $listeActiviteParticipants[] = $repActivite->find($participation->getActivite());
                 }
                 
             }
@@ -447,8 +403,8 @@ class ActivitesController extends Controller
         // On récupère le repository Participer
         $repParticiper = $this->getRepository('Participer');
         
-        $listeParticipant = $repParticiper->findBy(array('idActivite' => $activite,
-                                                         'idUtilisateur' => $utilisateur));
+        $listeParticipant = $repParticiper->findBy(array('activite' => $activite,
+                                                         'utilisateur' => $utilisateur));
         return (!empty($listeParticipant));
     }
     
@@ -465,10 +421,17 @@ class ActivitesController extends Controller
         // On récupère le repository Participer
         $repParticiper = $this->getRepository('Participer');
         
-        $listeParticipant = $repParticiper->findBy(array('idActivite' => $activite,
-                                                         'idUtilisateur' => $utilisateur,
-                                                         'estAccepte' => true));
-        return (!empty($listeParticipant));
+        $listeParticipant = $repParticiper->findOneBy(array('activite' => $activite,
+                                                         'utilisateur' => $utilisateur));
+                                                         
+        // Si la variable est null, alors il n'y a aucune participation pour cette utilisateur à cette activité
+        if(is_null($listeParticipant))
+            return 0;
+        else
+            return $listeParticipant->getEstAccepte(); // 1 = accepter, 2 = refuser
+        
+        
+        //return (!empty($listeParticipant));
     }
     
     protected function estOrganisateur($activite)

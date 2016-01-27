@@ -25,14 +25,14 @@ class PeuplerSport extends AbstractFixture implements FixtureInterface, OrderedF
         $this->addReference('sport-jogging', $jogging);
         // -------------------------------------------------------------------------------------        
         $randonne = new Sport();
-		$randonne   ->setNom("Randonné")
-		            ->setUrlPictogramme("randonné.png");
+		$randonne   ->setNom("Randonnée")
+		            ->setUrlPictogramme("randonnee.png");
         $manager->persist($randonne);
         $this->addReference('sport-randonne', $randonne);
         // -------------------------------------------------------------------------------------        
         $ski = new Sport();
 		$ski    ->setNom("Ski")
-		        ->setUrlPictogramme("Sks.png");
+		        ->setUrlPictogramme("ski.png");
         $manager->persist($ski); 
         $this->addReference('sport-ski', $ski);
         // -------------------------------------------------------------------------------------        

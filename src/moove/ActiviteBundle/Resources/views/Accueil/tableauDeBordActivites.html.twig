@@ -16,7 +16,7 @@
             <th>Date</th>
             <th>Participants</th>
             <th>Organisateur</th>
-            <th>Etat</th>
+            <th>Demande</th>
             <th></th>
           </tr>
         </thead>
@@ -30,9 +30,11 @@
               <td>{% if activite.lieuArrivee is not null%}{{ activite.lieuArrivee.nom }}{% endif %}</td>
               <td>{{ activite.dateHeureRDV | date("d/m/y") }}</td>
               <td>{{ tabNbParticipants[loop.index0] ~ "/" ~ activite.nbPlaces }}</td>
-              <td>{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</td>
-              {% if tabEstAccepte[loop.index0] %}
-                <td><p><span class="label label-success">Accepté</span></p></td>
+              <td>{% if activite.organisateur == app.user %} Moi {% else %}{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}{% endif %}</td>
+              {% if tabEstAccepte[loop.index0] == 1 %}
+                <td><p><span class="label label-success">Acceptée</span></p></td>
+              {% elseif tabEstAccepte[loop.index0] == 2 %}
+                <td><p><span class="label label-danger">Refusée</span></p></td>
               {% else %}
                 <td><p><span class="label label-warning">En attente</span></p></td>
               {% endif %}
@@ -47,6 +49,7 @@
 {% endblock %}
 
 {% block navTableau %}
+{#
 <nav>
   <ul class="pagination">
     {% if page > 1 %}
@@ -80,4 +83,5 @@
     {% endif %}
   </ul>
 </nav>
+#}
 {% endblock %}

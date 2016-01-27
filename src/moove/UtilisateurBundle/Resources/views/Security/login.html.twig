@@ -1,6 +1,10 @@
-{% extends "mooveUtilisateurBundle::layout.html.twig" %}
+{% extends "FOSUserBundle::layout.html.twig" %}
 
 {% block title %}Connexion{% endblock %}
+
+{% block stylesheets %}
+  <link rel="stylesheet" type="text/css" href="{{ asset('bundles/mooveutilisateur/css/login.css') }}">
+{% endblock %}
 
 {% block boutons %}
 <a href="{{ path('fos_user_registration_register') }}"><button class="btn btn-primary-outline" type="button">Inscription</button></a>
