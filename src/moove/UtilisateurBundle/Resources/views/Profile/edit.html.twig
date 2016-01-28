@@ -1,5 +1,7 @@
-{% extends "FOSUserBundle::layout.html.twig" %}
+{% extends "::vueMere.html.twig" %}
 
-{% block fos_user_content %}
+{% block title %}Modifier mon profil{% endblock %}
+
+{% block body %}
 {% include "FOSUserBundle:Profile:edit_content.html.twig" %}
-{% endblock fos_user_content %}
+{% endblock body %}

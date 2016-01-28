@@ -20,7 +20,7 @@
                 <div class="media-body">
                   <h4 class="media-heading">{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</h4>
                   <p>{{ niveauOrganisateur }}</p>
-                  <small>Annonce publiée le {{ activite.dateCreation | date("d/m/y") }}</small>
+                  <small>Annonce publiée le {{ activite.dateCreation | localizeddate('none', 'none', null, null, "d MMMM Y à H'h'mm") }}</small>
                 </div>
               </div>
         </div>
@@ -46,13 +46,13 @@
                   <p><span class="info-label text-muted">Lieu d'arrivée</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#e51c23"></i>{% if activite.lieuArrivee is not null  %}{{ activite.lieuArrivee.nom }}{% else %}{% endif %}</span></p>
                 </div>
                 <div class="infos">
-                  <p><span class="info-label text-muted">Date de départ</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateHeureRDV | date("d/m/y H:i") }}</span></p>
+                  <p><span class="info-label text-muted">Date de départ</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateHeureRDV | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm") }}</span></p>
                 </div>
                 <div class="infos">
-                  <p><span class="info-label text-muted">Date de fermeture de l'activité</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateFermeture | date("d/m/y H:i") }}</span></p>
+                  <p><span class="info-label text-muted">Date de fermeture de l'activité</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateFermeture | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm") }}</span></p>
                 </div>
                 <div class="infos">
-                  <p><span class="info-label text-muted">Temps estimé</span><span class="info-valeur"><i class="fa fa-clock-o"></i>{{ activite.duree | date ("H:i") }}</span></p>
+                  <p><span class="info-label text-muted">Temps estimé</span><span class="info-valeur"><i class="fa fa-clock-o"></i>{{ activite.duree | localizeddate('none', 'none', null, null, "H 'h' mm") }}</span></p>
                 </div>
                 <div class="infos">
                   <p><span class="info-label text-muted">Nombre de places</span><span class="info-valeur"><i class="fa fa-users"></i>{{ activite.nbPlaces }} places</span></p>

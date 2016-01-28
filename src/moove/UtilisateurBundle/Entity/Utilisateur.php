@@ -3,6 +3,7 @@
 
 namespace moove\UtilisateurBundle\Entity;
 
+use moove\ActiviteBundle\Entity\Lieu;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -50,7 +51,8 @@ class Utilisateur extends BaseUser
     private $sexe;
     
     /**
-     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Lieu")
+     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Lieu",
+     *                cascade={"persist", "remove"})
      */
     private $lieuResidence;
     
@@ -65,7 +67,17 @@ class Utilisateur extends BaseUser
     public function __construct()
     {
         parent::__construct();
-        // your own logic
+        $this->URLAvatar = 'default.png';
+        $this->lieuResidence = new Lieu();
+        $this->lieuResidence->setNom("")
+                            ->setNumeroRue(null)
+                            ->setNomRue("")
+                            ->setComplementAdresse("")
+                            ->setCodePostal(null)
+                            ->setVille("")
+                            ->setLatitude(null)
+                            ->setLongitude(null)
+                            ;
     }
 
     /**

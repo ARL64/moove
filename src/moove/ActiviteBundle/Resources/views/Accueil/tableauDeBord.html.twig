@@ -19,6 +19,10 @@
             </ul>
         </div>
         <div class="col-md-12">
+          {% block fos_user_content %}
+          {% endblock %}
+        </div>
+        <div class="col-md-12">
             {% block bodyTableau %}{% endblock %}
             {% block navTableau %}{% endblock %}
         </div>
