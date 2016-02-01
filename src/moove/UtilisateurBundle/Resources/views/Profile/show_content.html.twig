@@ -4,27 +4,47 @@
 {% endblock %}
 {% block bodyFOS %}
 <div class="fos_user_user_show">
-    
-    <div class="media">
-        <div class="media-left">
-            <img class="media-object" src="{{ asset(app.user.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-9">
+                <div class="media">
+                    <div class="media-left">
+                        <img class="media-object" src="{{ asset(user.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
+                    </div>
+                    <div class="media-body">
+                        <p class="media-heading">{{ user.prenom ~ " " ~ user.nom }}</p>
+                        <p>{{ 'profile.show.username'|trans }} : {{ user.username }}</p>
+                        <p>{{ 'profile.show.email'|trans }} : {{ user.email }}</p>
+                    </div>
+                </div>
+                <div class="alignementTexte"> 
+                     <p> Date de naissance : {{ user.dateNaissance | date("d/m/y") }} </p>
+                     <p> Genre : {{ user.sexe }}</p>
+                     {% if nbSportNiveau > 1 %}
+                         <p> Sports : </p></br>
+                     {% else %}
+                         <p> Sport : </p> </br>
+                     {% endif %}
+                     <div class="col-md-12 ">
+                         {% for sportNiveau in tabSportNiveau %}
+                              
+                                 <img  src="{{ asset(sportNiveau.sport.urlPictogramme) }}" alt="Photo du sport" width="75" height="75"> 
+                                 Niveau : {{ sportNiveau.niveau.libelle }}
+                             
+                         {% endfor %}
+                     </div>
+                </div>
+            </div>
+            
+            
+            {% if user.id == app.user.id %}
+                <div class="col-md-3">
+                    <a href="{{ path('fos_user_profile_edit') }}"><button type="button" class="btn btn-primary btn-lg">Modifier mon profil</button></a>
+                </div>
+            {% endif %}
+            
+            
         </div>
-        <div class="media-body">
-          <p class="media-heading">{{ user.prenom ~ " " ~ user.nom }}</p>
-          <p>{{ 'profile.show.username'|trans }} : {{ user.username }}</p>
-          <p>{{ 'profile.show.email'|trans }} : {{ user.email }}</p>
-        </div>
-     </div>
-     <div class="test"> 
-         <p> Date de naissance: {{ user.dateNaissance | date("d/m/y") }} </p>
-        <p> Sports : </p></br>
-         {% for sportNiveau in tabSportNiveau %}
-         <div class="col-md-3"> 
-             <img  src="{{ asset(sportNiveau.sport.urlPictogramme) }}" alt="Photo du sport" width="75" height="75"> 
-             Niveau : {{ sportNiveau.niveau.libelle }}
-         </div>
-         {% endfor %}
-     </div>
-      <a href="{{ path('fos_user_profile_edit') }}"><button type="button" class="btn btn-primary btn-lg">Modifier mon profil</button></a>
+    </div>
 </div>
 {% endblock %}

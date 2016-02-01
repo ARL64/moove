@@ -51,10 +51,13 @@ class ProfileController extends Controller
         $repPratiquer = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Pratiquer');
         //On récupère un tableau de pratiquer où il y a l'id de l'utilisateur
         $tabSportNiveau = $repPratiquer->findByUtilisateur($user);
+        //$nbSportNiveau = count($repPratiquer->findByUtilisateur($user));
+        $nbSportNiveau = count($tabSportNiveau);
 
         return $this->render('FOSUserBundle:Profile:show.html.twig', array(
             'user' => $user,
-            'tabSportNiveau' => $tabSportNiveau
+            'tabSportNiveau' => $tabSportNiveau,
+            'nbSportNiveau' => $nbSportNiveau
         ));
     }
 

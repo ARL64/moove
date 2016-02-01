@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Moove - {% block title %}{% endblock %}</title>
+        <title>{% block title %}{% endblock %} | Moove</title>
         <link href="{{ asset('favicon.ico') }}" rel="shortcut icon" type="image/x-icon" />
         <link rel="stylesheet" type="text/css" href="{{ asset('css/bootstrap4.min.css') }}">
         <link rel="stylesheet" type="text/css" href="{{ asset('bundles/mooveutilisateur/css/style.css') }}">
@@ -45,19 +45,17 @@
       <div id="marketing" class="container marketing">
         <div class="row">
           <div class="col-lg-4">
-            <img class="img-circle animated rubberBand" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
-            <h2>Participez.</h2>
+            <img class="img-circle" src= " {{ asset('img/Participer.jpg') }}" alt="Image participer" width="240" height="240">
+            <h2>Participez</h2>
             <p>Rejoignez des sportifs qui cherchent à faire de nouvelles rencontres, qu'ils correspondent à votre niveau ou non.</p>
           </div><!-- /.col-lg-4 -->
           <div class="col-lg-4">
-            <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
-            <h2>Proposez.</h2>
-            <p>Créez une activité afin que d'autres sportifs puissent vous rejoindre pour passer un moment sportif et amical.</p>
-          </div><!-- /.col-lg-4 -->
+            
+          </div>
           <div class="col-lg-4">
-            <img class="img-circle" src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="Generic placeholder image" width="140" height="140">
-            <h2>Prévoyez.</h2>
-            <p>Organisez des activités simplement.</p>
+            <img class="img-circle" src=" {{ asset('img/Prevoyer.jpg') }}" alt="Image Prévoyer" width="240" height="240">
+            <h2>Proposez et prévoyez</h2>
+            <p>Organisez des activités simplement. Créez une activité afin que d'autres sportifs puissent vous rejoindre pour passer un moment sportif et amical.</p>
           </div><!-- /.col-lg-4 -->
         </div><!-- /.row -->
 
@@ -68,8 +66,8 @@
 
         <div class="row featurette">
           <div class="col-md-7">
-            <h2 class="featurette-heading">First featurette heading. <span class="text-muted">It'll blow your mind.</span></h2>
-            <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+            <h2 class="featurette-heading">Participez à des activités ! <span class="text-muted">Et faites des rencontres inoubliables !</span></h2>
+            <p class="lead"> Rejoignez des activités créées par des milliards de sportifs motivés pour progresser ensemble ! Avec Moove vous n'allez pas seulement faire des progrès faramineux dans votre sport favori mais vous allez aussi faire de merveilleuses rencontres que vous garderez tout au long de votre vie !</p>
           </div>
           <div class="col-md-5">
             <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
@@ -80,22 +78,10 @@
 
         <div class="row featurette">
           <div class="col-md-7 col-md-push-5">
-            <h2 class="featurette-heading">Oh yeah, it's that good. <span class="text-muted">See for yourself.</span></h2>
-            <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
+            <h2 class="featurette-heading">Proposez vos propres activités ! <span class="text-muted">Soyez un leader !</span></h2>
+            <p class="lead">Vous êtes du genre à mener la danse ? que ça soit au lit, dans votre vie de famille ou dans votre travail étendez votre influence par-delà votre monde en y incluant vos passions pour le sport en mettant vos qualités de meneur au service d'une communauté dépassant l'entendement !</p>
           </div>
           <div class="col-md-5 col-md-pull-7">
-            <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
-          </div>
-        </div>
-
-        <hr class="featurette-divider">
-
-        <div class="row featurette">
-          <div class="col-md-7">
-            <h2 class="featurette-heading">And lastly, this one. <span class="text-muted">Checkmate.</span></h2>
-            <p class="lead">Donec ullamcorper nulla non metus auctor fringilla. Vestibulum id ligula porta felis euismod semper. Praesent commodo cursus magna, vel scelerisque nisl consectetur. Fusce dapibus, tellus ac cursus commodo.</p>
-          </div>
-          <div class="col-md-5">
             <img class="featurette-image img-responsive center-block" data-src="holder.js/500x500/auto" alt="Generic placeholder image">
           </div>
         </div>

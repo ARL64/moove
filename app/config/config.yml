@@ -35,6 +35,8 @@ framework:
 twig:
     debug:            "%kernel.debug%"
     strict_variables: "%kernel.debug%"
+    form:
+        resources: ['bootstrap_3_layout.html.twig']
 
 # Assetic Configuration
 assetic:
@@ -77,6 +79,7 @@ swiftmailer:
     host:      "%mailer_host%"
     username:  "%mailer_user%"
     password:  "%mailer_password%"
+    port:      "%mailer_port%"
     spool:     { type: memory }
 
 fos_user:
@@ -84,3 +87,16 @@ fos_user:
     firewall_name: main
     user_class: moove\UtilisateurBundle\Entity\Utilisateur
     use_username_form_type: false
+    service: 
+        mailer: fos_user.mailer.twig_swift
+    registration:
+        confirmation:
+            enabled: true
+            from_email:
+                address:        inscription@moove.com
+                sender_name:    Moove
+    resetting:
+        email:
+            from_email:
+                address:        reset@moove.com
+                sender_name:    Moove

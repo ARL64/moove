@@ -2,7 +2,11 @@ p{
     font-size: medium;
 }
 
-.test{
+.alignementTexte{
     margin-top: 30px;
-
+}
+.bouton{
+    margin-top: 20px;
+    float: right;
+    
 }

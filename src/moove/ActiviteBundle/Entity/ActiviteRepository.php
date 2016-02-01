@@ -28,8 +28,21 @@ class ActiviteRepository extends EntityRepository
             ;
         }
         
+        
+        /*
+        $requete->Join('mooveUtilisateurBundle:Utilisateur', 'u', 'WITH', 'a.organisateur = u.id')
+                ->addSelect('u')
+                ->Join('mooveActiviteBundle:Sport', 's', 'WITH', 'a.sportPratique = s.id')
+                ->addSelect('s')
+        ;
+        var_dump($requete->getDql());
+        */
+        
         // on récupère la commande DQL
         $query = $requete->getQuery();
+        
+        //$query->setQueryHint('foo', 'bar');
+        //$query->useResultCache('my_cache_id');
         
         // on retourne un tableau de résultat
         return $query->getResult();
@@ -47,7 +60,7 @@ class ActiviteRepository extends EntityRepository
         $requete = $this->_em->createQueryBuilder()
             ->select('a')
             ->from($this->_entityName, 'a')
-            ->leftJoin('mooveActiviteBundle:Participer', 'p', 'WITH', 'a.id = p.activite')
+            ->Join('mooveActiviteBundle:Participer', 'p', 'WITH', 'a.id = p.activite')
             ->where('p.utilisateur = :idUtilisateur')
             ->orderBy('a.dateHeureRDV', 'DESC')
             

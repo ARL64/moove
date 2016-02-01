@@ -2,6 +2,7 @@
 {% block title %}Détails activité {{activite.id}} {% endblock %}
 {% block stylesheets %}
   <link rel="stylesheet" href="{{ asset('css/details/style.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/Glyphter.css') }}">
 {% endblock %}
 {% block body %} 
     <!-- Titre de la page -->
@@ -19,7 +20,13 @@
                 </div>
                 <div class="media-body">
                   <h4 class="media-heading">{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</h4>
-                  <p>{{ niveauOrganisateur }}</p>
+                  <p>
+                    {% if niveauOrganisateur != null %}
+                      {{ niveauOrganisateur }}
+                    {% else %}
+                      Non pratiquant
+                    {% endif %}
+                  </p>
                   <small>Annonce publiée le {{ activite.dateCreation | localizeddate('none', 'none', null, null, "d MMMM Y à H'h'mm") }}</small>
                 </div>
               </div>
@@ -34,7 +41,10 @@
             </div>
               <div class="panel-body">
                 <div class="infos">
-                  <p><span class="info-label text-muted">Sport</span><span class="info-valeur"><i class="fa fa-trophy"></i>{{ activite.sportPratique.nom }}</span></p>
+                  <p><span class="info-label text-muted">Sport</span><span class="info-valeur"><i class="icon-{{ activite.sportPratique.nomIcone }}"></i>{{ activite.sportPratique.nom }}</span></p>
+                </div>
+                <div class="infos">
+                  <p><span class="info-label text-muted">Ville</span><span class="info-valeur"><i class="fa fa-building-o"></i>{{ activite.lieuRDV.ville }}</span></p>
                 </div>
                 <div class="infos">
                   <p><span class="info-label text-muted">Lieu de rendez-vous</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#ff9800"></i>{{ activite.lieuRDV.nom }}</span></p>
@@ -74,15 +84,31 @@
               <h3 class="panel-title">Participants ({% if activite.nbPlaces - nbParticipants <= 1 %}<span class="text-red">{{ activite.nbPlaces - nbParticipants }}  place restante</span>{% else %}{{ activite.nbPlaces - nbParticipants }}  places restantes{% endif %})</h3>
             </div>
               <div class="panel-body">
-                {% for participantCourant in tabParticipants %}
+                {% for participationCourant in tabParticipants %}
                   <div class="media">
                     <div class="media-left">
-                        <img class="media-object" src="{{ asset(participantCourant.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
+                        <img class="media-object" src="{{ asset(participationCourant.utilisateur.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
                     </div>
                     <div class="media-body">
-                      <h4 class="media-heading">{{ participantCourant.prenom ~ " " ~ participantCourant.nom }}</h4>
-                      <p>{{ participantCourant.dateNaissance | date("d/m/y") }}</p>
-                      <p>Niveau : </p>
+                      <h4 class="media-heading">{{ participationCourant.utilisateur.prenom ~ " " ~ participationCourant.utilisateur.nom }}
+                        {% if estOrganisateur and participationCourant.estAccepte == 0 %}
+                          <button type="button" class="btn btn-success btn-xs ">Accepter</button>
+                          <button type="button" class="btn btn-danger btn-xs">Refuser</button>
+                        {% endif %}
+                      </h4> {# HERESIE !!! HERESIE !!! BRULE EN ENFER HERESIE !!! #}
+                      <p>{{ participationCourant.utilisateur.dateNaissance | date("d/m/y") }}</p>
+                      <p>Niveau : 
+                        {% set find = false %}
+                        {% for prati in participationCourant.utilisateur.pratiquer %}
+                          {% if prati.sport == activite.sportPratique %}
+                              {{ prati.niveau.libelle }} <i>({{ prati.sport.nom }})</i>
+                            {% set find = true %}
+                          {% endif %}
+                        {% endfor %}
+                        {% if not find %}
+                          Non pratiquant
+                        {% endif %}
+                      </p> 
                     </div>
                   </div>
                 {% endfor %}
@@ -92,6 +118,7 @@
                     <button type="button" class="btn btn-primary btn-lg disabled">Activité terminée</button>
                   {% else %}
                     <button type="button" class="btn btn-primary btn-lg">Modifier l'activité</button>
+                    <button type="button" class="btn btn-danger btn-lg">Supprimer l'activité</button>
                   {% endif %}
                 {% else %}
                   {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) %}
@@ -171,7 +198,7 @@
       // Créé un objet map et indique dans quel id de div elle sera affichée
       var map = new google.maps.Map(document.getElementById('map'), {
         center: lieuRDV,
-        scrollwheel: true,
+        scrollwheel: false,
         zoom: 15
       });
       

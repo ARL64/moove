@@ -35,22 +35,22 @@ registration:
     flash:
         user_created: 'L''utilisateur a été créé avec succès'
     email:
-        subject: 'Bienvenue %username% !'
-        message: "Bonjour %username% !\n\nPour valider votre compte utilisateur, merci de vous rendre sur %confirmationUrl%\n\nCordialement,\nL'équipe.\n"
+        subject: 'Moove - Bienvenue sur Moove %prenom% !'
+        message: "Bonjour %prenom% ! Pour valider ton compte sur Moove, merci de cliquer sur le bouton ci-dessous."
 resetting:
-    password_already_requested: 'Un nouveau mot de passe a déjà été demandé pour cet utilisateur dans les dernières 24 heures.'
+    password_already_requested: 'Un e-mail de réinitialisation de mot de passe vous a déjà été envoyé dans les dernières 24 heures.'
     check_email: 'Un e-mail a été envoyé à l''adresse %email%. Il contient un lien sur lequel il vous faudra cliquer afin de réinitialiser votre mot de passe.'
     request:
         invalid_username: 'Le nom d''utilisateur ou l''adresse e-mail "%username%" n''existe pas.'
         username: 'Nom d''utilisateur ou adresse e-mail'
-        submit: 'Réinitialiser le mot de passe'
+        submit: 'Envoyer demande'
     reset:
         submit: 'Modifier le mot de passe'
     flash:
         success: 'Le mot de passe a été réinitialisé avec succès'
     email:
         subject: 'Moove - Réinitialisation de votre mot de passe'
-        message: "Bonjour %username% !\n\nPour réinitialiser votre mot de passe, merci de vous rendre sur %confirmationUrl%\n\nCordialement,\nL'équipe Moove.\n"
+        message: "Bonjour %prenom% ! Pour réinitialiser ton mot de passe, merci de cliquer sur le bouton ci-dessous."
 layout:
     logout: Déconnexion
     login: Connexion

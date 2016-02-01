@@ -20,6 +20,7 @@ class PeuplerPratiquer extends AbstractFixture implements FixtureInterface, Orde
 		                ;
         $manager->persist($cyclismeJsarie);
         $this->addReference('pratiquer-cylismeJsarie', $cyclismeJsarie);
+        //$this->getReference('utilisateur-jsarie')->addPratiquer($cyclismeJsarie);
         // -------------------------------------------------------------------------------------        
         /*$joggingJsarie = new Pratiquer();
 		$joggingJsarie  ->setUtilisateur($this->getReference('utilisateur-jsarie'))
@@ -27,7 +28,8 @@ class PeuplerPratiquer extends AbstractFixture implements FixtureInterface, Orde
 		                ->setNiveau($this->getReference('niveau-debutant'))
 		                ;
         $manager->persist($joggingJsarie);
-        $this->addReference('pratiquer-joggingJsarie', $joggingJsarie);*/
+        $this->addReference('pratiquer-joggingJsarie', $joggingJsarie);
+        $this->getReference('utilisateur-jsarie')->addPratiquer($joggingJsarie);*/
         // -------------------------------------------------------------------------------------        
         $randonneJsarie = new Pratiquer();
 		$randonneJsarie ->setUtilisateur($this->getReference('utilisateur-jsarie'))
@@ -36,6 +38,7 @@ class PeuplerPratiquer extends AbstractFixture implements FixtureInterface, Orde
 		                ;
         $manager->persist($randonneJsarie);
         $this->addReference('pratiquer-randonneJsarie', $randonneJsarie);
+        //$this->getReference('utilisateur-jsarie')->addPratiquer($randonneJsarie);
         // -------------------------------------------------------------------------------------        
         $skiJsarie = new Pratiquer();
 		$skiJsarie ->setUtilisateur($this->getReference('utilisateur-jsarie'))
@@ -44,6 +47,7 @@ class PeuplerPratiquer extends AbstractFixture implements FixtureInterface, Orde
 		                ;
         $manager->persist($skiJsarie);
         $this->addReference('pratiquer-skiJsarie', $skiJsarie);
+        //$this->getReference('utilisateur-jsarie')->addPratiquer($skiJsarie);
         // -------------------------------------------------------------------------------------        
 
         // Avauthey
@@ -55,14 +59,16 @@ class PeuplerPratiquer extends AbstractFixture implements FixtureInterface, Orde
 		                ;
         $manager->persist($cyclismeAvauthey);
         $this->addReference('pratiquer-cylismeAvauthey', $cyclismeAvauthey);
+        //$this->getReference('utilisateur-avauthey')->addPratiquer($cyclismeAvauthey);
         // -------------------------------------------------------------------------------------        
-        $joggingAvauthey = new Pratiquer();
+        /*$joggingAvauthey = new Pratiquer();
 		$joggingAvauthey ->setUtilisateur($this->getReference('utilisateur-avauthey'))
 		                ->setSport($this->getReference('sport-jogging'))
 		                ->setNiveau($this->getReference('niveau-debutant'))
 		                ;
         $manager->persist($joggingAvauthey);
         $this->addReference('pratiquer-joggingAvauthey', $joggingAvauthey);
+        $this->getReference('utilisateur-avauthey')->addPratiquer($joggingAvauthey);
         // -------------------------------------------------------------------------------------        
         $randonneAvauthey = new Pratiquer();
 		$randonneAvauthey ->setUtilisateur($this->getReference('utilisateur-avauthey'))
@@ -71,6 +77,7 @@ class PeuplerPratiquer extends AbstractFixture implements FixtureInterface, Orde
 		                ;
         $manager->persist($randonneAvauthey);
         $this->addReference('pratiquer-randonneAvauthey', $randonneAvauthey);
+        $this->getReference('utilisateur-avauthey')->addPratiquer($randonneAvauthey);
         // -------------------------------------------------------------------------------------        
         $skiAvauthey = new Pratiquer();
 		$skiAvauthey ->setUtilisateur($this->getReference('utilisateur-avauthey'))
@@ -79,6 +86,7 @@ class PeuplerPratiquer extends AbstractFixture implements FixtureInterface, Orde
 		                ;
         $manager->persist($skiAvauthey);
         $this->addReference('pratiquer-skiAvauthey', $skiAvauthey);
+        $this->getReference('utilisateur-avauthey')->addPratiquer($skiAvauthey);*/
         // -------------------------------------------------------------------------------------        
 
         // Jmpichon
@@ -90,6 +98,7 @@ class PeuplerPratiquer extends AbstractFixture implements FixtureInterface, Orde
 		                ;
         $manager->persist($cyclismeJmpichon);
         $this->addReference('pratiquer-cylismeJmpichon', $cyclismeJmpichon);
+        $this->getReference('utilisateur-jmpichon')->addPratiquer($cyclismeJmpichon);
         // -------------------------------------------------------------------------------------        
         $joggingJmpichon = new Pratiquer();
 		$joggingJmpichon ->setUtilisateur($this->getReference('utilisateur-jmpichon'))
@@ -98,6 +107,7 @@ class PeuplerPratiquer extends AbstractFixture implements FixtureInterface, Orde
 		                ;
         $manager->persist($joggingJmpichon);
         $this->addReference('pratiquer-joggingJmpichon', $joggingJmpichon);
+        //$this->getReference('utilisateur-jmpichon')->addPratiquer($joggingJmpichon);
         // -------------------------------------------------------------------------------------        
         $randonneJmpichon = new Pratiquer();
 		$randonneJmpichon ->setUtilisateur($this->getReference('utilisateur-jmpichon'))
@@ -106,6 +116,7 @@ class PeuplerPratiquer extends AbstractFixture implements FixtureInterface, Orde
 		                ;
         $manager->persist($randonneJmpichon);
         $this->addReference('pratiquer-randonneJmpichon', $randonneJmpichon);
+        //$this->getReference('utilisateur-jmpichon')->addPratiquer($randonneJmpichon);
         // -------------------------------------------------------------------------------------        
         $skiJmpichon = new Pratiquer();
 		$skiJmpichon ->setUtilisateur($this->getReference('utilisateur-jmpichon'))
@@ -114,6 +125,7 @@ class PeuplerPratiquer extends AbstractFixture implements FixtureInterface, Orde
 		                ;
         $manager->persist($skiJmpichon);
         $this->addReference('pratiquer-skiJmpichon', $skiJmpichon);
+        //$this->getReference('utilisateur-jmpichon')->addPratiquer($skiJmpichon);
         // -------------------------------------------------------------------------------------        
 
         // Fdartigues
@@ -125,6 +137,7 @@ class PeuplerPratiquer extends AbstractFixture implements FixtureInterface, Orde
 		                ;
         $manager->persist($cyclismeFdartigues);
         $this->addReference('pratiquer-cylismeFdartigues', $cyclismeFdartigues);
+        //$this->getReference('utilisateur-fdartigues')->addPratiquer($cyclismeFdartigues);
         // -------------------------------------------------------------------------------------        
         $joggingFdartigues = new Pratiquer();
 		$joggingFdartigues ->setUtilisateur($this->getReference('utilisateur-fdartigues'))
@@ -133,6 +146,7 @@ class PeuplerPratiquer extends AbstractFixture implements FixtureInterface, Orde
 		                ;
         $manager->persist($joggingFdartigues);
         $this->addReference('pratiquer-joggingFdartigues', $joggingFdartigues);
+        //$this->getReference('utilisateur-fdartigues')->addPratiquer($joggingFdartigues);
         // -------------------------------------------------------------------------------------        
        /* $randonneFdartigues = new Pratiquer();
 		$randonneFdartigues ->setUtilisateur($this->getReference('utilisateur-fdartigues'))
@@ -140,7 +154,8 @@ class PeuplerPratiquer extends AbstractFixture implements FixtureInterface, Orde
 		                ->setNiveau($this->getReference('niveau-debutant'))
 		                ;
         $manager->persist($randonneFdartigues);
-        $this->addReference('pratiquer-randonneFdartigues', $randonneFdartigues);*/
+        $this->addReference('pratiquer-randonneFdartigues', $randonneFdartigues);
+        $this->getReference('utilisateur-fdartigues')->addPratiquer($randonneFdartigues);*/
         // -------------------------------------------------------------------------------------        
         $skiFdartigues = new Pratiquer();
 		$skiFdartigues  ->setUtilisateur($this->getReference('utilisateur-fdartigues'))
@@ -149,6 +164,7 @@ class PeuplerPratiquer extends AbstractFixture implements FixtureInterface, Orde
 		                ;
         $manager->persist($skiFdartigues);
         $this->addReference('pratiquer-skiFdartigues', $skiFdartigues);
+        //$this->getReference('utilisateur-fdartigues')->addPratiquer($skiFdartigues);
         // -------------------------------------------------------------------------------------        
 
         

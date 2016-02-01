@@ -3,6 +3,10 @@
 namespace moove\ActiviteBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use moove\ActiviteBundle\Entity\Activite;
+use moove\ActiviteBundle\Entity\Sport;
+use moove\ActiviteBundle\Entity\Lieu;
+use Symfony\Component\HttpFoundation\Request;
 
 class ActivitesController extends Controller
 {
@@ -50,7 +54,9 @@ class ActivitesController extends Controller
         /** Repository de Activite */
         $repActivite = $this->getRepository('Activite');
         /** Repository de Utilisateur */
-        $repUtilisateur = $this->getDoctrine()->getManager()->getRepository('mooveUtilisateurBundle:Utilisateur');
+        //$repUtilisateur = $this->getDoctrine()->getManager()->getRepository('mooveUtilisateurBundle:Utilisateur');
+        $repUtilisateur = $this->getRepository('Utilisateur', 'Utilisateur');
+        
         /** Repository de Pratiquer */
         $repPratiquer = $this->getRepository('Pratiquer');
         /** Repository de Niveau */
@@ -58,32 +64,34 @@ class ActivitesController extends Controller
         
         // On récupère l'activité par l'id de l'activite $idActivite
         $activite = $repActivite->find($idActivite);
-        // On récupère le un tableau composé d'un objet Pratiquer
-        $tabPratiquer = $repPratiquer->findBy(array('utilisateur' => $activite->getOrganisateur(),
-                                                  'sport' => $activite->getSportPratique(),
-                                            ));
-        // On récupère le niveau de l'organisateur ayant créé l'activité
-        $niveauOrganisateur = $repNiveau->find($tabPratiquer[0]->getNiveau())->getLibelle();
-        // On récupère un tableau d'objet Participer $tabParticiper
-        $tabParticiper = $repParticiper->findBy(array('activite' => $idActivite, 'estAccepte' => 1));
-        // On initialise le tableau des objets Utilisateur
-        $tabParticipants = [];
-        // Pour chaque objet Participer on récupère l'utilisateur dans $tabParticipants
-        foreach ($tabParticiper as $participer) {
-            // On met dans le tableau des participants les utilisateurs
-            $tabParticipants[] = $repUtilisateur->find($participer->getUtilisateur());
-        }
         
-        // On récupère le nombre de participants de l'activité
-        $nbParticipants = count($tabParticipants);
-        
-        // On indique si l'utilisateur accédant au détails de l'activité est participant ou non
         $estParticipant = $this->estParticipantDeActivite($activite);
         $estAccepte = $this->estAccepte($activite);
         $estOrganisateur = $this->estOrganisateur($activite);
+        
+        $niveauOrganisateur = null;
+
+        $resultatNiveauOrganisateur = $repNiveau->findByUtilisateur($activite->getOrganisateur(), $activite->getSportPratique());
+        if(!is_null($resultatNiveauOrganisateur))
+        {
+           $resultatNiveauOrganisateur->getLibelle();
+        }
+            
+        // On récupère un tableau d'objet Participer $tabParticiper
+        if($estOrganisateur)
+            $arg = array(1,0);
+        else
+            $arg = 1;
+        
+        $tabParticiper = $repParticiper->findBy(array('activite' => $idActivite, 'estAccepte' => $arg));
+        // On récupère le nombre de participants de l'activité
+        $nbParticipants = count($tabParticiper);
+        
+        // On indique si l'utilisateur accédant au détails de l'activité est participant ou non
+
 
         return $this->render('mooveActiviteBundle:Activite:detailsActivite.html.twig', array('activite' => $activite, 
-                                                                                            'tabParticipants' => $tabParticipants,
+                                                                                            'tabParticipants' => $tabParticiper,
                                                                                             'niveauOrganisateur' => $niveauOrganisateur,
                                                                                             'nbParticipants' => $nbParticipants,
                                                                                             'estParticipant' => $estParticipant,
@@ -137,16 +145,98 @@ class ActivitesController extends Controller
      */
     public function rechercherActiviteAction()
     {
-        return $this->render('mooveActiviteBundle:Activite:rechercherActivites.html.twig');
+        // On récupère le repository Activite
+        $repActivite = $this->getRepository('Activite');
+        // On récupère toutes les activités dans $tabActivites
+        $tabActivites = $repActivite->findAll();
+        // On compte combien il y a d'activités
+        $nbActivites = count($tabActivites);
+        
+        return $this->render('mooveActiviteBundle:Activite:rechercherActivites.html.twig', array(
+            'tabActivites' => $tabActivites,
+            'nbActivites' => $nbActivites
+        ));
     }
     
     /**
      * Renvoie à la page "http://moove-arl64.c9users.io/web/app_dev.php/proposer"
      * 
      */
-    public function proposerActiviteAction()
+    public function proposerActiviteAction(Request $requeteUtilisateur)
     {
-        return $this->render('mooveActiviteBundle:Activite:proposerActivite.html.twig');
+        // On crée un objet "activité"
+        $activite = new Activite();
+        $organisateur = $this->getUser();
+
+        // On crée le formulaire permettant de saisir un livre
+        $formulaireActivite = $this->createFormBuilder($activite)
+                                /*->add('sportPratique', 
+                                        'choice',
+                                        /*['choices' => [
+                                            new Sport('Ski'),
+                                            new Sport('Randonnee'),
+                                            new Sport('Cyclisme'),
+                                            new Sport('Jogging')],
+                                            'choice_label' => function($sportPratique) 
+                                            {
+                                                return strtoupper($sportPratique->getNom());
+                                            },
+                                            'choice_attr' => function($sportPratique) 
+                                            {
+                                                return ['class' => 'sportPratique'.$sportPratique->getNom()];
+                                            }
+                                        ]
+                                    )*/
+                                   
+                                  /*array(
+                                    'Ski' => ,
+                                    'Randonnée' => ,
+                                    'Cyclisme' => ,
+                                    'Jogging' => )
+                                    */
+                                   //->add('ville')
+                                   //->add('lieuRDV')
+                                   //->add('lieuDepart')
+                                   //->add('lieuArrivee')
+                                   ->add('dateHeureRDV', 'datetime', array('label' => 'Date et heure de rendez-vous'))
+                                   ->add('dateFermeture', 'datetime',array('label' => 'Date et heure de fermeture  de l\'activité'))
+                                   ->add('duree', 'time',array('label' => 'Durée estimée'))
+                                   ->add('nbPlaces','choice', array( 'choices'  => array(
+                                       '1' => 1,
+                                       '2' => 2,
+                                       '3' => 3,
+                                       '4' => 4,
+                                       '5' => 5,
+                                       '6' => 6,
+                                       '7' => 7,
+                                       '8' => 8,
+                                       '9' => 9,
+                                       '10' => 10,
+                                       '11' => 11,
+                                       '12' => 12),
+                                       'label'=> 'Nombre de places'))
+                                   ->add('description', 'textarea' ,array ('label' => 'Informations'))
+                                   ->getForm();
+                                   
+        /* On analyse la requête courante pour savoir si le formulaire a été soumis ou pas.
+        Dans le cas d'une soumission, les données saisies par l'utilisateur viendront remplir
+        l'objet $activite*/
+        $formulaireActivite->handleRequest($requeteUtilisateur);
+        
+        if($formulaireActivite->isSubmitted()) // Le formulaire a été soumis
+        {
+            //On enregistre l'objet $livre en base de données
+            $gestionnaireEntite = $this->getDoctrine()->getManager();
+            $gestionnaireEntite->persist($activite);
+            $gestionnaireEntite->flush();
+            
+            //On redirige vers la page de visualisation de l'activité ajouté
+            return $this->redirect($this->generateUrl('moove_activite_detailsActivite',
+                                                      array('id' => $activite->get(id),'organisateur' => $organisateur)));
+        }
+        //A ce point, le visiteur arrive sur la page qui doit afficher le formulaire
+        return $this->render('mooveActiviteBundle:Activite:proposerActivite.html.twig',
+                             array('formulaireActivite' => $formulaireActivite->createView()));
     }
     // /!\ Fin actions métier
     
@@ -171,18 +261,6 @@ class ActivitesController extends Controller
             throw $this->createAccessDeniedException(); 
         }   
     }
- 
-    /**
-     * simplifie : $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:MonRepository');
-     * en $this->getRepository('MonRepository');
-     * 
-     * @param $nomRepository (string) nom du repository souhaité
-     * @return (repository)
-     */
-    protected function getRepository($nomRepository)
-    {
-        return $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:'.$nomRepository);
-    }
     
     /**
      * Retourne une liste du nombre de participant pour chaque activité fournis dans la $tabActivites.
@@ -199,7 +277,7 @@ class ActivitesController extends Controller
         $listeNbParticipant = array();
 	    foreach ($tabActivites as $activite) 
 	    {
-	        $listeParticipant = $repParticiper->findByActivite($activite->getId());
+	        $listeParticipant = $repParticiper->findBy(array('activite' => $activite, 'estAccepte' => 1));
             $listeNbParticipant[] = count($listeParticipant);
         }
         
@@ -250,7 +328,6 @@ class ActivitesController extends Controller
 		                            array('dateHeureRDV' => 'DESC'), 
 		                            $nbResultatPage, 
 		                            ($page-1)*$nbResultatPage);*/
-		                            
 	    return $repActivite->findByUtilisateur($utilisateur->getId(), $terminer);
     }
     
@@ -263,7 +340,7 @@ class ActivitesController extends Controller
 		$repParticiper = $this->getRepository('Participer');
 		
 		// On compte le nombre de participation d'un utilisateur 
-		$nombreParticipations = count($repParticiper->findBy(array('utilisateur' => $utilisateur)));
+		$nombreParticipations = count($repParticiper->findBy(array('utilisateur' => $utilisateur, 'estAccepte' => 1)));
 		
 		//On renvoie le nombre de participation d'un utilisateur
         return $nombreParticipations;
@@ -446,6 +523,17 @@ class ActivitesController extends Controller
         return ($organisateur == $utilisateur);
     }
     
-    
+    /**
+     * simplifie : $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:MonRepository');
+     * en $this->getRepository('MonRepository');
+     * 
+     * @param $nomRepository (string) nom du repository souhaité
+     * @param $nomBundle (string = 'Activite') nom du bundle (si différent de celui actuel)
+     * @return (repository)
+     */
+    protected function getRepository($nomRepository, $nomBundle = 'Activite')
+    {
+        return $this->getDoctrine()->getManager()->getRepository('moove'.$nomBundle.'Bundle:'.$nomRepository);
+    }
     
 } // fin de "class ActivitesController extends Controller"

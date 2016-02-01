@@ -44,3 +44,5 @@ security:
         - { path: ^/historique, role: ROLE_USER }
         - { path: ^/activites, role: ROLE_USER }
         - { path: ^/activite, role: ROLE_USER }
+        - { path: ^/rechercher, role: ROLE_USER }
+        - { path: ^/proposer, role: ROLE_USER }

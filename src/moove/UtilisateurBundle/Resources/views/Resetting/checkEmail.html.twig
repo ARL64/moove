@@ -1,9 +1,18 @@
 {% extends "FOSUserBundle::layout.html.twig" %}
 
+
+{% block title %}Réinitialisation envoyée{% endblock %}
+
+{% block boutons %}
+<a href="{{ path('fos_user_registration_register') }}"><button class="btn btn-primary-outline" type="button">Connexion</button></a>
+<a href="{{ path('fos_user_security_login') }}"><button class="btn btn-primary-outline" type="button">Inscription</button></a>
+{% endblock %}
+
 {% trans_default_domain 'FOSUserBundle' %}
 
 {% block fos_user_content %}
-<p>
-{{ 'resetting.check_email'|trans({'%email%': email}) }}
-</p>
+<div class="alert alert-success alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <p>{{ 'resetting.check_email'|trans({'%email%': email}) }}</p>
+</div>
 {% endblock %}

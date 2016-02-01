@@ -101,27 +101,4 @@ class Sport
         return $this->urlPictogramme;
     }
     
-
-    /**
-     * Set nomIcone
-     *
-     * @param string $nomIcone
-     * @return Sport
-     */
-    public function setNomIcone($nomIcone)
-    {
-        $this->nomIcone = $nomIcone;
-
-        return $this;
-    }
-
-    /**
-     * Get nomIcone
-     *
-     * @return string 
-     */
-    public function getNomIcone()
-    {
-        return $this->nomIcone;
-    }
 }

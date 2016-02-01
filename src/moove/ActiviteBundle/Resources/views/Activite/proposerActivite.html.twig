@@ -1,10 +1,22 @@
+{% form_theme formulaireActivite 'bootstrap_3_layout.html.twig' %}
 {% extends "::vueMere.html.twig" %}
+{% block activeProposer %}active{% endblock %}
 {% block title %}Proposer des activités{% endblock %}
 
 {% block body %} 
     <!-- Titre de la page -->
     <section class="content-header">
       <h1>Proposer</h1>
+      <section class="content">
+        <div class="row">
+          <div class="col-md-6">
+            <form method="post" {{ form_enctype(formulaireActivite) }}>
+              {{ form_widget(formulaireActivite) }}
+              <input type="submit" class="btn btn-primary" />
+            </form>
+          </div>
+          <div class="col-md-6">
+          </div>
+        </div>
     </section>
-     
 {% endblock %}

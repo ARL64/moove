@@ -1,4 +1,14 @@
 {% extends "FOSUserBundle::layout.html.twig" %}
+{% block title %}Réinitialisation de mot de passe{% endblock %}
+
+{% block boutons %}
+<a href="{{ path('fos_user_registration_register') }}"><button class="btn btn-primary-outline" type="button">Connexion</button></a>
+<a href="{{ path('fos_user_security_login') }}"><button class="btn btn-primary-outline" type="button">Inscription</button></a>
+{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/mooveutilisateur/css/resetting.css') }}"
+{% endblock %}
 
 {% block fos_user_content %}
 {% include "FOSUserBundle:Resetting:request_content.html.twig" %}

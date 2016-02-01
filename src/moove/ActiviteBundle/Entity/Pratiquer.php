@@ -23,7 +23,7 @@ class Pratiquer
     
     /**
      * 
-     * @ORM\ManyToOne(targetEntity="moove\UtilisateurBundle\Entity\Utilisateur")
+     * @ORM\ManyToOne(targetEntity="moove\UtilisateurBundle\Entity\Utilisateur", inversedBy="pratiquer")
      */
     private $utilisateur;
 

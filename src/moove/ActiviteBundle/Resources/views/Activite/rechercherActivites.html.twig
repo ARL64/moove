@@ -1,5 +1,9 @@
 {% extends "::vueMere.html.twig" %}
 {% block title %}Rechercher des activités{% endblock %}
+{% block activeRechercher %}active{% endblock %}
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('bundles/mooveactivite/css/rechercher.css') }}">
+{% endblock %}
 
 {% block body %} 
     <!-- Titre de la page -->
@@ -10,14 +14,46 @@
     <!-- Contenu principal -->
     <section class="content">
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-12">
                 <form class="form-inline">
                     <input id="autocomplete" type="text" class="form-control" placeholder="Entrez une ville...">
                     <button type="submit" class="btn btn-default">Rechercher</button>
                 </form>
+                <p>{{ nbActivites }} résultats</p>
             </div>
-            <div class="col-md-4">
-        
+            <div class="col-md-4 pull-right">
+                <h2>Filtres de recherche</h2>
+            </div>
+            <div class="col-md-8">
+                <div class="list-group">
+                    {% for activite in tabActivites %}
+                      <a href="{{ path('moove_activite_detailsActivite', {idActivite: activite.id}) }}" class="list-group-item">
+                        <div class="col-md-2 media">
+                            <div class="media-left">
+                                <img class="media-object img-rounded img-responsive"  src="{{ asset(activite.organisateur.URLAvatar) }}" alt="Photo de l'organisateur" >
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <p>{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</p>
+                            <p>{{ ('now'|date('Y') - activite.organisateur.dateNaissance|date('Y') - 1) + ('now'|date('2010-m-d')|date('U') - activite.organisateur.dateNaissance|date('2010-m-d')|date('U') >= 0 ? 1 : 0) }} ans</p>
+                            <p>Niveau organisateur</p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <h4 class="list-group-item-heading">{{ activite.dateHeureRDV | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm")}}</h4>
+                            <p>Lieu RDV : {{ activite.lieuRDV.ville }}</p>
+                            <p>Sport : {{ activite.sportPratique.nom }}</p>
+                        </div>
+                        <div class="col-md-3 text-right">
+                            <h3>{# nbParticipants #} <small> participants</small></h3>
+                            <p>{{ activite.nbPlaces }} places restantes</p>
+                            <p>Niveau : {{ activite.niveauRequis.libelle }}</p>
+                        </div>
+                      </a>
+
+                    {% else %}
+                        Aucune activité
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </section>

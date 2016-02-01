@@ -12,5 +12,46 @@ use Doctrine\ORM\EntityRepository;
  */
 class NiveauRepository extends EntityRepository
 {
+    public function findByUtilisateur($idUtilisateur, $idSport = null)
+    {
+        // on récupère la query de base de séléction des activités par utilisateur
+        $requete = $this->getAllNiveauForUser($idUtilisateur);
+        
+        // on ajoute la condition terminer ou non
+        if(!is_null($idSport))
+        {
+            $requete->andWhere('pr.sport = :idSport')
+                    ->setParameter('idSport', $idSport)
+            ;
+           // on récupère la commande DQL
+            $query = $requete->getQuery();
+        
+            // on retourne un tableau de résultat
+            $resultat = $query->getResult();
+            if(!empty($resultat))
+                return $resultat[0];
+            else
+                return null;
+        }
+        
+        // on récupère la commande DQL
+        $query = $requete->getQuery();
+        
+        // on retourne un tableau de résultat
+        return $query->getResult();
+    }
 
+    protected function getAllNiveauForUser($idUtilisateur)
+    {
+        // création de la requete de base
+        $requete = $this->_em->createQueryBuilder()
+            ->select('n')
+            ->from($this->_entityName, 'n')
+            ->leftJoin('mooveActiviteBundle:Pratiquer', 'pr', 'WITH', 'n.id = pr.niveau')
+            ->where('pr.utilisateur = :idUtilisateur')
+            ->setParameter('idUtilisateur', $idUtilisateur)
+        ;
+        
+        return $requete;
+    }
 }

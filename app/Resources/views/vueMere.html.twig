@@ -59,7 +59,6 @@
                     <img src="{{ asset(app.user.URLAvatar) }}" class="img-circle" alt="User Image">
                     <p>
                       {{ app.user.prenom ~ " " ~ app.user.nom }}
-                      <small>Cycliste vétéran</small>
                     </p>
                   </li>
                   <!-- Footer dropdown -->
@@ -93,19 +92,19 @@
           </div>
           <ul class="sidebar-menu">
             <li class="header">MENU</li>
-            <li class="active">
+            <li class="{% block activeTableauDeBord %}{% endblock %}">
               <a href="{{ path('moove_activite_tableauDeBord') }}">
                 <i class="fa fa-dashboard">
                 </i> <span>Tableau de bord</span>
               </a>
             </li>
-            <li>
+            <li class="{% block activeRechercher %}{% endblock %}">
               <a href="{{ path('moove_activite_rechercher') }}">
                 <i class="fa fa-search"></i>
                 <span>Rechercher une activité</span>
               </a>
             </li>
-            <li>
+            <li class="{% block activeProposer %}{% endblock %}">
               <a href="{{ path('moove_activite_proposer') }}">
                 <i class="fa fa-plus-square">
                 </i> <span>Proposer une activité</span>

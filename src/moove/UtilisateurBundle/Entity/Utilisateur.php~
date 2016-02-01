@@ -57,7 +57,7 @@ class Utilisateur extends BaseUser
     private $lieuResidence;
    
     /**
-     * @ORM\OneToMany(targetEntity="moove\ActiviteBundle\Entity\Pratiquer", mappedBy="utilisateur")
+     * @ORM\OneToMany(targetEntity="moove\ActiviteBundle\Entity\Pratiquer", mappedBy="???")
      *
      */
     private $pratiquer;
@@ -71,7 +71,6 @@ class Utilisateur extends BaseUser
      * @ORM\Column(name="dateNaissance", type="datetime", nullable=true)
      */
     private $dateNaissance;
-
 
     public function __construct()
     {
@@ -87,8 +86,6 @@ class Utilisateur extends BaseUser
                             ->setLatitude(null)
                             ->setLongitude(null)
                             ;
-                            
-        //$this->pratiquer = new ArrayCollection();
     }
 
     /**
@@ -240,37 +237,4 @@ class Utilisateur extends BaseUser
     }
 
 
-
-    /**
-     * Add pratiquer
-     *
-     * @param \moove\ActiviteBundle\Entity\Pratiquer $pratiquer
-     * @return Utilisateur
-     */
-    public function addPratiquer(\moove\ActiviteBundle\Entity\Pratiquer $pratiquer)
-    {
-        $this->pratiquer[] = $pratiquer;
-
-        return $this;
-    }
-
-    /**
-     * Remove pratiquer
-     *
-     * @param \moove\ActiviteBundle\Entity\Pratiquer $pratiquer
-     */
-    public function removePratiquer(\moove\ActiviteBundle\Entity\Pratiquer $pratiquer)
-    {
-        $this->pratiquer->removeElement($pratiquer);
-    }
-
-    /**
-     * Get pratiquer
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getPratiquer()
-    {
-        return $this->pratiquer;
-    }
 }
