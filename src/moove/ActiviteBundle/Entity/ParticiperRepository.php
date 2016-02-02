@@ -18,7 +18,10 @@ class ParticiperRepository extends EntityRepository
         $requete = $this->_em->createQueryBuilder() 
             ->select('p')
             ->from($this->_entityName, 'p')
-            ->leftJoin('mooveActiviteBundle:Activite', 'a', 'WITH', 'a.id = p.activite')
+            ->join('p.activite', 'a')
+            ->addSelect('a')
+            ->join('a.organisateur', 'u')
+            ->addSelect('u')
             ->Where('a.organisateur = :organisateur')
             ->setParameter('organisateur', $idOrganisateur)
         ;
@@ -34,7 +37,7 @@ class ParticiperRepository extends EntityRepository
         $query = $requete->getQuery();
         
         // on retourne un tableau de résultat
-        return $query->getArrayResult();
+        return $query->getResult();
     }
     
 }

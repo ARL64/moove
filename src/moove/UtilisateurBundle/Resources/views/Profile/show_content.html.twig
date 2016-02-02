@@ -35,15 +35,13 @@
                      </div>
                 </div>
             </div>
-            
-            
-            {% if user.id == app.user.id %}
-                <div class="col-md-3">
+            <div class="col-md-3">
+                {% if user.id == app.user.id %}
                     <a href="{{ path('fos_user_profile_edit') }}"><button type="button" class="btn btn-primary btn-lg">Modifier mon profil</button></a>
-                </div>
-            {% endif %}
-            
-            
+                {#{% else %}
+                    <a href="{{ path('notForNow_addUser') }}"><button type="button" class="btn btn-primary btn-lg">Envoyer demande ami</button></a>#}
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>

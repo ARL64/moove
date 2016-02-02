@@ -5,7 +5,6 @@ namespace moove\ActiviteBundle\Entity;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
-use moove\UtilisateurBundle\Entity\participer;
 
 /**
  * ActiviteRepository
@@ -15,10 +14,41 @@ use moove\UtilisateurBundle\Entity\participer;
  */
 class ActiviteRepository extends EntityRepository
 {
+    public function findByUtilisateurAccepter($idUtilisateur, $estAccepter, $terminer = null)
+    {
+        $requete = $this->getAllActivityForUser($idUtilisateur)
+                        ->andWhere('p.estAccepte = :estAccepte')
+                        ->setParameter('estAccepte', $estAccepter)
+                    ;
+        if(!is_null($terminer))
+        {
+            $requete->andWhere('a.estTerminee = :fini')
+                    ->setParameter('fini', $terminer)
+            ;
+        }
+        
+        
+        // on récupère la commande DQL
+        $query = $requete->getQuery();
+        
+        // on retourne un tableau de résultat
+        return $query->getResult();
+    }
+    
     public function findByUtilisateur($idUtilisateur, $terminer = null)
     {
         // on récupère la query de base de séléction des activités par utilisateur
-        $requete = $this->getAllActivityForUser($idUtilisateur);
+        $requete = $this->getAllActivityForUser($idUtilisateur)->join('a.organisateur', 'u')
+                ->addSelect('u')
+                ->join('a.sportPratique', 's')
+                ->addSelect('s')
+                ->join('a.lieuRDV', 'lrdv')
+                ->addSelect('lrdv')
+                ->leftJoin('a.lieuDepart', 'ld')
+                ->addSelect('ld')
+                ->leftJoin('a.lieuArrivee', 'la')
+                ->addSelect('la')
+        ;
         
         // on ajoute la condition terminer ou non
         if(!is_null($terminer))
@@ -28,21 +58,8 @@ class ActiviteRepository extends EntityRepository
             ;
         }
         
-        
-        /*
-        $requete->Join('mooveUtilisateurBundle:Utilisateur', 'u', 'WITH', 'a.organisateur = u.id')
-                ->addSelect('u')
-                ->Join('mooveActiviteBundle:Sport', 's', 'WITH', 'a.sportPratique = s.id')
-                ->addSelect('s')
-        ;
-        var_dump($requete->getDql());
-        */
-        
         // on récupère la commande DQL
         $query = $requete->getQuery();
-        
-        //$query->setQueryHint('foo', 'bar');
-        //$query->useResultCache('my_cache_id');
         
         // on retourne un tableau de résultat
         return $query->getResult();
@@ -60,10 +77,10 @@ class ActiviteRepository extends EntityRepository
         $requete = $this->_em->createQueryBuilder()
             ->select('a')
             ->from($this->_entityName, 'a')
-            ->Join('mooveActiviteBundle:Participer', 'p', 'WITH', 'a.id = p.activite')
+            ->leftJoin('mooveActiviteBundle:Participer', 'p', 'WITH', 'a.id = p.activite')
             ->where('p.utilisateur = :idUtilisateur')
-            ->orderBy('a.dateHeureRDV', 'DESC')
             
+            ->orderBy('a.dateHeureRDV', 'DESC')
             ->setParameter('idUtilisateur', $idUtilisateur)
         ;
         

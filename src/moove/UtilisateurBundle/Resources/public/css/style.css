@@ -27,7 +27,7 @@ body {
   border-radius: 5px;
   background-color: #fff;
   position: relative;
-  top: 40%;
+  top: 38%;
   transform: translateY(-40%);
 }
 .form-signin .form-control {

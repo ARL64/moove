@@ -6,11 +6,15 @@
     <!-- Titre de la page -->
     <section class="content-header">
       <h1>
+        
+        
         {% if user.id == app.user.id %}
           Mon Profil
         {% else %}
           {{ user.prenom ~ " " ~ user.nom }}
         {% endif %}
+        
+        
       </h1>
     </section>
     

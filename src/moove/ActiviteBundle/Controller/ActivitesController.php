@@ -21,17 +21,21 @@ class ActivitesController extends Controller
         $this->checkAuthorization();
         //on récupère l'utilisateur connecté
         $utilisateur = $this->getUser();
-        //On récupère le manager & le repository des participations
+        /** Repository de Participer */
         $repParticipations = $this->getRepository('Participer');
+        /** Repository de Activite */
+        $repActivite = $this->getRepository('Activite');
 
-        $nbParticipations = $this->nbParticipations();
-        $nbOrganisations = $this->nbOrganisations();
-        $nbDemandesEnAttente = $this->nbDemandesEnAttente();
+        $nbParticipations = count($repParticipations->findBy(array('utilisateur' => $utilisateur, 'estAccepte' => 1)));
+        $nbOrganisations = count($repActivite->findByOrganisateur($utilisateur));
+        $nbDemandesEnAttente = count($repParticipations->findBy(array('utilisateur' => $utilisateur, 'estAccepte' => 0)));
        
-        $nbDemandesParticipationsActiviteEnAttente = count($repParticipations->findByOrganisateur($utilisateur, false));
+        $listeDesDemandesDeParticipationsEnAttente = $repParticipations->findByOrganisateur($utilisateur, 0);
+
+        $nbDemandesParticipationsActiviteEnAttente = count($listeDesDemandesDeParticipationsEnAttente);
         
-        $listeDesDemandesEnAttente = $this->listeDesDemandesDeParticipations();
-        $listeDesDemandesDeParticipationsEnAttente = $this->listeDesDemandesDeParticipationsAMesActivites();
+        $listeDesDemandesEnAttente = $repActivite->findByUtilisateurAccepter($utilisateur, 0);
+        
         return $this->render('mooveActiviteBundle:Accueil:tableauDeBordAccueil.html.twig', 
                             array(  'nbParticipations' => $nbParticipations, 
                                     'nbOrganisations' => $nbOrganisations, 
@@ -40,7 +44,6 @@ class ActivitesController extends Controller
                                     'nbDemandesEnAttenteOrganisateur' => $nbDemandesParticipationsActiviteEnAttente,
                                     'ListeDemandeAValide' => $listeDesDemandesDeParticipationsEnAttente));
     }
-    
     
     /**
      * Renvoie à la page "http://moove-arl64.c9users.io/web/app_dev.php/activite/{idActivite}"
@@ -54,9 +57,7 @@ class ActivitesController extends Controller
         /** Repository de Activite */
         $repActivite = $this->getRepository('Activite');
         /** Repository de Utilisateur */
-        //$repUtilisateur = $this->getDoctrine()->getManager()->getRepository('mooveUtilisateurBundle:Utilisateur');
         $repUtilisateur = $this->getRepository('Utilisateur', 'Utilisateur');
-        
         /** Repository de Pratiquer */
         $repPratiquer = $this->getRepository('Pratiquer');
         /** Repository de Niveau */
@@ -76,13 +77,10 @@ class ActivitesController extends Controller
         {
            $resultatNiveauOrganisateur->getLibelle();
         }
-            
+         
+         $arg = $estOrganisateur? array(1,0) : 1;   
+         
         // On récupère un tableau d'objet Participer $tabParticiper
-        if($estOrganisateur)
-            $arg = array(1,0);
-        else
-            $arg = 1;
-        
         $tabParticiper = $repParticiper->findBy(array('activite' => $idActivite, 'estAccepte' => $arg));
         // On récupère le nombre de participants de l'activité
         $nbParticipants = count($tabParticiper);
@@ -107,9 +105,10 @@ class ActivitesController extends Controller
     public function historiqueAction()
     {   
         $this->checkAuthorization();
-
-        /** Liste des activitées finies, 20 résultats par page */   
-        $tabActivites = $this->getListeParticipationForUser(true);
+        
+        $utilisateur = $this->getUser(); 
+        $repActivite = $this->getRepository('Activite');
+        $tabActivites = $repActivite->findByUtilisateur($utilisateur->getId(), true);
         /** Liste du nombre de participations */
         $tabNbParticipants = $this->getNbParticipantsParActivite($tabActivites);
         return $this->render('mooveActiviteBundle:Accueil:tableauDeBordHistorique.html.twig',
@@ -126,8 +125,9 @@ class ActivitesController extends Controller
         $this->checkAuthorization();
 
         /** liste des activités de l'utilisateur courrant*/
-        $tabActivites = $this->getListeParticipationForUser(false);
-        /** liste du nombre de participant pour chaque activité en corélation avec $tabActivite */
+        $utilisateur = $this->getUser(); 
+        $repActivite = $this->getRepository('Activite');
+        $tabActivites = $repActivite->findByUtilisateur($utilisateur->getId(), false);        /** liste du nombre de participant pour chaque activité en corélation avec $tabActivite */
         $tabNbParticipants = $this->getNbParticipantsParActivite($tabActivites);
         $tabEstAccepte = [];
         foreach($tabActivites as $activite)
@@ -166,55 +166,34 @@ class ActivitesController extends Controller
     {
         // On crée un objet "activité"
         $activite = new Activite();
-        $organisateur = $this->getUser();
+        $lieu = new Lieu();
+        
+        // On initialise l'organisteur avec l'utilisateur qui est entrain de créer l'activité
+        $activite->setOrganisateur($this->getUser());
 
         // On crée le formulaire permettant de saisir un livre
         $formulaireActivite = $this->createFormBuilder($activite)
-                                /*->add('sportPratique', 
-                                        'choice',
-                                        /*['choices' => [
-                                            new Sport('Ski'),
-                                            new Sport('Randonnee'),
-                                            new Sport('Cyclisme'),
-                                            new Sport('Jogging')],
-                                            'choice_label' => function($sportPratique) 
-                                            {
-                                                return strtoupper($sportPratique->getNom());
-                                            },
-                                            'choice_attr' => function($sportPratique) 
-                                            {
-                                                return ['class' => 'sportPratique'.$sportPratique->getNom()];
-                                            }
-                                        ]
-                                    )*/
-                                   
-                                  /*array(
-                                    'Ski' => ,
-                                    'Randonnée' => ,
-                                    'Cyclisme' => ,
-                                    'Jogging' => )
-                                    */
-                                   //->add('ville')
+                                    ->add('sportPratique', 'entity',
+                                          array('label' => 'Sport',
+                                                'empty_value' => 'Sélectionnez un sport',
+                                                'class' => 'mooveActiviteBundle:Sport',
+                                                'property' => 'nom',
+                                                'multiple' => false,
+                                                'expanded' => false))
+                                    ->add('niveauRequis', 'entity',
+                                          array('label' => 'Niveau requis',
+                                                'empty_value' => 'Sélectionez un niveau',
+                                                'class' => 'mooveActiviteBundle:Niveau',
+                                                'property' => 'libelle',
+                                                'multiple' => false,
+                                                'expanded' => false))
                                    //->add('lieuRDV')
                                    //->add('lieuDepart')
                                    //->add('lieuArrivee')
                                    ->add('dateHeureRDV', 'datetime', array('label' => 'Date et heure de rendez-vous'))
-                                   ->add('dateFermeture', 'datetime',array('label' => 'Date et heure de fermeture  de l\'activité'))
-                                   ->add('duree', 'time',array('label' => 'Durée estimée'))
-                                   ->add('nbPlaces','choice', array( 'choices'  => array(
-                                       '1' => 1,
-                                       '2' => 2,
-                                       '3' => 3,
-                                       '4' => 4,
-                                       '5' => 5,
-                                       '6' => 6,
-                                       '7' => 7,
-                                       '8' => 8,
-                                       '9' => 9,
-                                       '10' => 10,
-                                       '11' => 11,
-                                       '12' => 12),
-                                       'label'=> 'Nombre de places'))
+                                   ->add('dateFermeture', 'datetime', array('label' => 'Date et heure de fermeture  de l\'activité'))
+                                   ->add('duree', 'time', array('label' => 'Durée estimée'))
+                                   ->add('nbPlaces','integer', array('label'=> 'Nombre de places'))
                                    ->add('description', 'textarea' ,array ('label' => 'Informations'))
                                    ->getForm();
                                    
@@ -283,189 +262,7 @@ class ActivitesController extends Controller
         
         return $listeNbParticipant;
     }
-    
-    /**
-     * Retourne la liste des Activité auquel participe l'utilisateur actuellement autentifié.
-     * 
-     * @param $terminer (boolean) indique si les activités son finis (true) ou non (false) 
-     * @param $page (integer&) indique la page actuel de recherche (fonctionne de pair avec $nbResultatPage). La valeur pourra être adapter si elle est trop grande.
-     * @param $nbResultatPage (integer) indique le nombre de résultat a afficher par $page
-     * @param $nbPage (&integer) variable de stockage pour le nombre de page nécessaire a l'affichage de toute les activités
-     * @return array<Activite>
-     */
-    protected function getListeParticipationForUser($terminer) // $terminer, &$page, $nbResultatPage, &$nbPage
-    {
-        // On obtient l'utilisateur courrant
-        $utilisateur = $this->getUser(); 
 
-        // On récupère le manager & le repository des Participants : Participer
-	//	$repParticiper = $this->getRepository('Participer');
-		
-		// On récupère le manager & le repository des Activités : Activite
-		$repActivite = $this->getRepository('Activite');
-/*
-		// On récupère la liste des Participations liés à la personne connectée $utilisateur
-		$listeEntiereParticiper = $repParticiper->findBy(array('idUtilisateur' => $utilisateur));
-		
-		// optimisable
-		// on récupère la liste des ID des activité
-		$listeIdActivite = array();
-	    foreach ($listeEntiereParticiper as $participe) 
-	    {
-            $listeIdActivite[] = $participe->getIdActivite();
-        }
-        
-        // arrondi a l'entier supérieur du total de page nécessaire
-        $nbPage = ceil(count($repActivite->findBy(array('id'=>$listeIdActivite, 'estTerminee' => $terminer))) / $nbResultatPage);
-        // si l'utilisateur n'as aucune activité (évite les bug de requête avec -X)
-        if($nbPage == 0) $nbPage = 1;
-        // si l'utilisateur rentre manuellement une valeur impossible
-        if($page > $nbPage) $page = $nbPage;*/
-            
-        // on retourne la liste des activités, terminées ou non ($terminer), triées par ordre croissant selon la date,
-        // avec une limite de $nbResultatPage activités
-		/*return $repActivite->findBy(array('id'=>$listeIdActivite, 'estTerminee' => $terminer), 
-		                            array('dateHeureRDV' => 'DESC'), 
-		                            $nbResultatPage, 
-		                            ($page-1)*$nbResultatPage);*/
-	    return $repActivite->findByUtilisateur($utilisateur->getId(), $terminer);
-    }
-    
-    protected function nbParticipations()
-    {
-        //On récupère l'utilisateur actuel
-        $utilisateur = $this->getUser();
-        
-        // On récupère le manager & le repository des Participants : Participer
-		$repParticiper = $this->getRepository('Participer');
-		
-		// On compte le nombre de participation d'un utilisateur 
-		$nombreParticipations = count($repParticiper->findBy(array('utilisateur' => $utilisateur, 'estAccepte' => 1)));
-		
-		//On renvoie le nombre de participation d'un utilisateur
-        return $nombreParticipations;
-    }
-    
-    /**
-     * Retourne le nombre d'activité organisé par l'utilisateur
-     * 
-     * @return integer
-     */
-    protected function nbOrganisations()
-    {
-        //on récupère l'utilisateur connecté
-         $utilisateur = $this->getUser();
-
-        // On récupère le manager & le repository des Activtés
-		$repActivite = $this->getRepository('Activite');
-		
-		// On compte le nombre d'activité dont on est organisateur
-		$nombreOrganisations = count($repActivite->findBy(array('organisateur' => $utilisateur)));
-		
-		//On renvoie à la vue le nombre d'activité dont on est organisateur
-        return $nombreOrganisations;
-    }
-   
-    /**
-     * Retourne le nombre d'activité ou une demande d'admission est en cours pour l'utilisateur
-     * 
-     * @return integer
-     */ 
-    protected function nbDemandesEnAttente()
-    {
-        //on récupère l'id de l'utilisateur
-        $utilisateur = $this->getUser();
-        
-        //On récupère le manager & le repository des participations
-        $repParticipations = $this->getRepository('Participer');
-        
-        // On récupère la liste des Participations liés à la personne connectée $utilisateur
-		$nbDemandesEnAttente = count($repParticipations->findBy(array('utilisateur' => $utilisateur, 'estAccepte' => 0)));
-		
-		//On renvoie le nombre de demandes en attente
-		return $nbDemandesEnAttente;
-    }
-
-    
-    /**
-     * retourne un tableau contenant le nombre de demande et le tableau de toute les activités
-     * 
-     * @return array<integer, array<activite>>
-     */
-    protected function listeDesDemandesDeParticipations()
-    {
-        //On récupère l'utilisateur
-        $utilisateur = $this->getUser()->getId();
-        
-        // On récupère le nombre de demandes en attente
-        $nbDemandesEnAttente = $this->nbDemandesEnAttente();
-        
-        //On récupère le manager & repository des participations
-        $repParticipations = $this->getRepository('Participer');
-        
-         //On récupère le manager & le repository des activités
-        $repActivite = $this->getRepository('Activite');
-        
-        // On récupère la liste des Participations liés à la personne connectée $utilisateur
-		$tabParticipationEnAttente = $repParticipations->findBy(array('utilisateur' => $utilisateur, 'estAccepte' => 0));
-		
-		
-
-        $listeActivite = array();
-	    foreach ($tabParticipationEnAttente as $participation) 
-	    {
-	        $activite = $repActivite->find($participation->getActivite());
-	        
-	        $listeActivite[] = $activite;
-
-        }
-        $tabDemandesEnAttente = array('nbDemandes' => $nbDemandesEnAttente, 'listeDemande' => $listeActivite);
-        return $tabDemandesEnAttente;
-    }
-    
-    /**
-     * retourne un tableau contenant le nombre de demande à mes activités que je propose et le tableau de toute les activités
-     * 
-     * @return array<integer, array<Activite>>
-     */   
-    protected function listeDesDemandesDeParticipationsAMesActivites()
-    {
-		//On récupère l'utilisateur
-        $organisateur = $this->getUser();
-        
-        //On récupère le manager & le repository des activités & des utilisateurs
-        $repActivite = $this->getRepository('Activite');
-		$repUtilisateurs = $this->getDoctrine()->getManager()->getRepository('mooveUtilisateurBundle:Utilisateur');
-		$repParticipations = $this->getRepository('Participer');
-
-		//On crée un tableau contenant toutes les activités dont je suis organisateur
-        $listeActivitesOrganisateur = $repActivite->findBy(array('organisateur' => $organisateur));
-
-		$listeUtilisateurParticipants = array();
-		$listeActiviteParticipants = array();
-		$listeParticipants = array();
-		foreach($listeActivitesOrganisateur as $activite)
-        {
-            $listeParticipations = $repParticipations->findBy(array( 'activite' => $activite->getId(), 'estAccepte' => 0));
-            //on récupère la liste des participations où le booléen est à faux
-            if($listeParticipations != null)
-            {
-                foreach($listeParticipations as $participation)
-                {
-                    $listeParticipants[] = $participation;
-			        $listeUtilisateurParticipants[] = $repUtilisateurs->find($participation->getUtilisateur());
-			        $listeActiviteParticipants[] = $repActivite->find($participation->getActivite());
-                }
-                
-            }
-
-			
-        }
-
-		return array('listeDemandes' => $listeParticipants, 'listeUtilisateur' => $listeUtilisateurParticipants, 'listeActivite' => $listeActiviteParticipants);
-		 
-	}
-    
     /**
      * Retourne un booléen permettant d'indiquer si l'utilisateur connecté participe à l'activité $idActivite
      * 
@@ -502,11 +299,7 @@ class ActivitesController extends Controller
                                                          'utilisateur' => $utilisateur));
                                                          
         // Si la variable est null, alors il n'y a aucune participation pour cette utilisateur à cette activité
-        if(is_null($listeParticipant))
-            return 0;
-        else
-            return $listeParticipant->getEstAccepte(); // 1 = accepter, 2 = refuser
-        
+        return is_null($listeParticipant)? 0 : $listeParticipant->getEstAccepte(); // 1 = accepter, 2 = refuser
         
         //return (!empty($listeParticipant));
     }
@@ -518,9 +311,8 @@ class ActivitesController extends Controller
         
         // On récupère le repository Activite
         $repActivite = $this->getRepository('Activite');
-        $organisateur = $repActivite->find($activite)->getOrganisateur();
-        
-        return ($organisateur == $utilisateur);
+
+        return ($repActivite->find($activite)->getOrganisateur() == $utilisateur);
     }
     
     /**

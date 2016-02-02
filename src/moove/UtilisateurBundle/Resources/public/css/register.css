@@ -16,7 +16,8 @@
 .form-signin input[id="fos_user_registration_form_nom"],
 .form-signin input[id="fos_user_registration_form_email"],
 .form-signin input[id="fos_user_registration_form_plainPassword_first"],
-.form-signin input[id="fos_user_registration_form_username"]
+.form-signin input[id="fos_user_registration_form_username"],
+.form-signin input[id="fos_user_registration_form_plainPassword_second"]
  {
   margin-bottom: -1px;
   border-bottom-right-radius: 0;
@@ -27,7 +28,8 @@
 .form-signin input[id="fos_user_registration_form_plainPassword_first"],
 .form-signin input[id="fos_user_registration_form_plainPassword_second"],
 .form-signin input[id="inputBirthday"],
-.form-signin input[id="fos_user_registration_form_username"] {
+.form-signin input[id="fos_user_registration_form_username"],
+.form-signin input[id="fos_user_registration_form_dateNaissance"] {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
@@ -36,10 +38,31 @@
   margin: 5px 0 5px 0;
 }
 
+.form-signin input[id="fos_user_registration_form_dateNaissance"] {
+  line-height: 1rem;
+}
+
 .form-signin .input-group-addon {
   border-top-right-radius: 0;
 }
 
 .form-group {
   margin-bottom: 0;
+}
+
+.radios {
+  display: inline;
+}
+
+div[id="fos_user_registration_form_sexe"] {
+  text-align: center;
+  margin: 1rem 0 1rem 0;
+}
+
+.radios+.radios {
+    margin-left: 1rem;
+}
+
+.form-group .control-label {
+  display: none;
 }

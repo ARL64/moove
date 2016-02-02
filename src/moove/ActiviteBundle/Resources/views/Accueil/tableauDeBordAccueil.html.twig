@@ -42,7 +42,7 @@
                         <h3 class="panel-title">Mes demandes de participation</h3>
                     </div>
                     <div class="panel-body">
-                        {% for liste in listeDemandesEnAttente.listeDemande %}
+                        {% for liste in listeDemandesEnAttente %}
                           <p>Ma demande de participation à l'activité <a href="{{ path('moove_activite_detailsActivite', {idActivite: liste.id}) }}" >{{ liste.sportPratique.nom | lower }} du {{ liste.dateHeureRDV | date("d/m/y") }}</a> de <a href="{{ path('moove_utilisateur_profileUtilisateur', {idUtilisateur: liste.organisateur.id}) }}">{{ liste.organisateur.prenom ~ " " ~ liste.organisateur.nom }}</a> est toujours en attente.</p>
                         {% else %}
                           Je n'ai pas de demandes en attente. Allez rejoindre des activités en <a href="{{ path('moove_activite_rechercher') }}">recherchant des activités</a>.
@@ -87,12 +87,14 @@
                     </div>
                     <div class="panel-body">
                         {% if ListeDemandeAValide is not empty %}
-                            {% for participation in ListeDemandeAValide.listeDemandes %}
+                            {% for participation in ListeDemandeAValide %}
                             <p>
-                                <a href="{{ path('moove_utilisateur_profileUtilisateur', {idUtilisateur: ListeDemandeAValide.listeUtilisateur[loop.index0].id}) }}">{{ ListeDemandeAValide.listeUtilisateur[loop.index0].prenom ~ " " ~ ListeDemandeAValide.listeUtilisateur[loop.index0].nom}}</a> demande à participer à l'activite <a href="{{ path('moove_activite_detailsActivite', {idActivite: ListeDemandeAValide.listeActivite[loop.index0].id}) }}">{{ ListeDemandeAValide.listeActivite[loop.index0].sportPratique.nom | lower }} du {{ ListeDemandeAValide.listeActivite[loop.index0].dateHeureRDV | date("d/m/y") }}.</a>
+                                <a href="{{ path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participation.utilisateur.id}) }}">{{ participation.utilisateur.prenom ~ " " ~ participation.utilisateur.nom}}</a> demande à participer à l'activite <a href="{{ path('moove_activite_detailsActivite', {idActivite: participation.activite.id}) }}">{{ participation.activite.sportPratique.nom | lower }} du {{ participation.activite.dateHeureRDV | date("d/m/y") }}.</a>
                                 <button type="button" class="btn btn-success btn-xs ">Accepter</button>
                                 <button type="button" class="btn btn-danger btn-xs">Refuser</button>
                             </p>
+                            {% else %}
+                                <p>Je n'ai proposé aucune activité ou je n'ai pas de demandes en attente sur vos activités.</p>
                             {% endfor %}
                         {% endif %}
                     </div>

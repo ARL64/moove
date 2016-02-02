@@ -44,17 +44,24 @@
                   <p><span class="info-label text-muted">Sport</span><span class="info-valeur"><i class="icon-{{ activite.sportPratique.nomIcone }}"></i>{{ activite.sportPratique.nom }}</span></p>
                 </div>
                 <div class="infos">
+                  <p><span class="info-label text-muted">Niveau requis</span><span class="info-valeur"><i class="fa fa-bar-chart"></i>{{ activite.niveauRequis.libelle }}</span></p>
+                </div>
+                <div class="infos">
                   <p><span class="info-label text-muted">Ville</span><span class="info-valeur"><i class="fa fa-building-o"></i>{{ activite.lieuRDV.ville }}</span></p>
                 </div>
                 <div class="infos">
                   <p><span class="info-label text-muted">Lieu de rendez-vous</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#ff9800"></i>{{ activite.lieuRDV.nom }}</span></p>
                 </div>
-                <div class="infos">
-                  <p><span class="info-label text-muted">Lieu de départ</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#4caf50"></i>{% if activite.lieuDepart is not null  %}{{ activite.lieuDepart.nom }}{% else %}{% endif %}</span></p>
-                </div>
-                <div class="infos">
-                  <p><span class="info-label text-muted">Lieu d'arrivée</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#e51c23"></i>{% if activite.lieuArrivee is not null  %}{{ activite.lieuArrivee.nom }}{% else %}{% endif %}</span></p>
-                </div>
+                {% if activite.lieuDepart is not null  %}
+                  <div class="infos">
+                    <p><span class="info-label text-muted">Lieu de départ</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#4caf50"></i>{{ activite.lieuDepart.nom }}</span></p>
+                  </div>
+                {% endif %}
+                {% if activite.lieuArrivee is not null  %}
+                  <div class="infos">
+                    <p><span class="info-label text-muted">Lieu d'arrivée</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#e51c23"></i>{{ activite.lieuArrivee.nom }}</span></p>
+                  </div>
+                {% endif %}
                 <div class="infos">
                   <p><span class="info-label text-muted">Date de départ</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateHeureRDV | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm") }}</span></p>
                 </div>

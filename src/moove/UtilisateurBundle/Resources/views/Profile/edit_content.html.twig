@@ -1,9 +1,9 @@
+<link rel="stylesheet" href="{{ asset('css/details/style.css') }}">
 {% trans_default_domain 'FOSUserBundle' %}
-
+<div class="col-md-5">
 {{ form_start(form, { 'action': path('fos_user_profile_edit'), 'attr': { 'class': 'fos_user_profile_edit' } }) }}
     {{ form_widget(form) }}
-    <div>
-        <input type="submit" value="{{ 'profile.edit.submit'|trans }}" />
-    </div>
+    <input type="submit" class="btn btn-primary btn-lg" value="{{ 'profile.edit.submit'|trans }}" /></br>
+    <a href=#><button type="button" class="btn btn-danger btn-lg">Supprimer mon compte</button></a>
+</div>
 {{ form_end(form) }}
-<a href=#><button type="button" class="btn btn-danger btn-lg">Supprimer mon compte</button></a>
