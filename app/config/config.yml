@@ -90,11 +90,16 @@ fos_user:
     service: 
         mailer: fos_user.mailer.twig_swift
     registration:
+        form:
+            type: app_user_registration
         confirmation:
             enabled: true
             from_email:
                 address:        inscription@moove.com
                 sender_name:    Moove
+    profile:
+        form:
+            type: app_user_profile
     resetting:
         email:
             from_email:

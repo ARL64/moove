@@ -33,11 +33,11 @@ class Participer
     private $activite;
 
     /**
-     * @var boolean
+     * @var smallint
      *
      * @ORM\Column(name="estAccepte", type="smallint")
      */
-    private $estAccepte; // type : "boolean"
+    private $estAccepte; // type : "smallint"
 
 
   

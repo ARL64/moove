@@ -38,10 +38,6 @@
   margin: 5px 0 5px 0;
 }
 
-.form-signin input[id="fos_user_registration_form_dateNaissance"] {
-  line-height: 1rem;
-}
-
 .form-signin .input-group-addon {
   border-top-right-radius: 0;
 }
@@ -56,7 +52,7 @@
 
 div[id="fos_user_registration_form_sexe"] {
   text-align: center;
-  margin: 1rem 0 1rem 0;
+  margin: 0.7rem 0 0.7rem 0;
 }
 
 .radios+.radios {

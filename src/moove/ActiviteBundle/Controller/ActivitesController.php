@@ -26,23 +26,39 @@ class ActivitesController extends Controller
         /** Repository de Activite */
         $repActivite = $this->getRepository('Activite');
 
-        $nbParticipations = count($repParticipations->findBy(array('utilisateur' => $utilisateur, 'estAccepte' => 1)));
-        $nbOrganisations = count($repActivite->findByOrganisateur($utilisateur));
+        $listeOrganisationEnApproche = $repParticipations->findByUtilisateurEstAccepter($utilisateur, false, 1);
+        $nbOrganisations = count($repActivite->findBy(array('organisateur' => $utilisateur, 'estTerminee' => 0)));
+        
+        
+        $listeDesDemandesDeParticipationsEnAttente = $repParticipations->findByOrganisateur($utilisateur, 0);
+        $nbDemandesParticipationsActiviteEnAttente = count($listeDesDemandesDeParticipationsEnAttente);
+
+        $listeParticipationEnApproche = $repParticipations->findByUtilisateurEstAccepter($utilisateur, false, 1);
+        $nbParticipations = count($listeParticipationEnApproche) - $nbOrganisations;
+        
         $nbDemandesEnAttente = count($repParticipations->findBy(array('utilisateur' => $utilisateur, 'estAccepte' => 0)));
        
-        $listeDesDemandesDeParticipationsEnAttente = $repParticipations->findByOrganisateur($utilisateur, 0);
+       // BUG //
+       /*
+        La liste des activité a un problème, ce n'est pas les bonnes valeurs...
+       */
 
-        $nbDemandesParticipationsActiviteEnAttente = count($listeDesDemandesDeParticipationsEnAttente);
         
         $listeDesDemandesEnAttente = $repActivite->findByUtilisateurAccepter($utilisateur, 0);
-        
         return $this->render('mooveActiviteBundle:Accueil:tableauDeBordAccueil.html.twig', 
-                            array(  'nbParticipations' => $nbParticipations, 
-                                    'nbOrganisations' => $nbOrganisations, 
+                            array(  
+                                    'nbParticipations' => $nbParticipations, 
+                                    'listeParticipationEnApproche' => $listeParticipationEnApproche,
+                                    
                                     'nbDemandesEnAttente' => $nbDemandesEnAttente, 
                                     'listeDemandesEnAttente' => $listeDesDemandesEnAttente,
+
                                     'nbDemandesEnAttenteOrganisateur' => $nbDemandesParticipationsActiviteEnAttente,
-                                    'ListeDemandeAValide' => $listeDesDemandesDeParticipationsEnAttente));
+                                    'ListeDemandeAValide' => $listeDesDemandesDeParticipationsEnAttente,
+                                    
+                                     'nbOrganisations' => $nbOrganisations,
+                                    'listeOrganisationEnApproche' => $listeOrganisationEnApproche
+                                    ));
     }
     
     /**
@@ -75,7 +91,7 @@ class ActivitesController extends Controller
         $resultatNiveauOrganisateur = $repNiveau->findByUtilisateur($activite->getOrganisateur(), $activite->getSportPratique());
         if(!is_null($resultatNiveauOrganisateur))
         {
-           $resultatNiveauOrganisateur->getLibelle();
+           $niveauOrganisateur = $resultatNiveauOrganisateur->getLibelle();
         }
          
          $arg = $estOrganisateur? array(1,0) : 1;   
@@ -193,7 +209,7 @@ class ActivitesController extends Controller
                                    ->add('dateHeureRDV', 'datetime', array('label' => 'Date et heure de rendez-vous'))
                                    ->add('dateFermeture', 'datetime', array('label' => 'Date et heure de fermeture  de l\'activité'))
                                    ->add('duree', 'time', array('label' => 'Durée estimée'))
-                                   ->add('nbPlaces','integer', array('label'=> 'Nombre de places'))
+                                   ->add('nbPlaces','integer', array('label'=> 'Nombre de places total (vous inclut)'))
                                    ->add('description', 'textarea' ,array ('label' => 'Informations'))
                                    ->getForm();
                                    

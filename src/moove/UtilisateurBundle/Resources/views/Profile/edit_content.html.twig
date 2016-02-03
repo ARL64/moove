@@ -3,7 +3,8 @@
 <div class="col-md-5">
 {{ form_start(form, { 'action': path('fos_user_profile_edit'), 'attr': { 'class': 'fos_user_profile_edit' } }) }}
     {{ form_widget(form) }}
-    <input type="submit" class="btn btn-primary btn-lg" value="{{ 'profile.edit.submit'|trans }}" /></br>
+    <input type="submit" class="btn btn-primary btn-lg" value="{{ 'profile.edit.submit'|trans }}" />
+    <a href=#><button type="button" class="btn btn-warning btn-lg">Annuler</button></a></br>
     <a href=#><button type="button" class="btn btn-danger btn-lg">Supprimer mon compte</button></a>
 </div>
 {{ form_end(form) }}

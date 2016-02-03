@@ -66,19 +66,19 @@
                   <p><span class="info-label text-muted">Date de départ</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateHeureRDV | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm") }}</span></p>
                 </div>
                 <div class="infos">
-                  <p><span class="info-label text-muted">Date de fermeture de l'activité</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateFermeture | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm") }}</span></p>
+                  <p><span class="info-label text-muted">Date de fin d'inscription  l'activité</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateFermeture | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm") }}</span></p>
                 </div>
                 <div class="infos">
                   <p><span class="info-label text-muted">Temps estimé</span><span class="info-valeur"><i class="fa fa-clock-o"></i>{{ activite.duree | localizeddate('none', 'none', null, null, "H 'h' mm") }}</span></p>
                 </div>
                 <div class="infos">
-                  <p><span class="info-label text-muted">Nombre de places</span><span class="info-valeur"><i class="fa fa-users"></i>{{ activite.nbPlaces }} places</span></p>
+                  <p><span class="info-label text-muted">Nombre de places (vous inclus)</span><span class="info-valeur"><i class="fa fa-users"></i>{{ activite.nbPlaces }} places</span></p>
                 </div>
               </div>
           </div>
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h3 class="panel-title">Description</h3>
+              <h3 class="panel-title">Informations</h3>
             </div>
               <div class="panel-body">
                 {{activite.description}}
@@ -130,20 +130,20 @@
                 {% else %}
                   {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) %}
                     {% if estAccepte == 1 %}
-                      <button type="button" class="btn btn-primary btn-lg disabled">Activité fermée</button>
+                      <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
                     {% elseif estAccepte == 2 %}
-                      <button type="button" class="btn btn-primary btn-lg disabled">Activité fermée</button>
+                      <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
                     {% else %}
-                      <button type="button" class="btn btn-primary btn-lg disabled">Activité fermée</button>
+                      <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
                     {% endif %}
                   {% else %}
                     {% if estParticipant %}
                       {% if estAccepte == 1 %}
-                        <button type="button" class="btn btn-primary btn-lg">Quitter l'activité</button>
+                        <button type="button" class="btn btn-danger btn-lg">Quitter l'activité</button>
                       {% elseif estAccepte == 2 %}
-                        <button type="button" class="btn btn-primary btn-lg disabled">Vous avez été refusé</button>
+                        <button type="button" class="btn btn-danger btn-lg disabled">Vous avez été refusé</button>
                       {% else %}
-                        <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyée</button>
+                        <button type="button" class="btn btn-warning btn-lg disabled">Demande envoyée</button>
                       {% endif %}
                       
                     {% else %}

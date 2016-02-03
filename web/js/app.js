@@ -117,6 +117,13 @@ $(function () {
   if (o.sidebarPushMenu) {
     $.App.pushMenu.activate(o.sidebarToggleSelector);
   }
+  
+  //Activate Bootstrap tooltip
+  if (o.enableBSToppltip) {
+    $('body').tooltip({
+      selector: o.BSTooltipSelector
+    });
+  }
 
   //Activate fast click
   if (o.enableFastclick && typeof FastClick != 'undefined') {
@@ -291,6 +298,4 @@ function _init() {
       }
     }
   };
-
-
 }

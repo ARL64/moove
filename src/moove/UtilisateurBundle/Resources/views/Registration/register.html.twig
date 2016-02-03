@@ -3,7 +3,8 @@
 {% block title %}Inscription{% endblock %}
 
 {% block stylesheets %}
-<link rel="stylesheet" href="{{ asset('bundles/mooveutilisateur/css/register.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/mooveutilisateur/css/register.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/bootstrap-datepicker.min.css') }}">
 {% endblock %}
 
 {% block boutons %}
@@ -13,3 +14,16 @@
 {% block fos_user_content %}
 {% include "FOSUserBundle:Registration:register_content.html.twig" %}
 {% endblock fos_user_content %}
+
+{% block javascript %}
+    <script src="{{ asset('js/bootstrap-datepicker.min.js') }}" charset="utf-8"></script>
+    <script>
+        $('form-group input').datepicker({
+          format: "dd/mm/yyyy",
+          startView: 2,
+          language: "fr",
+          orientation: "bottom auto",
+          autoclose: false
+        });
+    </script>
+{% endblock %}

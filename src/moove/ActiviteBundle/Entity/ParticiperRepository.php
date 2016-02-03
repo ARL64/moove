@@ -40,4 +40,38 @@ class ParticiperRepository extends EntityRepository
         return $query->getResult();
     }
     
+    
+    public function findByUtilisateurEstAccepter($idUtilisateur, $terminer, $accepter = null)
+    {
+        $requete = $this->_em->createQueryBuilder() 
+            ->select('p')
+            ->from($this->_entityName, 'p')
+            ->join('p.activite', 'a')
+            
+            ->Where('p.utilisateur = :utilisateur')
+            ->setParameter('utilisateur', $idUtilisateur)
+        ;
+        
+        if(!is_null($terminer))
+        {
+            $requete->andWhere('a.estTerminee = :terminer')
+                    ->setParameter('terminer', $terminer)
+            ;
+        }
+        
+        if(!is_null($accepter))
+        {
+            $requete->andWhere('p.estAccepte = :accepter')
+                    ->setParameter('accepter', $accepter)
+            ;
+        }
+
+        // on récupère la commande DQL
+        $query = $requete->getQuery();
+        
+        // on retourne un tableau de résultat
+        return $query->getResult();    
+        
+    }
+    
 }

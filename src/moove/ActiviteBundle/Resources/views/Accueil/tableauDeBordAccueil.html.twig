@@ -8,95 +8,170 @@
     <br>
     <div class="row">
         <div class="col-md-6">
-            <div class="col-md-6">
-                <div class="panel status panel-success">
-                    <div class="panel-heading">
-                        <h1 class="panel-title text-center">{{ nbParticipations }}</h1>
+            <div class="panel panel-default">
+                <div class="panel-heading text-center">Les activités des autres</div>
+                <div class="panel-body">
+                    <div class="col-md-6">
+                        <div class="panel status panel-success">
+                            <div class="panel-heading">
+                                <h1 class="panel-title text-center">{{ nbParticipations }}</h1>
+                            </div>
+                            <div class="panel-body text-center">
+                                {% if nbParticipations > 1 %}                    
+                                    <strong>participations</strong>
+                                {% else %}
+                                    <strong>participation</strong>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
-                    <div class="panel-body text-center">
-                        {% if nbParticipations > 1 %}                    
-                            <strong>participations</strong>
-                        {% else %}
-                            <strong>participation</strong>
-                        {% endif %}
+                    <div class="col-md-6">
+                        <div class="panel status panel-info">
+                            <div class="panel-heading">
+                                <h1 class="panel-title text-center">{{ nbDemandesEnAttente }}</h1>
+                            </div>
+                            <div class="panel-body text-center">                        
+                                {% if nbDemandesEnAttente > 1 %}                    
+                                    <strong>demandes d'acceptation en attente</strong>
+                                {% else %}
+                                    <strong>demande d'acceptation en attente</strong>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="panel status panel-danger">
-                    <div class="panel-heading">
-                        <h1 class="panel-title text-center">{{ nbDemandesEnAttente }}</h1>
+                    <div class="col-md-12">
+                        
+                        <div class="panel panel-success">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Mes participations en approche</h3>
+                            </div>
+                            <div class="panel-body">
+                                {% set auMoinsUneParticipationHorsMoi = false %}
+                                {% for liste in listeParticipationEnApproche %}
+                                    {% if liste.activite.organisateur != app.user %}
+                                        {% set auMoinsUneParticipationHorsMoi = true %}
+                                        <p>L'activité 
+                                            <a href="{{ path('moove_activite_detailsActivite', {idActivite: liste.activite.id}) }}" >
+                                                  {{ liste.activite.sportPratique.nom | lower }} du {{ liste.activite.dateHeureRDV | date("d/m/y") }}
+                                            </a> 
+                                            de 
+                                            <a href="{{ path('moove_utilisateur_profileUtilisateur', {idUtilisateur: liste.activite.organisateur.id}) }}">
+                                                {{ liste.activite.organisateur.prenom ~ " " ~ liste.activite.organisateur.nom }}
+                                            </a> 
+                                            {% set tempsAvantDebut = (liste.activite.dateHeureRDV | date("U") - "now" | date("U")) %}
+                                            démarre dans {{ tempsAvantDebut | date("d \\j\\o\\u\\r\\s h \\h\\e\\u\\r\\e\\s i \\m\\i\\n\\u\\t\\e\\s") }}  .
+                                        </p>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if not auMoinsUneParticipationHorsMoi %}
+                                    Vous n'avez pas d'activité en approche. Vous pouvez rejoindre des activités en <a href="{{ path('moove_activite_rechercher') }}">recherchant des activités</a>.
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Mes demandes de participation</h3>
+                            </div>
+                            <div class="panel-body">
+                                {% for liste in listeDemandesEnAttente %}
+                                    <p>Ma demande de participation à l'activité 
+                                        <a href="{{ path('moove_activite_detailsActivite', {idActivite: liste.id}) }}" >
+                                            {{ liste.sportPratique.nom | lower }} du {{ liste.dateHeureRDV | date("d/m/y") }}
+                                        </a> 
+                                        de 
+                                        <a href="{{ path('moove_utilisateur_profileUtilisateur', {idUtilisateur: liste.organisateur.id}) }}">
+                                            {{ liste.organisateur.prenom ~ " " ~ liste.organisateur.nom }}
+                                        </a> est en attente.
+                                    </p>
+                                {% else %}
+                                  Je n'ai pas de demandes en attente. Vous pouvez rejoindre des activités en <a href="{{ path('moove_activite_rechercher') }}">recherchant des activités</a>.
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
                     </div>
-                    <div class="panel-body text-center">                        
-                        {% if nbDemandesEnAttente > 1 %}                    
-                            <strong>demandes d'acceptation en attente</strong>
-                        {% else %}
-                            <strong>demande d'acceptation en attente</strong>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-12">
-                <div class="panel panel-danger">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Mes demandes de participation</h3>
-                    </div>
-                    <div class="panel-body">
-                        {% for liste in listeDemandesEnAttente %}
-                          <p>Ma demande de participation à l'activité <a href="{{ path('moove_activite_detailsActivite', {idActivite: liste.id}) }}" >{{ liste.sportPratique.nom | lower }} du {{ liste.dateHeureRDV | date("d/m/y") }}</a> de <a href="{{ path('moove_utilisateur_profileUtilisateur', {idUtilisateur: liste.organisateur.id}) }}">{{ liste.organisateur.prenom ~ " " ~ liste.organisateur.nom }}</a> est toujours en attente.</p>
-                        {% else %}
-                          Je n'ai pas de demandes en attente. Allez rejoindre des activités en <a href="{{ path('moove_activite_rechercher') }}">recherchant des activités</a>.
-                        {% endfor %}
-                    </div>
-                </div>
+                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="col-md-6">
-                <div class="panel status panel-primary">
-                    <div class="panel-heading">
-                        <h1 class="panel-title text-center">{{ nbOrganisations }}</h1>
+        <div class=" col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading text-center">Mes activités</div>
+                <div class="panel-body">
+                    <div class="col-md-6">
+                        <div class="panel status panel-primary">
+                            <div class="panel-heading">
+                                <h1 class="panel-title text-center">{{ nbOrganisations }}</h1>
+                            </div>
+                            <div class="panel-body text-center">
+                                {% if nbOrganisations > 1 %}                    
+                                    <strong>organisations</strong>
+                                {% else %}
+                                    <strong>organisation</strong>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
-                    <div class="panel-body text-center">
-                        {% if nbOrganisations > 1 %}                    
-                            <strong>organisations</strong>
-                        {% else %}
-                            <strong>organisation</strong>
-                        {% endif %}
+                    <div class="col-md-6">
+                        <div class="panel status panel-warning">
+                            <div class="panel-heading">
+                                <h1 class="panel-title text-center">{{ nbDemandesEnAttenteOrganisateur }}</h1>
+                            </div>
+                            <div class="panel-body text-center">                        
+                                {% if nbDemandesEnAttenteOrganisateur > 1 %}                    
+                                    <strong>demandes de participation en attente</strong>
+                                {% else %}
+                                    <strong>demande de participation en attente</strong>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="panel status panel-warning">
-                    <div class="panel-heading">
-                        <h1 class="panel-title text-center">{{ nbDemandesEnAttenteOrganisateur }}</h1>
-                    </div>
-                    <div class="panel-body text-center">                        
-                        {% if nbDemandesEnAttenteOrganisateur > 1 %}                    
-                            <strong>demandes de participation en attente</strong>
-                        {% else %}
-                            <strong>demande de participation en attente</strong>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-12">
-            <div class="panel panel-warning">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Demandes de participation à mes activités</h3>
-                    </div>
-                    <div class="panel-body">
-                        {% if ListeDemandeAValide is not empty %}
-                            {% for participation in ListeDemandeAValide %}
-                            <p>
-                                <a href="{{ path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participation.utilisateur.id}) }}">{{ participation.utilisateur.prenom ~ " " ~ participation.utilisateur.nom}}</a> demande à participer à l'activite <a href="{{ path('moove_activite_detailsActivite', {idActivite: participation.activite.id}) }}">{{ participation.activite.sportPratique.nom | lower }} du {{ participation.activite.dateHeureRDV | date("d/m/y") }}.</a>
-                                <button type="button" class="btn btn-success btn-xs ">Accepter</button>
-                                <button type="button" class="btn btn-danger btn-xs">Refuser</button>
-                            </p>
-                            {% else %}
-                                <p>Je n'ai proposé aucune activité ou je n'ai pas de demandes en attente sur vos activités.</p>
-                            {% endfor %}
-                        {% endif %}
+                    <div class="col-md-12">
+                      
+                        
+                        <div class="panel panel-primary">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Mes organisations en approche</h3>
+                            </div>
+                            <div class="panel-body">
+                                {% set auMoinsUneParticipationHorsMoi = false %}
+                                {% for liste in listeOrganisationEnApproche %}
+                                    {% if liste.activite.organisateur == app.user %}
+                                        {% set auMoinsUneParticipationHorsMoi = true %}
+                                        <p>Votre activité 
+                                            <a href="{{ path('moove_activite_detailsActivite', {idActivite: liste.activite.id}) }}" >
+                                                  {{ liste.activite.sportPratique.nom | lower }} du {{ liste.activite.dateHeureRDV | date("d/m/y") }}
+                                            </a> 
+                                            {% set tempsAvantDebut = (liste.activite.dateHeureRDV | date("U") - "now" | date("U")) %}
+                                            démarre dans {{ tempsAvantDebut | date("m \\m\\o\\i\\s d \\j\\o\\u\\r\\s h \\h\\e\\u\\r\\e\\s i \\m\\i\\n\\u\\t\\e\\s") }}.
+                                        </p>
+                                    {% endif %}
+                                {% endfor %}
+                                {% if not auMoinsUneParticipationHorsMoi %}
+                                    Vous n'avez pas d'activité en approche. Vous pouvez rejoindre des activités en <a href="{{ path('moove_activite_rechercher') }}">recherchant des activités</a>.
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="panel panel-warning">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Demandes de participation à mes activités</h3>
+                            </div>
+                            <div class="panel-body">
+                                {% if ListeDemandeAValide is not empty %}
+                                    {% for participation in ListeDemandeAValide %}
+                                        <p>
+                                            <a href="{{ path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participation.utilisateur.id}) }}">{{ participation.utilisateur.prenom ~ " " ~ participation.utilisateur.nom}}</a> demande à participer à mon activite <a href="{{ path('moove_activite_detailsActivite', {idActivite: participation.activite.id}) }}">{{ participation.activite.sportPratique.nom | lower }} du {{ participation.activite.dateHeureRDV | date("d/m/y") }}.</a>
+                                            <button type="button" class="btn btn-success btn-xs ">Accepter</button>
+                                            <button type="button" class="btn btn-danger btn-xs">Refuser</button>
+                                        </p>
+                                    {% endfor %}
+                                {% else %}
+                                    Je n'ai proposé aucune activité ou je n'ai pas de demandes en attente sur mes activités.
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -110,7 +185,7 @@
                    {% set aucuneDemande = false %}
                    
                      {% for listeDemande in ListeDemandeAValide.listeDemandes[0] %}
-                        <p>{{ listeDemande.prenom ~ " " ~ listeDemande.nom}}  demande à participer à l'activite {{listeOrganisations.sportPratique.nom | lower }} du {{listeOrganisations.DateHeureRDV | date("d/m/y") }}.
+                        <p>{{ listeDemande.prenom ~ " " ~ listeDemande.nom}}  demande à participer à mon activite {{listeOrganisations.sportPratique.nom | lower }} du {{listeOrganisations.DateHeureRDV | date("d/m/y") }}.
                           <button type="button" class="btn btn-success btn-xs ">Accepter</button>
                           <button type="button" class="btn btn-danger btn-xs">Refuser</button>
                         </p>

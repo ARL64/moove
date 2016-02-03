@@ -6,42 +6,121 @@
 <div class="fos_user_user_show">
     <div class="row">
         <div class="col-md-12">
-            <div class="col-md-9">
-                <div class="media">
-                    <div class="media-left">
-                        <img class="media-object" src="{{ asset(user.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
+            <!-- partie correspondant au panel violet -->
+            <div class="col-md-4">
+                <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <h3 class="panel-title text-center">Informations générales</h3>
+                            </div>
+                            <div class="panel-body">
+                                <div class="media">
+                                    <div class="media-left">
+                                        <img class="media-object" src="{{ asset(user.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
+                                    </div>
+                                    <div class="media-body">
+                                        <p class="media-heading">{{ user.prenom ~ " " ~ user.nom }}</p>
+                                        <p>{{ 'profile.show.username'|trans }} : {{ user.username }}</p>
+                                        <p>{{ 'profile.show.email'|trans }} : {{ user.email }}</p>
+                                    </div>
+                                </div>
+                                <div> 
+                                     <p>Age : {{ ('now'|date('Y') - user.dateNaissance|date('Y') - 1) + ('now'|date('2010-m-d')|date('U') - user.dateNaissance|date('2010-m-d')|date('U') >= 0 ? 1 : 0) }} ans</p>
+                                     <p>Genre : {{ user.sexe }}</p>
+                                </div>
+                            </div>
+                </div>
+            </div>
+            <!-- partie correspondant au panel vert -->
+            <div class="col-md-8">
+                <div class="panel panel-success">
+                    <div class="panel-heading">
+                          <h3 class="panel-title text-center"> Informations complémentaires </h3>
                     </div>
-                    <div class="media-body">
-                        <p class="media-heading">{{ user.prenom ~ " " ~ user.nom }}</p>
-                        <p>{{ 'profile.show.username'|trans }} : {{ user.username }}</p>
-                        <p>{{ 'profile.show.email'|trans }} : {{ user.email }}</p>
+                    <div class="panel-body">
+                        <div class="col-md-3">
+                            <div class="panel panel-success">
+                                <div class="panel-heading">
+                                     <h3 class="panel-title"> Organisations totales:</h3>
+                                         <div class="panel-body">
+                                             <p class="centrer">{{ nbOrganisationsFinies }}</p>
+                                         </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="panel panel-success">
+                                <div class="panel-heading">
+                                     <h3 class="panel-title"> Participations totales:</h3>
+                                         <div class="panel-body">
+                                             <p class="centrer">{{ nbParticipationsFinies }}</p>
+                                         </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="panel panel-success">
+                                <div class="panel-heading">
+                                     <h3 class="panel-title">Organisations à venir:</h3>
+                                         <div class="panel-body">
+                                             <p class="centrer">{{ nbParticipations }}</p>
+                                         </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="panel panel-success">
+                                <div class="panel-heading">
+                                     <h3 class="panel-title"> Participations à venir:</h3>
+                                         <div class="panel-body">
+                                             <p class="centrer">{{ nbOrganisations }}</p>
+                                         </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="alignementTexte"> 
-                     <p> Date de naissance : {{ user.dateNaissance | date("d/m/y") }} </p>
-                     <p> Genre : {{ user.sexe }}</p>
-                     {% if nbSportNiveau > 1 %}
-                         <p> Sports : </p></br>
-                     {% else %}
-                         <p> Sport : </p> </br>
-                     {% endif %}
-                     <div class="col-md-12 ">
+            </div>
+        </div>
+        <!-- Partie correspondant au panel orange -->
+        <div class="col-md-12">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        <h3 class="panel-title text-center">
+                            {% if user.id == app.user.id %}
+                                {% if nbSportNiveau > 1 %}
+                                     Mes sports
+                                {% else %}
+                                    Mon sport
+                                {% endif %}
+                            {% else %}
+                                {% if nbSportNiveau > 1 %}
+                                     Ses sports
+                                {% else %}
+                                    Son sport
+                                {% endif %}
+                            {% endif %}
+                        </h3>
+                    </div>
+                    <div class="panel-body">
                          {% for sportNiveau in tabSportNiveau %}
-                              
-                                 <img  src="{{ asset(sportNiveau.sport.urlPictogramme) }}" alt="Photo du sport" width="75" height="75"> 
-                                 Niveau : {{ sportNiveau.niveau.libelle }}
-                             
+                         <div class="col-md-3">
+                            <div class="media">
+                                <div class="media-left">
+                                    <img class="media-object" src="{{ asset(sportNiveau.sport.urlPictogramme) }}" alt="Photo du sport" width="75" height="75">
+                                </div>
+                                <div class="media-body">
+                                    <p>Niveau : {{ sportNiveau.niveau.libelle }}</p>
+                                    <p>{{ sportNiveau.sport.nom }}</p>
+                                </div>
+                            </div>
+                        </div>
                          {% endfor %}
-                     </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-3">
-                {% if user.id == app.user.id %}
-                    <a href="{{ path('fos_user_profile_edit') }}"><button type="button" class="btn btn-primary btn-lg">Modifier mon profil</button></a>
-                {#{% else %}
-                    <a href="{{ path('notForNow_addUser') }}"><button type="button" class="btn btn-primary btn-lg">Envoyer demande ami</button></a>#}
-                {% endif %}
-            </div>
+            <div class="col-md-1"></div>
         </div>
     </div>
 </div>

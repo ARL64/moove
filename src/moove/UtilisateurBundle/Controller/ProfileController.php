@@ -47,17 +47,37 @@ class ProfileController extends Controller
         if (!is_object($user) || !$user instanceof UserInterface) {
             throw new AccessDeniedException('This user does not have access to this section.');
         }
-        //On récupère le manager & le repository de pratiquer, de  niveau et de sport
+        //On récupère le manager & le repository de pratiquer, d'activité et de participer
         $repPratiquer = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Pratiquer');
+        $repActivite = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Activite');
+        $repParticipations = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Participer');
         //On récupère un tableau de pratiquer où il y a l'id de l'utilisateur
         $tabSportNiveau = $repPratiquer->findByUtilisateur($user);
         //$nbSportNiveau = count($repPratiquer->findByUtilisateur($user));
         $nbSportNiveau = count($tabSportNiveau);
+        
+        //On récupère le nombre d'organisation non terminée
+        $nbOrganisations = count($repActivite->findBy(array('organisateur' => $user, 'estTerminee' => 0)));
+        // on récupère la liste des participations à venir
+        $listeParticipationEnApproche = $repParticipations->findByUtilisateurEstAccepter($user, false, 1);
+        //on récupère le nombre de participations à venir
+        $nbParticipations = count($listeParticipationEnApproche) - $nbOrganisations;
+        
+        //On récupère le nombre d'organisation terminées
+        $nbOrganisationsFinies = count($repActivite->findBy(array('organisateur' => $user, 'estTerminee' => 1)));
+        //On récupère la liste des participations finis
+        $listeParticipationsFinies = $repParticipations->findByUtilisateurEstAccepter($user, true, 1);
+        //On récupère le nombre de participations finis
+        $nbParticipationsFinies = count($listeParticipationsFinies) - $nbOrganisationsFinies;
 
         return $this->render('FOSUserBundle:Profile:show.html.twig', array(
             'user' => $user,
             'tabSportNiveau' => $tabSportNiveau,
-            'nbSportNiveau' => $nbSportNiveau
+            'nbSportNiveau' => $nbSportNiveau,
+            'nbOrganisations' => $nbOrganisations,
+            'nbParticipations' => $nbParticipations,
+            'nbOrganisationsFinies' => $nbOrganisationsFinies,
+            'nbParticipationsFinies' => $nbParticipationsFinies
         ));
     }
 

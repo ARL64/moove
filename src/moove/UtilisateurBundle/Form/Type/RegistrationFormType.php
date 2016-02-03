@@ -59,7 +59,6 @@ class RegistrationFormType extends AbstractType
             // Nom d'utilisateur
             ->add('username', null, array(
                 'label' => 'form.username', 'translation_domain' => 'FOSUserBundle',
-                'translation_domain' => 'FOSUserBundle',
                 'label_attr' => array('class' => 'sr-only'),
                 'attr' => array(
                     'placeholder' => 'form.username',
@@ -80,11 +79,19 @@ class RegistrationFormType extends AbstractType
                 'invalid_message' => 'fos_user.password.mismatch',
             ))
             // Date de naissance
+            ->add('dateNaissance', 'text', array(
+                'label' => 'form.birthday', 'translation_domain' => 'FOSUserBundle',
+                'label_attr' => array('class' => 'sr-only'),
+                    'attr' => array(
+                        'placeholder' => 'form.birthday',
+            )))
+            /* Calendrier founi
             ->add('dateNaissance', 'birthday', array(
                 'label' => 'Date de naissance',
                 'label_attr' => array('class' => 'sr-only'),
                 'widget' => 'single_text'
             ))
+            */
             ->add('sexe', 'choice', array(
                 'choices' => array('homme' => ' Homme', 'femme' => ' Femme'),
                 'multiple' => false,
@@ -103,13 +110,13 @@ class RegistrationFormType extends AbstractType
             'intention'  => 'registration',
         ));
     }
-
+    
     // BC for SF < 2.7
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $this->configureOptions($resolver);
     }
-
+    
     // BC for SF < 3.0
     public function getName()
     {
@@ -118,6 +125,6 @@ class RegistrationFormType extends AbstractType
 
     public function getBlockPrefix()
     {
-        return 'fos_user_registration';
+        return 'app_user_registration';
     }
 }

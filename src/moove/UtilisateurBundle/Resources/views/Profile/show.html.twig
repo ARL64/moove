@@ -1,21 +1,17 @@
 {% extends "::vueMere.html.twig" %}
-
+{% block stylesheets %}
+  <link rel="stylesheet" href="{{ asset('css/components/panel.css') }}">
+{% endblock %}
 {% block title %}Profil{% endblock %}
 
 {% block body %} 
     <!-- Titre de la page -->
     <section class="content-header">
-      <h1>
-        
-        
-        {% if user.id == app.user.id %}
-          Mon Profil
-        {% else %}
-          {{ user.prenom ~ " " ~ user.nom }}
-        {% endif %}
-        
-        
-      </h1>
+      <h1>{% if user.id == app.user.id %}Mon Profil{% else %}{{ user.prenom ~ " " ~ user.nom }}{% endif %} {% if user.id == app.user.id %}
+          <a href="{{ path('fos_user_profile_edit') }}"><button type="button" class="pull-right btn btn-primary">Modifier mon profil</button></a>
+        {#{% else %}
+          <a href="{{ path('notForNow_addUser') }}"><button type="button" class="btn btn-primary btn-lg">Envoyer demande ami</button></a>#}
+        {% endif %}</h1>
     </section>
     
     <!-- Contenu principal -->

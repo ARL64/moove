@@ -415,4 +415,12 @@ class Activite
     {
         return $this->lieuArrivee;
     }
+    
+    
+    
+    public function tempsAvantDebut()
+    {
+        $dateNow = new \DateTime(/*'NOW'*/);
+        return $dateNow->diff($this->dateHeureRDV);
+    }
 }
