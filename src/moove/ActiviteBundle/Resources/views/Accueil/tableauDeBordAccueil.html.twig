@@ -64,7 +64,7 @@
                                     {% endif %}
                                 {% endfor %}
                                 {% if not auMoinsUneParticipationHorsMoi %}
-                                    Vous n'avez pas d'activité en approche. Vous pouvez rejoindre des activités en <a href="{{ path('moove_activite_rechercher') }}">recherchant des activités</a>.
+                                    <p>Vous n'avez pas d'activité en approche. Vous pouvez rejoindre des activités en <a href="{{ path('moove_activite_rechercher') }}">recherchant des activités</a>.</p>
                                 {% endif %}
                             </div>
                         </div>
@@ -85,7 +85,7 @@
                                         </a> est en attente.
                                     </p>
                                 {% else %}
-                                  Je n'ai pas de demandes en attente. Vous pouvez rejoindre des activités en <a href="{{ path('moove_activite_rechercher') }}">recherchant des activités</a>.
+                                  <p>Je n'ai pas de demandes en attente. Vous pouvez rejoindre des activités en <a href="{{ path('moove_activite_rechercher') }}">recherchant des activités</a>.</p>
                                 {% endfor %}
                             </div>
                         </div>
@@ -148,7 +148,7 @@
                                     {% endif %}
                                 {% endfor %}
                                 {% if not auMoinsUneParticipationHorsMoi %}
-                                    Vous n'avez pas d'activité en approche. Vous pouvez rejoindre des activités en <a href="{{ path('moove_activite_rechercher') }}">recherchant des activités</a>.
+                                    <p>Vous n'avez pas d'activité en approche. Vous pouvez rejoindre des activités en <a href="{{ path('moove_activite_rechercher') }}">recherchant des activités</a>.</p>
                                 {% endif %}
                             </div>
                         </div>
@@ -168,7 +168,7 @@
                                         </p>
                                     {% endfor %}
                                 {% else %}
-                                    Je n'ai proposé aucune activité ou je n'ai pas de demandes en attente sur mes activités.
+                                    <p>Je n'ai proposé aucune activité ou je n'ai pas de demandes en attente sur mes activités.</p>
                                 {% endif %}
                             </div>
                         </div>

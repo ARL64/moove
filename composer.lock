@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "eb2555b1c8a72b9e0c841b4271eeab8a",
-    "content-hash": "30d7fbf72df44b2cb1af90cfb112d044",
+    "hash": "9f3bd88399448d2f10fef52f968cc016",
+    "content-hash": "52651a5cab3b28700c9df976e12635c3",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -713,7 +713,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/6ccff96434c0ac7fee077d1dce90966341dfd278",
+                "url": "https://api.github.com/repos/FriendsOfSymfony/FOSUserBundle/zipball/8f1fc2273b37c61ddcc1620abf4500320a23763e",
                 "reference": "6ccff96434c0ac7fee077d1dce90966341dfd278",
                 "shasum": ""
             },
@@ -873,6 +873,57 @@
                 "sql"
             ],
             "time": "2014-01-12 16:20:24"
+        },
+        {
+            "name": "jstayton/google-maps-geocoder",
+            "version": "v2.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jstayton/GoogleMapsGeocoder.git",
+                "reference": "9da0b1363e0dc2908750e60af23f2d32b0afe855"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jstayton/GoogleMapsGeocoder/zipball/9da0b1363e0dc2908750e60af23f2d32b0afe855",
+                "reference": "9da0b1363e0dc2908750e60af23f2d32b0afe855",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "require-dev": {
+                "phpdocumentor/phpdocumentor": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "GoogleMapsGeocoder": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Justin Stayton",
+                    "homepage": "http://justinstayton.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A PHP wrapper for the Google Maps Geocoding API v3.",
+            "homepage": "https://github.com/jstayton/GoogleMapsGeocoder",
+            "keywords": [
+                "geocode",
+                "geocoder",
+                "geocoding",
+                "gmap",
+                "gmaps",
+                "google",
+                "map",
+                "maps"
+            ],
+            "time": "2015-11-10 19:17:52"
         },
         {
             "name": "kriswallsmith/assetic",

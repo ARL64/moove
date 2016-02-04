@@ -18,11 +18,11 @@
 {% block javascript %}
     <script src="{{ asset('js/bootstrap-datepicker.min.js') }}" charset="utf-8"></script>
     <script>
-        $('form-group input').datepicker({
-          format: "dd/mm/yyyy",
+        $('#datePicker input').datepicker({
+          format: "dd-mm-yyyy",
           startView: 2,
           language: "fr",
-          orientation: "bottom auto",
+          orientation: "top auto",
           autoclose: false
         });
     </script>

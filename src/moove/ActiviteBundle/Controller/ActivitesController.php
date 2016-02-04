@@ -36,7 +36,8 @@ class ActivitesController extends Controller
         $listeParticipationEnApproche = $repParticipations->findByUtilisateurEstAccepter($utilisateur, false, 1);
         $nbParticipations = count($listeParticipationEnApproche) - $nbOrganisations;
         
-        $nbDemandesEnAttente = count($repParticipations->findBy(array('utilisateur' => $utilisateur, 'estAccepte' => 0)));
+        $listeDesDemandesEnAttente = $repActivite->findByUtilisateurAccepter($utilisateur, 0);
+        $nbDemandesEnAttente = count($listeDesDemandesEnAttente);
        
        // BUG //
        /*
@@ -44,7 +45,6 @@ class ActivitesController extends Controller
        */
 
         
-        $listeDesDemandesEnAttente = $repActivite->findByUtilisateurAccepter($utilisateur, 0);
         return $this->render('mooveActiviteBundle:Accueil:tableauDeBordAccueil.html.twig', 
                             array(  
                                     'nbParticipations' => $nbParticipations, 
@@ -97,10 +97,13 @@ class ActivitesController extends Controller
          $arg = $estOrganisateur? array(1,0) : 1;   
          
         // On récupère un tableau d'objet Participer $tabParticiper
-        $tabParticiper = $repParticiper->findBy(array('activite' => $idActivite, 'estAccepte' => $arg));
+        $tabParticiper = $repParticiper->findBy(array('activite' => $idActivite, 'estAccepte' => 1));
         // On récupère le nombre de participants de l'activité
         $nbParticipants = count($tabParticiper);
         
+        if($estOrganisateur)
+                $tabParticiper = array_merge($tabParticiper, $repParticiper->findBy(array('activite' => $idActivite, 'estAccepte' => 0)));
+
         // On indique si l'utilisateur accédant au détails de l'activité est participant ou non
 
 
@@ -183,9 +186,16 @@ class ActivitesController extends Controller
         // On crée un objet "activité"
         $activite = new Activite();
         $lieu = new Lieu();
-        
+        $today=getDate();
+        //$jour = $today['wday'];
+        $annee= $today['year'];
+        //$mois = mktime( 0, 0, 0, $today['mon'], 1, $today['year'] );
+       // $nombreDeJoursMois = intval(date("t",$mois));
         // On initialise l'organisteur avec l'utilisateur qui est entrain de créer l'activité
-        $activite->setOrganisateur($this->getUser());
+        $activite   ->setOrganisateur($this->getUser())
+                    ->setDateCreation(new \Datetime("NOW"))
+                    ->setEstTerminee(false)
+                ;
 
         // On crée le formulaire permettant de saisir un livre
         $formulaireActivite = $this->createFormBuilder($activite)
@@ -206,11 +216,12 @@ class ActivitesController extends Controller
                                    //->add('lieuRDV')
                                    //->add('lieuDepart')
                                    //->add('lieuArrivee')
-                                   ->add('dateHeureRDV', 'datetime', array('label' => 'Date et heure de rendez-vous'))
-                                   ->add('dateFermeture', 'datetime', array('label' => 'Date et heure de fermeture  de l\'activité'))
+                                   ->add('dateHeureRDV', 'datetime', array('label' => 'Date et heure de rendez-vous','years'=>range($annee, ($annee+5))))
+                                   ->add('dateFermeture', 'datetime', array('label' => 'Date et heure de fermeture  de l\'activité', 'years'=>range($annee, ($annee+5))))
                                    ->add('duree', 'time', array('label' => 'Durée estimée'))
-                                   ->add('nbPlaces','integer', array('label'=> 'Nombre de places total (vous inclut)'))
+                                   ->add('nbPlaces','integer', array('label'=> 'Nombre de places total (vous inclus)'))
                                    ->add('description', 'textarea' ,array ('label' => 'Informations'))
+                                   // ->add('lieu1', 'text', ['label' => 'Lieu de rendez-vous'])
                                    ->getForm();
                                    
         /* On analyse la requête courante pour savoir si le formulaire a été soumis ou pas.
@@ -220,14 +231,18 @@ class ActivitesController extends Controller
         
         if($formulaireActivite->isSubmitted()) // Le formulaire a été soumis
         {
+            //$lieuRDV = $formulaireActivite->getData();
+            //var_dump($lieuRDV['']);
+            
             //On enregistre l'objet $livre en base de données
             $gestionnaireEntite = $this->getDoctrine()->getManager();
             $gestionnaireEntite->persist($activite);
             $gestionnaireEntite->flush();
             
+            $requeteUtilisateur->getSession()->getFlashBag()->add('notice', 'Activité publiée.');
             //On redirige vers la page de visualisation de l'activité ajouté
             return $this->redirect($this->generateUrl('moove_activite_detailsActivite',
-                                                      array('id' => $activite->get(id),'organisateur' => $organisateur)));
+                                                      array('idActivite' => $activite->getId())));
         }
         //A ce point, le visiteur arrive sur la page qui doit afficher le formulaire
         return $this->render('mooveActiviteBundle:Activite:proposerActivite.html.twig',

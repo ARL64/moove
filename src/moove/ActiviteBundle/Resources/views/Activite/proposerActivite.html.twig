@@ -12,12 +12,70 @@
         <div class="row">
           <div class="col-md-5">
             <form method="post" {{ form_enctype(formulaireActivite) }}>
-              {{ form_widget(formulaireActivite) }}
-              <input type="submit" class="btn btn-primary" value="Publier"/>
-            </form>
-          </div>
-          <div class="col-md-6">
-          </div>
+              {{form_start(formulaireActivite)}}
+              <div>
+                {{ form_label(formulaireActivite.sportPratique) }}
+                {{ form_errors(formulaireActivite.sportPratique) }}
+                {{ form_widget(formulaireActivite.sportPratique) }}
+              </div>
+               <div>
+                {{ form_label(formulaireActivite.niveauRequis) }}
+                {{ form_errors(formulaireActivite.niveauRequis) }}
+                {{ form_widget(formulaireActivite.niveauRequis) }}
+              </div>
+              <div>
+                {{ form_label(formulaireActivite.dateHeureRDV) }}
+                {{ form_errors(formulaireActivite.dateHeureRDV) }}
+                {{ form_widget(formulaireActivite.dateHeureRDV) }}
+              </div>
+              <div>
+                {{ form_label(formulaireActivite.dateFermeture) }}
+                {{ form_errors(formulaireActivite.dateFermeture) }}
+                {{ form_widget(formulaireActivite.dateFermeture) }}
+              </div>
+              <div>
+                {{ form_label(formulaireActivite.duree) }}
+                {{ form_errors(formulaireActivite.duree) }}
+                {{ form_widget(formulaireActivite.duree) }}
+              </div>
+              <div>
+                {{ form_label(formulaireActivite.nbPlaces) }}
+                {{ form_errors(formulaireActivite.nbPlaces) }}
+                {{ form_widget(formulaireActivite.nbPlaces) }}
+              </div>
+              <div>
+                {{ form_label(formulaireActivite.description) }}
+                {{ form_errors(formulaireActivite.description) }}
+                {{ form_widget(formulaireActivite.description) }}
+              </div></br>
+            </div>
+            <div class="col-md-6">
+                <label class="control-label required" for="form_lieuRDV">Lieu de rendez-vous</label>
+                <input id="form_lieuRDV" type="text" class="form-control" placeholder="Entrez une ville...">
+            </div>
+            <div class="row">
+              <div class="col-md-9"></div>
+              <div class="col-md-3">
+                <input type="submit" class="btn btn-primary" value="Publier"/>
+                <a href="{{ path('moove_activite_tableauDeBord') }}"><button type="button" class="btn btn-warning">Annuler</button></a>
+              </div>
+            </div>
+          </form>
+          
         </div>
     </section>
+{% endblock %}
+{% block javascripts %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDmo1B7t569caLPAVZZNdcoH97JCnHRqNM&signed_in=true&libraries=places&callback=initAutocomplete"
+        async defer></script>
+    <script>
+        var input = (document.getElementById('form_lieuRDV'));
+        var autocomplete;
+        
+        function initAutocomplete() {
+          // Create the autocomplete object, restricting the search to geographical
+          // location types.
+          autocomplete = new google.maps.places.Autocomplete(input, {types: ['geocode']});
+        }
+    </script>
 {% endblock %}

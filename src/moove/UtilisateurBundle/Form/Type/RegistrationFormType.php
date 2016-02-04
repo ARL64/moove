@@ -78,13 +78,27 @@ class RegistrationFormType extends AbstractType
                         'class' => 'form-control')),
                 'invalid_message' => 'fos_user.password.mismatch',
             ))
-            // Date de naissance
-            ->add('dateNaissance', 'text', array(
+            /* Date de naissance
+            ->add('dateNaissance', 'birthday', array(
                 'label' => 'form.birthday', 'translation_domain' => 'FOSUserBundle',
                 'label_attr' => array('class' => 'sr-only'),
                     'attr' => array(
-                        'placeholder' => 'form.birthday',
-            )))
+                        'placeholder' => 'form.birthday'),
+                'input' => 'string',
+                'widget' => 'single_text',
+                'format' => 'YYYY-mm-dd'
+            ))*/
+            ->add('dateNaissance', 'date', [
+                'translation_domain' => 'FOSUserBundle',
+                'widget' => 'single_text',
+                'format' => 'dd-MM-yyyy',
+                'attr' => [
+                    'class' => 'form-control input-inline datepicker',
+                    'placeholder' => 'form.birthday',
+                    'data-provide' => 'datepicker',
+                    'data-date-format' => 'dd-mm-yyyy'
+                ]
+            ])
             /* Calendrier founi
             ->add('dateNaissance', 'birthday', array(
                 'label' => 'Date de naissance',

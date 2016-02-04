@@ -92,32 +92,45 @@
             </div>
               <div class="panel-body">
                 {% for participationCourant in tabParticipants %}
-                  <div class="media">
-                    <div class="media-left">
-                        <img class="media-object" src="{{ asset(participationCourant.utilisateur.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
-                    </div>
-                    <div class="media-body">
-                      <h4 class="media-heading">{{ participationCourant.utilisateur.prenom ~ " " ~ participationCourant.utilisateur.nom }}
-                        {% if estOrganisateur and participationCourant.estAccepte == 0 %}
-                          <button type="button" class="btn btn-success btn-xs ">Accepter</button>
-                          <button type="button" class="btn btn-danger btn-xs">Refuser</button>
-                        {% endif %}
-                      </h4> {# HERESIE !!! HERESIE !!! BRULE EN ENFER HERESIE !!! #}
-                      <p>{{ participationCourant.utilisateur.dateNaissance | date("d/m/y") }}</p>
-                      <p>Niveau : 
-                        {% set find = false %}
-                        {% for prati in participationCourant.utilisateur.pratiquer %}
-                          {% if prati.sport == activite.sportPratique %}
-                              {{ prati.niveau.libelle }} <i>({{ prati.sport.nom }})</i>
-                            {% set find = true %}
+                  {#<div class="media">#}
+                  
+                    <a href="{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}" class="list-group-item">
+                    
+                      <div class="media-left">
+                          <img class="media-object" src="{{ asset(participationCourant.utilisateur.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
+                      </div>
+                      <div class="media-body">
+                        <h4 class="media-heading">{{ participationCourant.utilisateur.prenom ~ " " ~ participationCourant.utilisateur.nom }}</h4>
+                          {# <p>
+                            {% if estOrganisateur and participationCourant.estAccepte == 0 %}
+                              <button type="button" class="btn btn-success btn-xs ">Accepter</button>
+                              <button type="button" class="btn btn-danger btn-xs">Refuser</button>
+                            {% endif %}
+                          </p> #}
+                        {# <p>{{ participationCourant.utilisateur.dateNaissance | date("d/m/y") }}</p> #}
+                        <p>Niveau : 
+                          {% set find = false %}
+                          {% for prati in participationCourant.utilisateur.pratiquer %}
+                            {% if prati.sport == activite.sportPratique %}
+                                {{ prati.niveau.libelle }} <i>({{ prati.sport.nom }})</i>
+                              {% set find = true %}
+                            {% endif %}
+                          {% endfor %}
+                          {% if not find %}
+                            Non pratiquant
                           {% endif %}
-                        {% endfor %}
-                        {% if not find %}
-                          Non pratiquant
-                        {% endif %}
-                      </p> 
-                    </div>
-                  </div>
+                          <p>
+                            {% if estOrganisateur and participationCourant.estAccepte == 0 %}
+                              <button type="mini-button" class="btn btn-success btn-xs ">Accepter</button>
+                              <button type="mini-button" class="btn btn-danger btn-xs">Refuser</button>
+                            {% endif %}
+                          </p>
+                        </p> 
+                      </div>
+                    
+                    </a>
+                  {#</div>#}
+                  
                 {% endfor %}
                 {# estAccepter == 1 :> validé | estAccepter == 2 :> refusé | estAccepter == 0 :> en attente #}
                 {% if estOrganisateur %}

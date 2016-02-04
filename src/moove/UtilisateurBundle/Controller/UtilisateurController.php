@@ -21,18 +21,54 @@ class UtilisateurController extends Controller
     {   
         $this->checkAuthorization();
         
+        if($idUtilisateur == $this->getUser()->getId())
+            return $this->redirect($this->generateUrl('fos_user_profile_show'));
+        
+        // On récupère le manager & le repository de pratiquer, d'activité et de participer
         $repPratiquer = $this->getRepository('Pratiquer', 'Activite');
+        $repActivite = $this->getRepository('Activite', 'Activite');
+        $repParticipations = $this->getRepository('Participer', 'Activite');
         $repUtilisateur = $this->getRepository('Utilisateur');
         
+        // On récupère l'utilisateur
         $user = $repUtilisateur->find($idUtilisateur);
+    
+        
+            
+        // On récupère un tableau de pratiquer où il y a l'id de l'utilisateur
         $tabSportNiveau = $repPratiquer->findByUtilisateur($user);
+        // $nbSportNiveau = count($repPratiquer->findByUtilisateur($user));
         $nbSportNiveau = count($tabSportNiveau);
+        
+        // On récupère le nombre d'organisation non terminée
+        $nbOrganisations = count($repActivite->findBy(array('organisateur' => $user, 'estTerminee' => 0)));
+        // On récupère la liste des participations à venir
+        $listeParticipationEnApproche = $repParticipations->findByUtilisateurEstAccepter($user, false, 1);
+        // oOn récupère le nombre de participations à venir
+        $nbParticipations = count($listeParticipationEnApproche) - $nbOrganisations;
+        
+        // On récupère le nombre d'organisation terminées
+        $nbOrganisationsFinies = count($repActivite->findBy(array('organisateur' => $user, 'estTerminee' => 1)));
+        // On récupère la liste des participations finis
+        $listeParticipationsFinies = $repParticipations->findByUtilisateurEstAccepter($user, true, 1);
+        // On récupère le nombre de participations finis
+        $nbParticipationsFinies = count($listeParticipationsFinies) - $nbOrganisationsFinies;
 
         return $this->render('mooveUtilisateurBundle:Profile:show.html.twig', array(
             'user' => $user,
             'tabSportNiveau' => $tabSportNiveau,
-            'nbSportNiveau' => $nbSportNiveau
+            'nbSportNiveau' => $nbSportNiveau,
+            'nbOrganisations' => $nbOrganisations,
+            'nbParticipations' => $nbParticipations,
+            'nbOrganisationsFinies' => $nbOrganisationsFinies,
+            'nbParticipationsFinies' => $nbParticipationsFinies
         ));
+
+  
+        
+        
+        
+        
     }
     
     

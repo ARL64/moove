@@ -7,9 +7,10 @@
     {{ form_row(form.email) }}
     {{ form_row(form.username) }}
     {{ form_row(form.plainPassword) }}
+    <div id="datePicker">
     {{ form_row(form.dateNaissance) }}
+    </div>
     {{ form_row(form.sexe) }}
-        {{ form_label(form.sexe, null, {'label_attr': {'class': 'sr-only'}}) }}
     <div>
         <input type="submit" class="btn btn-lg btn-primary-outline btn-block" value="{{ 'registration.submit'|trans }}" />
     </div>
