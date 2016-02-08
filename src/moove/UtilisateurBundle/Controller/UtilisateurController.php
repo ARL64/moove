@@ -32,23 +32,35 @@ class UtilisateurController extends Controller
         
         // On récupère l'utilisateur
         $user = $repUtilisateur->find($idUtilisateur);
-    
-        
             
         // On récupère un tableau de pratiquer où il y a l'id de l'utilisateur
         $tabSportNiveau = $repPratiquer->findByUtilisateur($user);
         // $nbSportNiveau = count($repPratiquer->findByUtilisateur($user));
         $nbSportNiveau = count($tabSportNiveau);
         
+        $tabOrgaFull = $repActivite->findByOrganisateur($user);
+        $nbOrganisations = array_reduce($tabOrgaFull, function ($carry, $item)
+                                                        {
+                                                            $carry += $item->getEstTerminee()? 0 : 1;
+                                                            return $carry;
+                                                        }, 0
+                                        );
+         $nbOrganisationsFinies = array_reduce($tabOrgaFull, function ($carry, $item)
+                                                        {
+                                                            $carry += $item->getEstTerminee()? 1 : 0;
+                                                            return $carry;
+                                                        }, 0
+                                        );      
+                                        
         // On récupère le nombre d'organisation non terminée
-        $nbOrganisations = count($repActivite->findBy(array('organisateur' => $user, 'estTerminee' => 0)));
+        //$nbOrganisations = count($repActivite->findBy(array('organisateur' => $user, 'estTerminee' => 0)));
         // On récupère la liste des participations à venir
         $listeParticipationEnApproche = $repParticipations->findByUtilisateurEstAccepter($user, false, 1);
         // oOn récupère le nombre de participations à venir
         $nbParticipations = count($listeParticipationEnApproche) - $nbOrganisations;
         
         // On récupère le nombre d'organisation terminées
-        $nbOrganisationsFinies = count($repActivite->findBy(array('organisateur' => $user, 'estTerminee' => 1)));
+        //$nbOrganisationsFinies = count($repActivite->findBy(array('organisateur' => $user, 'estTerminee' => 1)));
         // On récupère la liste des participations finis
         $listeParticipationsFinies = $repParticipations->findByUtilisateurEstAccepter($user, true, 1);
         // On récupère le nombre de participations finis
@@ -70,6 +82,7 @@ class UtilisateurController extends Controller
         
         
     }
+    
     
     
     // /!\ Fonction à partir d'ici 

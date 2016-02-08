@@ -11,6 +11,25 @@ class PeuplerSport extends AbstractFixture implements FixtureInterface, OrderedF
 {
     public function load(ObjectManager $manager)
     {
+        $file = fopen(__DIR__ . "/peuplerSport.csv", "r");
+
+        while(true)
+        {
+            $line = fgetcsv($file, 0, ';');
+            if(empty($line) || is_null($line))
+                break;
+            $temps = new Sport();
+            $temps  ->setNom($line[1])
+		            ->setUrlPictogramme($line[2])
+		            ->setNomIcone($line[3]);
+		            
+            $manager->persist($temps);
+            $this->addReference("sport-" . $line[0], $temps);
+            
+        }
+        fclose($file);
+        
+        /*
         // -------------------------------------------------------------------------------------        
         $cyclisme = new Sport();
 		$cyclisme   ->setNom("Cyclisme")
@@ -41,7 +60,7 @@ class PeuplerSport extends AbstractFixture implements FixtureInterface, OrderedF
         $this->addReference('sport-ski', $ski);
         // -------------------------------------------------------------------------------------        
 
-        
+        */
         $manager->flush();
     }
     public function getOrder()

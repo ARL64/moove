@@ -6,7 +6,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use moove\ActiviteBundle\Entity\Activite;
 use moove\ActiviteBundle\Entity\Sport;
 use moove\ActiviteBundle\Entity\Lieu;
+use moove\ActiviteBundle\Entity\Participer;
 use Symfony\Component\HttpFoundation\Request;
+use \GeocodeMapsGeocoder;
+require_once __DIR__ . '/../../../../vendor/jstayton/google-maps-geocoder/src/GoogleMapsGeocoder.php';
 
 class ActivitesController extends Controller
 {
@@ -185,12 +188,12 @@ class ActivitesController extends Controller
     {
         // On crée un objet "activité"
         $activite = new Activite();
-        $lieu = new Lieu();
-        $today=getDate();
+        $lieuRDV = new Lieu();
+        $today = getDate();
         //$jour = $today['wday'];
-        $annee= $today['year'];
+        $annee = $today['year'];
         //$mois = mktime( 0, 0, 0, $today['mon'], 1, $today['year'] );
-       // $nombreDeJoursMois = intval(date("t",$mois));
+        // $nombreDeJoursMois = intval(date("t",$mois));
         // On initialise l'organisteur avec l'utilisateur qui est entrain de créer l'activité
         $activite   ->setOrganisateur($this->getUser())
                     ->setDateCreation(new \Datetime("NOW"))
@@ -220,8 +223,8 @@ class ActivitesController extends Controller
                                    ->add('dateFermeture', 'datetime', array('label' => 'Date et heure de fermeture  de l\'activité', 'years'=>range($annee, ($annee+5))))
                                    ->add('duree', 'time', array('label' => 'Durée estimée'))
                                    ->add('nbPlaces','integer', array('label'=> 'Nombre de places total (vous inclus)'))
-                                   ->add('description', 'textarea' ,array ('label' => 'Informations'))
-                                   // ->add('lieu1', 'text', ['label' => 'Lieu de rendez-vous'])
+                                   ->add('description', 'textarea', array ('label' => 'Informations'))
+                                   ->add('adresseLieuRDV', 'text')
                                    ->getForm();
                                    
         /* On analyse la requête courante pour savoir si le formulaire a été soumis ou pas.
@@ -231,14 +234,51 @@ class ActivitesController extends Controller
         
         if($formulaireActivite->isSubmitted()) // Le formulaire a été soumis
         {
-            //$lieuRDV = $formulaireActivite->getData();
-            //var_dump($lieuRDV['']);
+            // On récupère l'adresse du lieu de rendez-vous dans $adresseLieuRDV
+            $adresseLieuRDV = $formulaireActivite->getData()->getAdresseLieuRDV();
             
-            //On enregistre l'objet $livre en base de données
+            // On créé un objet GoogleMapsGeocoder prenant en paramètre l'adresse du lieu de rendez-vous $adresseLieuRDV
+            $geocodeLieuRDV = new \GoogleMapsGeocoder($adresseLieuRDV);
+            // On enregistre le résultat de la requête faite à GoogleMapsAPI pour récupérer les informations du lieu
+            $reponse = $geocodeLieuRDV->geocode();
+            // On récupère les infos sur le lieu
+            $infosLieuRDV = $reponse['results'][0]['address_components'];
+            // On récupère la latitude et longitude sur le lieu
+            $latLngLieuRDV = $reponse['results'][0]['geometry']['location'];
+            // On hydrate le lieu avec les données précédemment récupérées
+            $lieuRDV->setNom(null)
+                    ->setNumeroRue($infosLieuRDV[0]['long_name'])
+                    ->setNomRue($infosLieuRDV[1]['long_name'])
+                    ->setComplementAdresse(null)
+                    ->setCodePostal($infosLieuRDV[6]['long_name'])
+                    ->setVille($infosLieuRDV[2]['long_name'])
+                    ->setLatitude($latLngLieuRDV['lat'])
+                    ->setLongitude($latLngLieuRDV['lng'])
+            ;
+            // On appelle le gestionnaire d'entité
             $gestionnaireEntite = $this->getDoctrine()->getManager();
+            
+            // On persiste le lieu dans la base de données
+            $gestionnaireEntite->persist($lieuRDV);
+            
+            // On ajoute le lieu à l'activité
+            $activite->setLieuRDV($lieuRDV);
+            
+            // On créé un objet Participer
+            $participer = new Participer();
+            
+            // On remplit l'objet Participer avec l'activité et l'utilisateur organisateur
+            $participer->setActivite($activite)
+                       ->setUtilisateur($this->getUser())
+                       ->setEstAccepte(true);
+            
+            // On persiste la participation dans la base de données
+            $gestionnaireEntite->persist($participer);
+            
+            //On enregistre l'objet $activite en base de données
             $gestionnaireEntite->persist($activite);
             $gestionnaireEntite->flush();
-            
+            // $this->get('session')
             $requeteUtilisateur->getSession()->getFlashBag()->add('notice', 'Activité publiée.');
             //On redirige vers la page de visualisation de l'activité ajouté
             return $this->redirect($this->generateUrl('moove_activite_detailsActivite',
@@ -248,6 +288,74 @@ class ActivitesController extends Controller
         return $this->render('mooveActiviteBundle:Activite:proposerActivite.html.twig',
                              array('formulaireActivite' => $formulaireActivite->createView()));
     }
+    
+    public function accepterDemandeParticipationActiviteAction($idActivite, $idUtilisateur)
+    {
+        $this->demandeParticipation($idActivite, $idUtilisateur, 1);
+    }
+    
+    public function refuserDemandeParticipationActiviteAction($idActivite, $idUtilisateur)
+    {
+        $this->demandeParticipation($idActivite, $idUtilisateur, 2);
+    }
+    
+    public function demandeParticipationActiviteAction($idActivite, $idUtilisateur)
+    {
+        // On récupère le repository Activite
+        $repActivite = $this->getRepository('Activite');
+
+        // On récupère l'activité
+        $activite = $repActivite->find($idActivite);
+        
+        // On récupère le nombre de participants de l'activité
+        $nbParticipants = $this->getNbParticipantsActivite($idActivite);
+        
+        // On récupère la date du jour
+        $dateAujourdhui = new \Datetime();
+            
+        // On vérifié que l'activité n'est pas remplie et que l'activité n'est pas terminée
+        if($activite->getNbPlaces() > $nbParticipants && $dateAujourdhui < $activite->getDateFermeture() && !$activite->getEstTerminee())
+        {
+            // On récupère le repository Activite
+            $repParticiper = $this->getRepository('Participer');
+            
+            // On récupère l'objet Participer de l'utilisateur ayant demandé la participation avec l'id $idUtilisateur
+            $participer = new Participer();
+            // On accepte l'utilisateur dans l'activité
+            $participer->setActivite($activite)
+                       ->setUtilisateur($this->getUser())
+                       ->setEstAccepte(0);
+            // On appelle le gestionnaire d'entité
+            $gestionnaireEntite = $this->getDoctrine()->getManager();
+            
+            // On persiste la participation dans la base de données
+            $gestionnaireEntite->persist($participer);
+            
+            // On enregistre la modification en base de données
+            $gestionnaireEntite->flush();
+            
+            // On ajoute un message flash à la session afin de notifier l'utilisateur que la demande a été envoyée
+            $this->addFlash('notice', "Votre demande de participation a été envoyée ! L'organisateur doit accepter votre demande pour que vous participiez à l'activité.");
+            return $this->redirect($this->generateUrl('moove_activite_detailsActivite', ['idActivite' => $activite->getId()]));
+        }
+        
+        $this->addFlash('notice', "La data limite d'inscription est dépassée ou il n'y a plus de places disponibles dans l'activité.");
+        return $this->redirect($this->generateUrl('moove_activite_detailsActivite', ['idActivite' => $activite->getId()]));
+    }
+        
+    public function quitterActiviteAction($idActivite, $idUtilisateur) 
+    {
+        // On récupère l'utilisateur connecté
+        //$user = $this->getRepository('Utilisateur', 'Utilisateur')->find($idUtilisateur);
+        $utilisateur = $this->getUser();
+        
+        // On récupère le repository participer
+        $repParticiper = $this->getRepository('Participer');
+        $quitterActivite = $repParticiper->quitterActivite($idActivite, $utilisateur);
+        return $this->redirect($this->generateUrl('moove_activite_detailsActivite', array ('idActivite'=> $idActivite)));
+        
+    }
+
     // /!\ Fin actions métier
     
     
@@ -292,6 +400,17 @@ class ActivitesController extends Controller
         }
         
         return $listeNbParticipant;
+    }
+    
+    protected function getNbParticipantsActivite($idActivite)
+    {
+        $repParticiper = $this->getRepository('Participer');
+        // On récupère un tableau d'objet Participer $tabParticiper
+        $tabParticiper = $repParticiper->findBy(array('activite' => $idActivite, 'estAccepte' => 1));
+        // On récupère le nombre de participants de l'activité
+        $nbParticipants = count($tabParticiper);
+        
+        return $nbParticipants;
     }
 
     /**
@@ -346,6 +465,57 @@ class ActivitesController extends Controller
         return ($repActivite->find($activite)->getOrganisateur() == $utilisateur);
     }
     
+    protected function demandeParticipation($idActivite, $idUtilisateur, $accepte)
+    {
+         // On récupère le repository Activite
+        $repActivite = $this->getRepository('Activite');
+        // On récupère l'organisateur
+        $organisateur = $this->getUser();
+        // On récupère l'activité
+        $activite = $repActivite->find($idActivite);
+        
+        // On vérifie l'organisateur est bien la personne connectée
+        if($activite->getOrganisateur() == $organisateur)
+        {
+            // On récupère le nombre de participants de l'activité
+            $nbParticipants = $this->getNbParticipantsActivite($idActivite);
+            
+            // On récupère la date du jour
+            $dateAujourdhui = new \Datetime();
+            
+            // On vérifié que l'activité n'est pas remplie et que l'activité n'est pas terminée
+            if($activite->getNbPlaces() > $nbParticipants && $dateAujourdhui < $activite->getDateFermeture() && !$activite->getEstTerminee())
+            {
+                // On récupère le repository Activite
+                $repParticiper = $this->getRepository('Participer');
+                
+                // On récupère l'objet Participer de l'utilisateur ayant demandé la participation avec l'id $idUtilisateur
+                $participer = $repParticiper->findOneBy(['utilisateur' => $idUtilisateur, 'activite' => $idActivite]);
+                // On accepte l'utilisateur dans l'activité
+                $participer->setEstAccepte($accepte);
+                // On appelle le gestionnaire d'entité
+                $gestionnaireEntite = $this->getDoctrine()->getManager();
+                
+                // On persiste la participation dans la base de données
+                $gestionnaireEntite->persist($participer);
+                
+                // On enregistre la modification en base de données
+                $gestionnaireEntite->flush();
+                
+                // On ajoute un message flash à la session afin de notifier l'utilisateur
+                if($accepte == 1)
+                    $this->get('session')->getSession()->getFlashBag()->add('notice', "L'utilisateur a bien été accepté !");
+                if($accepte == 2)
+                    $this->get('session')->getSession()->getFlashBag()->add('notice', "L'utilisateur a bien été refusé !");
+                return $this->redirect($this->generateUrl('moove_activite_detailsActivite', ['idActivite' => $activite->getId()]));
+        
+            }
+            
+            $requeteUtilisateur->getSession()->getFlashBag()->add('notice', "La data limite d'inscription est dépassée ou il n'y a plus de places disponibles dans l'activité.");
+            return $this->redirect($this->generateUrl('moove_activite_detailsActivite', ['idActivite' => $activite->getId()]));
+        }
+    }
+    
     /**
      * simplifie : $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:MonRepository');
      * en $this->getRepository('MonRepository');
@@ -358,5 +528,6 @@ class ActivitesController extends Controller
     {
         return $this->getDoctrine()->getManager()->getRepository('moove'.$nomBundle.'Bundle:'.$nomRepository);
     }
-    
 } // fin de "class ActivitesController extends Controller"
+
+

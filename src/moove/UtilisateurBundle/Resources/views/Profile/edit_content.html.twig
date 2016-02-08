@@ -1,10 +1,137 @@
 <link rel="stylesheet" href="{{ asset('css/details/style.css') }}">
 {% trans_default_domain 'FOSUserBundle' %}
-<div class="col-md-5">
-{{ form_start(form, { 'action': path('fos_user_profile_edit'), 'attr': { 'class': 'fos_user_profile_edit' } }) }}
-    {{ form_widget(form) }}
-    <input type="submit" class="btn btn-primary btn-lg" value="{{ 'profile.edit.submit'|trans }}" />
-    <a href={{ path('fos_user_profile_show') }}><button type="button" class="btn btn-warning btn-lg">Annuler</button></a></br>
-    <a href=#><button type="button" class="btn btn-danger btn-lg">Supprimer mon compte</button></a>
-</div>
-{{ form_end(form) }}
+<section class="content">
+    {{ form_start(form) }}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-4">
+                    <div class="panel panel-warning">
+                         <div class="panel-heading">
+                             <h3 class="panel-title">Connexion</h3>
+                         </div>
+                        <div class="panel-body">
+                            <div>
+                                {{ form_label(form.username) }}
+                                {{ form_errors(form.username) }}
+                                {{ form_widget(form.username) }}
+                            </div>
+                            <div>
+                                {{ form_label(form.email) }}
+                                {{ form_errors(form.email) }}
+                                {{ form_widget(form.email) }}
+                            </div>
+                            <div>
+                                {{ form_errors(form.plainPassword) }}
+                                {{ form_widget(form.plainPassword) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div class="panel panel-warning">
+                         <div class="panel-heading">
+                             <h3 class="panel-title">Informations</h3>
+                         </div>
+                        <div class="panel-body">
+                            <div class="col-md-5">
+                                <div>
+                                    {{ form_label(form.nom) }}
+                                    {{ form_errors(form.nom) }}
+                                    {{ form_widget(form.nom) }}
+                                </div>
+                                <div>
+                                    {{ form_label(form.dateNaissance) }}
+                                    {{ form_errors(form.dateNaissance) }}
+                                    {{ form_widget(form.dateNaissance) }}
+                                </div>
+                                <div>
+                                    {{ form_label(form.sexe) }}
+                                    {{ form_errors(form.sexe) }}
+                                    {{ form_widget(form.sexe) }}
+                                </div>
+                            </div>
+                            <div class="col-md-1"></div>
+                            <div class="col-md-5">
+                                <div>
+                                    {{ form_label(form.prenom) }}
+                                    {{ form_errors(form.prenom) }}
+                                    {{ form_widget(form.prenom) }}
+                                </div>
+                                <div>
+                                    {{ form_label(form.photo) }}
+                                    {{ form_errors(form.photo) }}
+                                    {{ form_widget(form.photo) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+           </div>
+       </div>
+       <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-7">
+                    <div class="panel panel-warning">
+                        <div class="panel-heading">
+                             <h3 class="panel-title">
+                                {% if nbSportNiveau > 1 %}
+                                     Mes sports
+                                {% else %}
+                                    Mon sport
+                                {% endif %}
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="col-md-8">
+                                {% for sportNiveau in tabSportNiveau %}
+                                    <div class="col-md-10">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <img class="media-object" src="{{ asset(sportNiveau.sport.urlPictogramme) }}" alt="Photo du sport" width="75" height="75">
+                                            </div>
+                                            <div class="media-body">
+                                                <p>Niveau : {{ sportNiveau.niveau.libelle }}</p>
+                                                <p>{{ sportNiveau.sport.nom }}</p>
+                                            </div>
+                                        </div></div>
+                                        <div class="col-md-1">
+                                            <a href=#><button type="button" class="btn btn-primary btn-s">Modifier Niveau</button></a></br>
+                                            <a href=#><button type="button" class="btn btn-warning btn-s" data-toggle="modal" data-target="#myModal">Supprimer ce sport</button></a></br>
+                                        </div>
+                                        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                          <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                              <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalLabel">Confirmez</h4>
+                                              </div>
+                                              <div class="modal-body">
+                                                Voulez-vous vraiment supprimer ce sport ? (Vous pourrez le rajouter à tout moment en cliquant sur ajouter un sport)
+                                              </div>
+                                              <div class="modal-footer">
+                                                <button type="button" class="btn btn-primary" data-dismiss="modal">Annuler</button>
+                                                <a href={{ path('moove_utilisateur_supprimer_sport', {'idUtilisateur':app.user.id, 'idSport': sportNiveau.sport.id})}}> <button type="button" class="btn btn-danger">Supprimer</button></a>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                    {% else %}
+                                        <p>Vous n'avez pas ajouté de sport !</p>
+                                {% endfor %}
+                            </div>
+                            <div  class="col-md-12">
+                            <a href=#><button type="button" class="btn btn-primary btn-s">Ajouter un sport</button></a>
+                        </div></div>
+                    </div>
+                </div>
+                <div class="col-md-1"></div>
+                <div class="col-md-4">
+                    <input type="submit" class="btn btn-primary btn-lg" value="{{ 'profile.edit.submit'|trans }}" />
+                    <a href={{ path('fos_user_profile_show') }}><button type="button" class="btn btn-warning btn-lg">Annuler</button></a></br>
+                    <a href=#><button type="button" class="btn btn-danger btn-lg">Supprimer mon compte</button></a>
+                </div>
+            </div> 
+        </div>
+    {{ form_end(form) }}
+</section>
+

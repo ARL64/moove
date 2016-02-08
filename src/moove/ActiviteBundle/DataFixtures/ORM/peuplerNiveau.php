@@ -11,6 +11,26 @@ class PeuplerNiveau extends AbstractFixture implements FixtureInterface, Ordered
 {
     public function load(ObjectManager $manager)
     {
+        
+        // ceci est un test
+        $file = fopen(__DIR__ . "/peuplerNiveau.csv", "r");
+
+        while(true)
+        {
+            $line = fgetcsv($file, 0, ';');
+            if(empty($line) || is_null($line))
+                break;
+            $temps = new Niveau();
+            $temps ->setLibelle($line[1]);
+            $manager->persist($temps);
+            $refName = "niveau-" . $line[0];
+            $this->addReference($refName, $temps);
+            
+        }
+        fclose($file);
+        
+        /*
+        
         // -------------------------------------------------------------------------------------        
         $debutant = new Niveau();
         $debutant->setLibelle("Débutant");
@@ -31,7 +51,7 @@ class PeuplerNiveau extends AbstractFixture implements FixtureInterface, Ordered
         $expert->setLibelle("Expert");
         $manager->persist($expert);
         $this->addReference('niveau-expert', $expert);
-        // -------------------------------------------------------------------------------------        
+        // -------------------------------------------------------------------------------------   */  
         $manager->flush();
     }
     

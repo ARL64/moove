@@ -12,5 +12,21 @@ use Doctrine\ORM\EntityRepository;
  */
 class PratiquerRepository extends EntityRepository
 {
-    
+    public function supprimerSport($idUtilisateur, $idSport)
+    {
+        $requete = $this->_em->createQueryBuilder()
+                        ->delete($this->_entityName, 'p') 
+                        ->where('p.utilisateur = :utilisateur')
+                        ->setParameter('utilisateur', $idUtilisateur)
+                        ->andWhere('p.sport = :sport')
+                        ->setParameter('sport', $idSport)
+                        ;
+                        
+         // on récupère la commande DQL
+        $query = $requete->getQuery();
+        
+        // on retourne un tableau de résultat
+        return $query->getResult();   
+
+    }
 }

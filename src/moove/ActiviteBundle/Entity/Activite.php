@@ -88,19 +88,24 @@ class Activite
     private $sportPratique;
 
     /**
-     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Lieu")
+     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Lieu", cascade={"persist", "remove"})
      */    
     private $lieuRDV;
     
     /**
-     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Lieu")
+     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Lieu", cascade={"persist", "remove"})
      */
     private $lieuDepart;
     
     /**
-     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Lieu")
+     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Lieu", cascade={"persist", "remove"})
      */
     private $lieuArrivee;
+    
+    
+    private $adresseLieuRDV;
+    private $adresseLieuDepart;
+    private $adresseLieuArrivee;
 
 
     /* /!\ Début des get & set /!\ */
@@ -422,5 +427,74 @@ class Activite
     {
         $dateNow = new \DateTime(/*'NOW'*/);
         return $dateNow->diff($this->dateHeureRDV);
+    }
+    
+    /**
+     * Get adresseLieuRDV
+     *
+     * @return string
+     */
+    public function getAdresseLieuRDV()
+    {
+        return $this->adresseLieuRDV;
+    }
+
+    /**
+     * Set adresseLieuRDV
+     *
+     * @param string
+     * @return Activite
+     */
+    public function setAdresseLieuRDV($adresseLieuRDV)
+    {
+        $this->adresseLieuRDV = $adresseLieuRDV;
+
+        return $this;
+    }
+    
+    /**
+     * Get adresseLieuDepart
+     *
+     * @return string
+     */
+    public function getAdresseLieuDepart()
+    {
+        return $this->adresseLieuDepart;
+    }
+
+    /**
+     * Set adresseLieuDepart
+     *
+     * @param string
+     * @return Activite
+     */
+    public function setAdresseLieuDepart($adresseLieuDepart)
+    {
+        $this->adresseLieuDepart = $adresseLieuDepart;
+
+        return $this;
+    }
+    
+    /**
+     * Get adresseLieuArrivee
+     *
+     * @return string
+     */
+    public function getAdresseLieuArrivee()
+    {
+        return $this->adresseLieuArrivee;
+    }
+
+    /**
+     * Set adresseLieuArrivee
+     *
+     * @param string
+     * @return Activite
+     */
+    public function setAdresseLieuArrivee($adresseLieuArrivee)
+    {
+        $this->adresseLieuArrivee = $adresseLieuArrivee;
+
+        return $this;
     }
 }

@@ -6,6 +6,7 @@ namespace moove\UtilisateurBundle\Entity;
 use moove\ActiviteBundle\Entity\Lieu;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -71,6 +72,8 @@ class Utilisateur extends BaseUser
      * @ORM\Column(name="dateNaissance", type="datetime", nullable=true)
      */
     private $dateNaissance;
+    
+    private $photo;
 
 
     public function __construct()
@@ -272,5 +275,28 @@ class Utilisateur extends BaseUser
     public function getPratiquer()
     {
         return $this->pratiquer;
+    }
+    
+    /**
+     * Get photo
+     *
+     * @return file 
+     */
+    public function getPhoto()
+    {
+        return $this->photo;
+    }
+
+    /**
+     * Set photo
+     *
+     * @param file $photo
+     * @return Utilisateur
+     */
+    public function setPhoto($photo)
+    {
+        $this->photo = $photo;
+
+        return $this;
     }
 }

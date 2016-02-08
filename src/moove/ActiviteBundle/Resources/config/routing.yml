@@ -26,3 +26,20 @@ moove_activite_rechercher:
 moove_activite_proposer:
     path:   /proposer
     defaults: { _controller: mooveActiviteBundle:Activites:proposerActivite }
+    
+moove_activite_accepter_demande_participation:
+    path: /refuser/{idActivite}/{idUtilisateur}
+    defaults: {_controller: mooveActiviteBundle:Activites:acceterDemandeParticipationActivite }
+
+moove_activite_refuser_demande_participation:
+    path: /accepter/{idActivite}/{idUtilisateur}
+    defaults: {_controller: mooveActiviteBundle:Activites:refuserDemandeParticipationActivite }
+    
+moove_activite_demande_participation:
+    path: /participer/{idActivite}/{idUtilisateur}
+    defaults: {_controller: mooveActiviteBundle:Activites:demandeParticipationActivite }
+    
+moove_activite_quitter_activite:
+    path: /activite/{idActivite}/{idUtilisateur}
+    defaults: {_controller: mooveActiviteBundle:Activites:quitterActivite }
+

@@ -15,7 +15,39 @@ class PeuplerActivite extends AbstractFixture implements FixtureInterface, Order
     {
         $dateActuel = new \DateTime('NOW');
 
-        // -------------------------------------------------------------------------------------        
+        $file = fopen(__DIR__ . "/peuplerActivite.csv", "r");
+
+        while(true)
+        {
+            $line = fgetcsv($file, 0, ';');
+            if(empty($line) || is_null($line))
+                break;
+            $temps = new Activite();
+            $temps  ->setDateHeureRDV(new \DateTime($line[1]))
+            		->setDateCreation($dateActuel)
+		            ->setDateFermeture(new \DateTime($line[2]))
+		            ->setDuree(new \DateTime($line[3]))
+		            ->setNbPLaces(intval($line[4]))
+		            ->setEstTerminee($line[5])
+		            ->setOrganisateur($this->getReference('utilisateur-' . $line[6]))
+		            ->setNiveauRequis($this->getReference('niveau-' . $line[7]))
+		            ->setSportPratique($this->getReference('sport-' . $line[8]))
+		            ->setLieuRDV($this->getReference('lieu-' . $line[9]))
+		            ->setDescription($line[12])
+		            ;
+		            
+		if($line[10] != "")
+		    $temps->setLieuDepart($this->getReference('lieu-' . $line[10]));
+		if($line[11] != "")
+		    $temps->setLieuArrivee($this->getReference('lieu-' . $line[11]));
+		  
+        $manager->persist($temps);
+        $this->addReference("activite-" . $line[0], $temps);
+            
+        }
+        fclose($file);
+        
+       /* // -------------------------------------------------------------------------------------        
         $activite001 = new Activite();
 		$activite001->setDateHeureRDV(new \DateTime('2016-02-23 8:00:00'))
 		            ->setDuree(new \DateTime('8:30:00'))
@@ -178,7 +210,7 @@ class PeuplerActivite extends AbstractFixture implements FixtureInterface, Order
 		            ;
         $manager->persist($activite009);
         $this->addReference('activite-009', $activite009);
-        // -------------------------------------------------------------------------------------        
+        // -------------------------------------------------------------------------------------   */     
 
 
         $manager->flush();

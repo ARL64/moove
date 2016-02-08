@@ -14,7 +14,65 @@ class PeuplerParticiper extends AbstractFixture implements FixtureInterface, Ord
 {
     public function load(ObjectManager $manager)
     {
-        // Voir à automatiser cette génération dans les classes d'entité
+        $i = 1;
+        $isFinish = false;
+        while(!$isFinish)
+        {
+            if($i < 10)
+                $suffixe = "00".$i;
+            else if($i < 100)
+                $suffixe = "0".$i;
+            else
+                $suffixe = $i;
+
+            try
+            {
+                $this->getReference('activite-' . $suffixe);
+            }
+            catch(Exception $e)
+            {
+                $isFinish = true;
+            }
+            
+            if(!$isFinish)
+            {
+                $temps = new Participer();
+	           	$temps->setUtilisateur($this->getReference('activite-' . $suffixe)->getOrganisateur())
+		                ->setActivite($this->getReference('activite-' . $suffixe))
+		                ->setEstAccepte(1)
+		                ;
+                $manager->persist($temps);
+                $this->addReference('organisateur-' . $suffixe, $temps);  
+            }
+            $i++;
+            
+            // le try catch est sencé vérifier justement cette condition, mais sa ne veux pas...
+            // ducoup, pour le moment incrémenté juste cette variable du nombre d'activité + 1...
+            if($i == 10)
+                break;
+        }
+        
+        $file = fopen(__DIR__ . "/peuplerParticiper.csv", "r");
+
+        while(true)
+        {
+            $line = fgetcsv($file, 0, ';');
+            if(empty($line) || is_null($line))
+                break;
+            $temps = new Participer();
+            $temps  ->setUtilisateur($this->getReference('utilisateur-'.$line[1]))
+                    ->setActivite($this->getReference('activite-' . $line[2]))
+		            ->setEstAccepte($line[3])
+		            ;
+
+		            
+            $manager->persist($temps);
+            $this->addReference("participer-" . $line[0], $temps);
+            
+        }
+        fclose($file);
+        
+/*        // Voir à automatiser cette génération dans les classes d'entité
         // -------------------------------------------------------------------------------------        
         $organisateur001 = new Participer();
 		$organisateur001->setUtilisateur($this->getReference('activite-001')->getOrganisateur())
@@ -88,9 +146,9 @@ class PeuplerParticiper extends AbstractFixture implements FixtureInterface, Ord
         $manager->persist($organisateur009);
         $this->addReference('organisateur-009', $organisateur009);
         // -------------------------------------------------------------------------------------        
+*/
 
-
-        
+/*        
         // -------------------------------------------------------------------------------------        
         $participer001 = new Participer();
 		$participer001  ->setUtilisateur($this->getReference('utilisateur-avauthey'))
@@ -221,7 +279,7 @@ class PeuplerParticiper extends AbstractFixture implements FixtureInterface, Ord
         $manager->persist($participer016);
         $this->addReference('participer-016', $participer016);
         // -------------------------------------------------------------------------------------       
-
+*/
         $manager->flush();
     }
     

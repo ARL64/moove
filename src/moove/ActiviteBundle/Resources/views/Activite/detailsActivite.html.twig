@@ -3,13 +3,25 @@
 {% block stylesheets %}
   <link rel="stylesheet" href="{{ asset('css/details/style.css') }}">
   <link rel="stylesheet" href="{{ asset('css/Glyphter.css') }}">
+  <link rel="stylesheet" href="{{ asset('css/components/alert.css') }}">
 {% endblock %}
 {% block body %} 
     <!-- Titre de la page -->
     <section class="content-header">
       <h1><h2><span class="label label-primary"> {{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }} propose une activité {{ activite.sportPratique.nom | lower }}</span></h2></h1>
     </section>
-     
+    
+    {% if app.session.flashbag.has('notice') %}
+    <div class="alert alert-success alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <ul>
+        {% for flashMessage in app.session.flashbag.get('notice') %}
+          <li>{{ flashMessage }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+            
     <!-- Contenu principal -->
     <section class="content">
       <div class="row">
@@ -47,19 +59,27 @@
                   <p><span class="info-label text-muted">Niveau requis</span><span class="info-valeur"><i class="fa fa-bar-chart"></i>{{ activite.niveauRequis.libelle }}</span></p>
                 </div>
                 <div class="infos">
-                  <p><span class="info-label text-muted">Ville</span><span class="info-valeur"><i class="fa fa-building-o"></i>{{ activite.lieuRDV.ville }}</span></p>
+                  <p><span class="info-label text-muted">Ville</span><span class="info-valeur"><i class="fa fa-building-o"></i>{{ activite.lieuRDV.ville ~ ", " ~ activite.lieuRDV.codePostal }}</span></p>
                 </div>
                 <div class="infos">
-                  <p><span class="info-label text-muted">Lieu de rendez-vous</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#ff9800"></i>{{ activite.lieuRDV.nom }}</span></p>
+                  <p><span class="info-label text-muted">Lieu de rendez-vous</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#ff9800"></i>{{ activite.lieuRDV.numeroRue ~ ", " ~ activite.lieuRDV.nomRue }}</span></p>
                 </div>
                 {% if activite.lieuDepart is not null  %}
                   <div class="infos">
                     <p><span class="info-label text-muted">Lieu de départ</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#4caf50"></i>{{ activite.lieuDepart.nom }}</span></p>
                   </div>
+                {% else %}
+                  <div class="infos">
+                    <p><span class="info-label text-muted">Lieu de départ</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#4caf50"></i>Non spécifié</span></p>
+                  </div>
                 {% endif %}
                 {% if activite.lieuArrivee is not null  %}
                   <div class="infos">
                     <p><span class="info-label text-muted">Lieu d'arrivée</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#e51c23"></i>{{ activite.lieuArrivee.nom }}</span></p>
+                  </div>
+                {% else %}
+                  <div class="infos">
+                    <p><span class="info-label text-muted">Lieu d'arrivée</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#e51c23"></i>Non spécifié</span></p>
                   </div>
                 {% endif %}
                 <div class="infos">
@@ -121,8 +141,9 @@
                           {% endif %}
                           <p>
                             {% if estOrganisateur and participationCourant.estAccepte == 0 %}
-                              <button type="mini-button" class="btn btn-success btn-xs ">Accepter</button>
-                              <button type="mini-button" class="btn btn-danger btn-xs">Refuser</button>
+                            
+                              <a href="{{ path('moove_activite_accepter_demande_participation', {'idActivite': participationCourant.activite.id, 'idUtilisateur': participationCourant.utilisateur.id}) }}"><button type="mini-button" class="btn btn-success btn-xs ">Accepter</button></a>
+                              <a href="{{ path('moove_activite_refuser_demande_participation', {'idActivite': participationCourant.activite.id, 'idUtilisateur': participationCourant.utilisateur.id}) }}"><button type="mini-button" class="btn btn-danger btn-xs">Refuser</button>
                             {% endif %}
                           </p>
                         </p> 
@@ -152,7 +173,7 @@
                   {% else %}
                     {% if estParticipant %}
                       {% if estAccepte == 1 %}
-                        <button type="button" class="btn btn-danger btn-lg">Quitter l'activité</button>
+                        <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#quitterActivite">Quitter l'activité</button>
                       {% elseif estAccepte == 2 %}
                         <button type="button" class="btn btn-danger btn-lg disabled">Vous avez été refusé</button>
                       {% else %}
@@ -160,10 +181,27 @@
                       {% endif %}
                       
                     {% else %}
-                      <button type="button" class="btn btn-primary btn-lg">Je veux participer</button>
+                      <a href="{{ path('moove_activite_demande_participation', {'idActivite': activite.id, 'idUtilisateur': app.user.id}) }}"><button type="button" class="btn btn-primary btn-lg">Je veux participer</button>
                     {% endif %}
                   {% endif %}
-                
+                <!-- Modal -->
+                <div class="modal fade" id="quitterActivite" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Quitter</h4>
+                      </div>
+                      <div class="modal-body">
+                        Voulez-vous vraiment quitter cette activité?
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Annuler</button>
+                        <a href= {{ path('moove_activite_quitter_activite', {'idActivite': activite.id, 'idUtilisateur': app.user.id})}}><button type="button" class="btn btn-danger">Quitter l'activité</button></a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 {# A VERIFIER
                 
                 {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) and estAccepte %}

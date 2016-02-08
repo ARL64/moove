@@ -50,8 +50,9 @@
               </div></br>
             </div>
             <div class="col-md-6">
-                <label class="control-label required" for="form_lieuRDV">Lieu de rendez-vous</label>
-                <input id="form_lieuRDV" type="text" class="form-control" placeholder="Entrez une ville...">
+                {{ form_label(formulaireActivite.adresseLieuRDV, 'Lieu de rendez-vous') }}
+                {{ form_errors(formulaireActivite.adresseLieuRDV) }}
+                {{ form_widget(formulaireActivite.adresseLieuRDV) }}
             </div>
             <div class="row">
               <div class="col-md-9"></div>
@@ -60,6 +61,7 @@
                 <a href="{{ path('moove_activite_tableauDeBord') }}"><button type="button" class="btn btn-warning">Annuler</button></a>
               </div>
             </div>
+            {{form_end(formulaireActivite)}}
           </form>
           
         </div>
@@ -69,7 +71,7 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDmo1B7t569caLPAVZZNdcoH97JCnHRqNM&signed_in=true&libraries=places&callback=initAutocomplete"
         async defer></script>
     <script>
-        var input = (document.getElementById('form_lieuRDV'));
+        var input = (document.getElementById('form_adresseLieuRDV'));
         var autocomplete;
         
         function initAutocomplete() {

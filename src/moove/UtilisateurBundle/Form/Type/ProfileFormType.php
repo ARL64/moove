@@ -86,7 +86,8 @@ class ProfileFormType extends AbstractType
             ->add('nom', 'text', array('label' => 'form.nom', 'translation_domain' => 'FOSUserBundle'))
             ->add('prenom', 'text', array('label' => 'form.prenom', 'translation_domain' => 'FOSUserBundle'))
             ->add('dateNaissance', 'birthday', array('label' => 'form.birthday', 'translation_domain' => 'FOSUserBundle'))
-
+            ->add('photo','file', array('label'=>'form.photo', 'translation_domain'=>'FOSUserBundle'))
+            ->add('sexe','choice',array('label' => 'form.sexe','choices'=>array('sexeH'=>'homme', 'sexeF'=>'femme'), 'translation_domain'=>'FOSUserBundle'))
         ;
     }
 }

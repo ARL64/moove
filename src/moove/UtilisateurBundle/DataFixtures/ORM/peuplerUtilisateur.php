@@ -29,10 +29,37 @@ class PeuplerUtilisatueur extends AbstractFixture implements FixtureInterface, C
 
     public function load(ObjectManager $manager)
     {
+                $userManager = $this->container->get('fos_user.user_manager');
 
-        $userManager = $this->container->get('fos_user.user_manager');
+         $file = fopen(__DIR__ . "/peuplerUtilisateur.csv", "r");
+
+        while(true)
+        {
+            $line = fgetcsv($file, 0, ';');
+            if(empty($line) || is_null($line))
+                break;
+            $temps = $userManager->createUser();
+            $temps  ->setNom($line[1])
+                    ->setPrenom($line[2])
+                    ->setURLAvatar($line[3])
+                    ->setDateNaissance(new \DateTime($line[4]))
+                    ->setUsername($line[5])
+                    ->setEmail($line[6])
+                    ->setEnabled(boolval($line[7]))
+                    ->setPlainPassword($line[8])
+                    ->setSexe($line[9])
+                    ->setLieuResidence($this->getReference('lieu-'.$line[10]))
+                    //->setRoles(new array())
+                    ;
+		            
+            $userManager->updateUser($temps, true);
+            $this->addReference("utilisateur-" . $line[0], $temps);
+            
+        }
+        fclose($file);
+
         
-        // -------------------------------------------------------------------------------------        
+/*        // -------------------------------------------------------------------------------------        
         $jodge = $userManager->createUser();
         $jodge  ->setNom("Sarie")
                 ->setPrenom("Joey")
@@ -61,7 +88,7 @@ class PeuplerUtilisatueur extends AbstractFixture implements FixtureInterface, C
                     ->setUsername("avauthey")
                     ->setEmail("vauthey.antoine@gmail.com")
                     ->setEnabled(true)
-                    ->setPlainPassword('qsdfgh')
+                    ->setPlainPassword('cpassa')
                     ->setSexe('homme')
                     //->setRoles(new array())
                     ->setLieuResidence($this->getReference('lieu-002'))
@@ -112,7 +139,7 @@ class PeuplerUtilisatueur extends AbstractFixture implements FixtureInterface, C
                     ;
         $userManager->updateUser($fdartigues, true);
         $this->addReference('utilisateur-fdartigues', $fdartigues);
-        // -------------------------------------------------------------------------------------        
+*/        // -------------------------------------------------------------------------------------        
     }
     
     public function getOrder()

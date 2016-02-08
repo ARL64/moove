@@ -25,9 +25,9 @@
           <a href="{{ path('moove_activite_detailsActivite', {idActivite: activite.id}) }}">
             <tr>
               <td>{{ activite.sportPratique.nom }}</td>
-              <td>{{ activite.lieuRDV.nom }}</td>
-              <td>{% if activite.lieuDepart is not null%}{{ activite.lieuDepart.nom }}{% endif %}</td>
-              <td>{% if activite.lieuArrivee is not null%}{{ activite.lieuArrivee.nom }}{% endif %}</td>
+              <td>{{ activite.lieuRDV.numeroRue ~ " " ~ activite.lieuRDV.nomRue ~ " " ~ activite.lieuRDV.ville  }}</td>
+              <td>{% if activite.lieuDepart is not null%}{{ activite.lieuDepart.numeroRue ~ " " ~ activite.lieuDepart.nomRue ~ " " ~ activite.lieuDepart.ville  }}{% else %}Non spécifié{% endif %}</td>
+              <td>{% if activite.lieuArrivee is not null%}{{ activite.lieuArrivee.numeroRue ~ " " ~ activite.lieuArrivee.nomRue ~ " " ~ activite.lieuArrivee.ville  }}{% else %}Non spécifié{% endif %}</td>
               <td>{{ activite.dateHeureRDV | date("d/m/y") }}</td>
               <td>{{ tabNbParticipants[loop.index0] ~ "/" ~ activite.nbPlaces }}</td>
               <td>{% if activite.organisateur == app.user %} Moi {% else %}{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}{% endif %}</td>

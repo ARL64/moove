@@ -11,6 +11,31 @@ class PeuplerLieu extends AbstractFixture implements FixtureInterface, OrderedFi
 {
     public function load(ObjectManager $manager)
     {
+         $file = fopen(__DIR__ . "/peuplerLieu.csv", "r");
+
+        while(true)
+        {
+            $line = fgetcsv($file, 0, ';');
+            if(empty($line) || is_null($line))
+                break;
+            $temps = new Lieu();
+            $temps  ->setNom($line[1])
+                    ->setNumeroRue(intval($line[2]))
+                    ->setNomRue($line[3])
+                    ->setComplementAdresse($line[4])
+                    ->setCodePostal(intval($line[5]))
+                    ->setVille($line[6])
+                    ->setLatitude(floatval($line[7]."The"))
+                    ->setLongitude(floatval($line[8]."The"))
+                    ;
+		            
+            $manager->persist($temps);
+            $this->addReference("lieu-" . $line[0], $temps);
+            
+        }
+        fclose($file);
+        
+/*        
         // -------------------------------------------------------------------------------------
         $lieu001 = new Lieu();
         $lieu001->setNom("cité U Pierre Bidart")
@@ -84,7 +109,7 @@ class PeuplerLieu extends AbstractFixture implements FixtureInterface, OrderedFi
         $manager->persist($lieu006);
         $this->addReference('lieu-006', $lieu006);
         // -------------------------------------------------------------------------------------
-
+*/
 
 
         $manager->flush();

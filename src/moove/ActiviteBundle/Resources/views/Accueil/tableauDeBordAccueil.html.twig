@@ -18,9 +18,9 @@
                             </div>
                             <div class="panel-body text-center">
                                 {% if nbParticipations > 1 %}                    
-                                    <strong>participations</strong>
+                                    <strong>participations à venir</strong>
                                 {% else %}
-                                    <strong>participation</strong>
+                                    <strong>participation à venir</strong>
                                 {% endif %}
                             </div>
                         </div>
@@ -105,9 +105,9 @@
                             </div>
                             <div class="panel-body text-center">
                                 {% if nbOrganisations > 1 %}                    
-                                    <strong>organisations</strong>
+                                    <strong>organisations à venir</strong>
                                 {% else %}
-                                    <strong>organisation</strong>
+                                    <strong>organisation à venir</strong>
                                 {% endif %}
                             </div>
                         </div>
@@ -163,8 +163,8 @@
                                     {% for participation in ListeDemandeAValide %}
                                         <p>
                                             <a href="{{ path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participation.utilisateur.id}) }}">{{ participation.utilisateur.prenom ~ " " ~ participation.utilisateur.nom}}</a> demande à participer à mon activite <a href="{{ path('moove_activite_detailsActivite', {idActivite: participation.activite.id}) }}">{{ participation.activite.sportPratique.nom | lower }} du {{ participation.activite.dateHeureRDV | date("d/m/y") }}.</a>
-                                            <button type="button" class="btn btn-success btn-xs ">Accepter</button>
-                                            <button type="button" class="btn btn-danger btn-xs">Refuser</button>
+                                            <a href="{{ path('moove_activite_accepter_demande_participation', {'idActivite': participation.activite.id, 'idUtilisateur': participation.utilisateur.id}) }}"><button type="button" class="btn btn-success btn-xs ">Accepter</button></a>
+                                            <a href="{{ path('moove_activite_refuser_demande_participation', {'idActivite': participation.activite.id, 'idUtilisateur': participation.utilisateur.id}) }}"><button type="button" class="btn btn-danger btn-xs">Refuser</button></a>
                                         </p>
                                     {% endfor %}
                                 {% else %}

@@ -41,7 +41,7 @@ class ParticiperRepository extends EntityRepository
     }
     
     
-    public function findByUtilisateurEstAccepter($idUtilisateur, $terminer, $accepter = null)
+    public function findByUtilisateurEstAccepter($idUtilisateur, $terminer = null, $accepter = null)
     {
         $requete = $this->_em->createQueryBuilder() 
             ->select('p')
@@ -70,8 +70,23 @@ class ParticiperRepository extends EntityRepository
         $query = $requete->getQuery();
         
         // on retourne un tableau de résultat
-        return $query->getResult();    
+        return $query->execute();    
         
     }
-    
+    public function quitterActivite($idActivite, $idUtilisateur)
+    {
+        $requete = $this->_em->createQueryBuilder()
+                        ->delete($this->_entityName, 'p') 
+                        ->where('p.utilisateur = :utilisateur')
+                        ->setParameter('utilisateur', $idUtilisateur)
+                        ->andWhere('p.activite = :activite')
+                        ->setParameter('activite', $idActivite)
+                        ;
+                        
+         // on récupère la commande DQL
+        $query = $requete->getQuery();
+        
+        // on retourne un tableau de résultat
+        return $query->getResult();  
+    }
 }

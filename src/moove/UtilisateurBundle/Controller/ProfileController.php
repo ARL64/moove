@@ -100,7 +100,7 @@ class ProfileController extends Controller
         if (null !== $event->getResponse()) {
             return $event->getResponse();
         }
-
+        
         /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
         $formFactory = $this->get('fos_user.profile.form.factory');
 
@@ -117,6 +117,22 @@ class ProfileController extends Controller
             $dispatcher->dispatch(FOSUserEvents::PROFILE_EDIT_SUCCESS, $event);
 
             $userManager->updateUser($user);
+            
+             // $file stores the uploaded PDF file
+            /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
+            $file = $user->getPhoto();
+
+            // Generate a unique name for the file before saving it
+            $fileName = md5(uniqid()).'.'.$file->guessExtension();
+
+            // Move the file to the directory where brochures are stored
+            $photoDir = $this->container->getParameter('kernel.root_dir').'/../../Ressources/public/images/avatars';
+            $file->move($photoDir, $fileName);
+
+            // Update the 'brochure' property to store the PDF file name
+            // instead of its contents
+            $user->setURLAvatar($fileName);
+
 
             if (null === $response = $event->getResponse()) {
                 $url = $this->generateUrl('fos_user_profile_show');
@@ -127,10 +143,25 @@ class ProfileController extends Controller
 
             return $response;
         }
-
+        //on récupère le répository de pratiquer
+        $repPratiquer = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Pratiquer');
+         //On récupère un tableau de pratiquer où il y a l'id de l'utilisateur
+        $tabSportNiveau = $repPratiquer->findByUtilisateur($user);
+        //$nbSportNiveau = count($repPratiquer->findByUtilisateur($user));
+        $nbSportNiveau = count($tabSportNiveau);
         return $this->render('FOSUserBundle:Profile:edit.html.twig', array(
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'tabSportNiveau' => $tabSportNiveau,
+            'nbSportNiveau' => $nbSportNiveau
         ));
     }
-    
+     public function supprimerSportAction($idSport)
+    {
+        $user = $this->getUser();
+        //on récupère le répository de pratiquer
+        $repPratiquer = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Pratiquer');
+        $suppressionSport = $repPratiquer->supprimerSport($user, $idSport);
+        return $this->redirect($this->generateUrl('fos_user_profile_edit'));
+        
+    }
 }

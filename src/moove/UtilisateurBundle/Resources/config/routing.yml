@@ -4,3 +4,7 @@ moove_utilisateur_profileUtilisateur:
     defaults: { _controller: mooveUtilisateurBundle:Utilisateur:profile }
     requirements:
         idUtilisateur: \d+
+        
+moove_utilisateur_supprimer_sport:
+    path: /utilisateur/{idUtilisateur}/{idSport}
+    defaults: {_controller: mooveUtilisateurBundle:Profile:supprimerSport }
