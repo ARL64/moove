@@ -86,4 +86,27 @@ class ActiviteRepository extends EntityRepository
         
         return $requete;
     }
+    public function supprimerActivite($idActivite, $organisateur)
+    {
+         $requete1 = $this->createQueryBuilder('p')
+                        ->delete('mooveActiviteBundle:Participer', 'p')
+                        ->where('p.activite = :activite')
+                        ->setParameter('activite', $idActivite)
+                        ;
+                        
+        $requete2 = $this->_em->createQueryBuilder()
+            ->delete($this->_entityName, 'a')
+            ->where('a.organisateur = :organisateur')
+            ->setParameter('organisateur', $organisateur)
+            ->andWhere('a.id = :activite')
+            ->setParameter('activite', $idActivite)
+            ;
+                        
+         // on récupère la commande DQL
+        $query1 = $requete1->getQuery();
+        $query2 = $requete2->getQuery();
+        
+        // on retourne un tableau de résultat
+        return array($query1->getResult(), $query2->getResult());  
+    }
 }

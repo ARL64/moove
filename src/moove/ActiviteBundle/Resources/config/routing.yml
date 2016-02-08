@@ -28,11 +28,11 @@ moove_activite_proposer:
     defaults: { _controller: mooveActiviteBundle:Activites:proposerActivite }
     
 moove_activite_accepter_demande_participation:
-    path: /refuser/{idActivite}/{idUtilisateur}
-    defaults: {_controller: mooveActiviteBundle:Activites:acceterDemandeParticipationActivite }
+    path: /accepter/{idActivite}/{idUtilisateur}
+    defaults: {_controller: mooveActiviteBundle:Activites:accepterDemandeParticipationActivite }
 
 moove_activite_refuser_demande_participation:
-    path: /accepter/{idActivite}/{idUtilisateur}
+    path: /refuser/{idActivite}/{idUtilisateur}
     defaults: {_controller: mooveActiviteBundle:Activites:refuserDemandeParticipationActivite }
     
 moove_activite_demande_participation:
@@ -40,6 +40,10 @@ moove_activite_demande_participation:
     defaults: {_controller: mooveActiviteBundle:Activites:demandeParticipationActivite }
     
 moove_activite_quitter_activite:
-    path: /activite/{idActivite}/{idUtilisateur}
+    path: /quitter/{idActivite}/{idUtilisateur}
     defaults: {_controller: mooveActiviteBundle:Activites:quitterActivite }
+
+moove_activite_supprimer_activite:
+    path: /supprimer/{idActivite}/{organisateur}
+    defaults: {_controller: mooveActiviteBundle:Activites:supprimerActivite }
 

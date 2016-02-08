@@ -1,9 +1,12 @@
-001;2016-02-23 8:00:00;2016-02-20 8:00:00;8:30:00;4;0;jmpichon;intermediaire;cyclisme;001;002;003;Etape 24 du Tour de France 2015
+001;2016-02-23 8:00:00;2016-02-20 8:00:00;8:30:00;4;0;jmpichon;intermediaire;cyclisme;001;002;003;Etape 24 du Tour de France 2015\n Nous allons nous rendre dans les hauteurs des pyrénnées pendant plus de 8h.\n Il est fortement conseillé de pouvoir tenir au moins 2h sans coupure et être capable de monter des pentes parfois très abrupte...
 002;2016-04-25 14:00:00;2016-04-24 14:00:00;2:00:00;5;0;fdartigues;expert;jogging;002;002;004;Entrainement sportif Haut niveau Jogging
-003;2015-12-16 7:00:00;2015-12-16 6:00:00;4:00:00;6;1;jsarie;debutant;ski;006;;;Ski détente - La Mongie
-004;2015-12-17 7:00:00;2015-12-16 6:00:00;4:00:00;4;1;jsarie;expert;ski;006;;;Ski pro - La Mongie
-005;2015-12-10 7:00:00;2015-12-09 6:00:00;4:00:00;4;1;jsarie;expert;ski;006;;;Ski pro - La Mongie
-006;2015-12-03 7:00:00;2015-12-02 6:00:00;4:00:00;4;1;jsarie;expert;ski;006;;;Ski pro - La Mongie
-007;2016-12-02 7:00:00;2016-12-01 6:00:00;4:00:00;4;0;jsarie;expert;ski;006;;;Ski pro - La Mongie
+003;2015-12-16 7:00:00;2015-12-16 6:00:00;4:00:00;6;1;lsarie;debutant;ski;006;;;Ski détente - La Mongie\n Après un quadruple entrainement sportif, rien ne vaut un peu de détente ! Pour l'occasion, nous nous rendrons dans la plus grande station des pyrénées afin de profité de son domaine skiable pendant 4h.\n Le forfait 4h est a 47€, et nous avons prévus de nous arréter décontracté dans un bar à la fin. Prévoyez un peu d'argent si vous souhaité venir !
+004;2015-12-17 7:00:00;2015-12-16 6:00:00;4:00:00;4;1;jsarie;expert;ski;006;;;Ski pro - La Mongie Scéance 4 / 4
+005;2015-12-10 7:00:00;2015-12-09 6:00:00;4:00:00;4;1;jsarie;expert;ski;006;;;Ski pro - La Mongie Scéance 3 / 4
+006;2015-12-03 7:00:00;2015-12-02 6:00:00;4:00:00;4;1;jsarie;expert;ski;006;;;Ski pro - La Mongie Scéance 2 / 4
+007;2016-12-02 7:00:00;2016-12-01 6:00:00;4:00:00;4;0;jsarie;expert;ski;006;;;Ski pro - La Mongie Scéance 1 / 4
 008;2016-05-23 8:00:00;2016-05-20 8:00:00;8:30:00;4;0;jmpichon;intermediaire;cyclisme;001;002;003;Etape 14 du Tour de France 2011
 009;2016-04-14 14:00:00;2016-04-14 10:00:00;2:00:00;5;0;avauthey;expert;jogging;002;002;004;Entrainement sportif Haut niveau Jogging
+010;2016-08-10 11:30:00;2016-08-08 22:30:00;0000-00-02 00:00:00;15;0;vseigle;debutant;randonne;009;;;Longue marche + camping dans les montagnes pendant 2 jours !!! Ca vas être super !!! :D
+011;2015-06-26 20:45:00;2015-05-26 00:00:00;4:00:00;3;1;fpellerin;debutant;randonne;001;;;Très longue marche de ma cuisine jusqu'a mon canapé !
+012;2016-07-14 10:00:00;2016-07-14 16:00:00;2:00:00;7;0;jsarie;debutant;jogging;008;008;001;Petit footing de 250km histoire de s'échauffé un peu avant l'IUT !

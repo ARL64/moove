@@ -1,12 +1,21 @@
 {% extends "mooveActiviteBundle:Accueil:tableauDeBord.html.twig" %}
 {% block stylesheets %}
-  <link rel="stylesheet" href="{{ asset('css/dashboard/style.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/components/panel.css') }}">
+  <link rel="stylesheet" href="{{ asset('bundles/mooveactivite/css/dashboard/style.css') }}">
 {% endblock %}
 {% block activeAccueil %}active{% endblock %}
 {% block bodyTableau %}
     <br>
     <div class="row">
+        {% if app.session.flashbag.has('notice') %}
+            <div class="alert alert-success alert-dismissible" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <ul>
+                {% for flashMessage in app.session.flashbag.get('notice') %}
+                  <li>{{ flashMessage }}</li>
+                {% endfor %}
+              </ul>
+            </div>
+        {% endif %}
         <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading text-center">Les activités des autres</div>
@@ -164,8 +173,26 @@
                                         <p>
                                             <a href="{{ path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participation.utilisateur.id}) }}">{{ participation.utilisateur.prenom ~ " " ~ participation.utilisateur.nom}}</a> demande à participer à mon activite <a href="{{ path('moove_activite_detailsActivite', {idActivite: participation.activite.id}) }}">{{ participation.activite.sportPratique.nom | lower }} du {{ participation.activite.dateHeureRDV | date("d/m/y") }}.</a>
                                             <a href="{{ path('moove_activite_accepter_demande_participation', {'idActivite': participation.activite.id, 'idUtilisateur': participation.utilisateur.id}) }}"><button type="button" class="btn btn-success btn-xs ">Accepter</button></a>
-                                            <a href="{{ path('moove_activite_refuser_demande_participation', {'idActivite': participation.activite.id, 'idUtilisateur': participation.utilisateur.id}) }}"><button type="button" class="btn btn-danger btn-xs">Refuser</button></a>
+                                            <button type="button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#modalRefus">Refuser</button>
                                         </p>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="modalRefus" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                          <div class="modal-dialog" role="document">
+                                            <div class="modal-content">
+                                              <div class="modal-header">
+                                                <button type="button" class="close" data-dismiss="modal" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
+                                                <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
+                                              </div>
+                                              <div class="modal-body">
+                                                <p>Êtes-vous sur de vouloir refuser la participation de {{ participation.utilisateur.prenom ~ " " ~ participation.utilisateur.prenom }} à votre activité ?</p>
+                                              </div>
+                                              <div class="modal-footer">
+                                                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                                                <a href="{{ path('moove_activite_refuser_demande_participation', {'idActivite': participation.activite.id, 'idUtilisateur': participation.utilisateur.id}) }}"><button type="button" class="btn btn-danger">Oui, refuser</button></a>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
                                     {% endfor %}
                                 {% else %}
                                     <p>Je n'ai proposé aucune activité ou je n'ai pas de demandes en attente sur mes activités.</p>
@@ -178,24 +205,5 @@
         </div>
     </div>
 {% endblock %}
-{#
-                {% set aucuneDemande = true %}
-                {% for listeOrganisations in ListeDemandeAValide.listeOrganisations %}
-                   {% if ListeDemandeAValide.listeDemandes is not empty %}
-                   {% set aucuneDemande = false %}
-                   
-                     {% for listeDemande in ListeDemandeAValide.listeDemandes[0] %}
-                        <p>{{ listeDemande.prenom ~ " " ~ listeDemande.nom}}  demande à participer à mon activite {{listeOrganisations.sportPratique.nom | lower }} du {{listeOrganisations.DateHeureRDV | date("d/m/y") }}.
-                          <button type="button" class="btn btn-success btn-xs ">Accepter</button>
-                          <button type="button" class="btn btn-danger btn-xs">Refuser</button>
-                        </p>
-                    {% endfor %}
-                    {% endif %}
-                {% else %}
-                Vous n'organisez pas d'activite.
-              {% endfor %}
-              {% if aucuneDemande %}
-                  Vous n'avez aucune demandes en attente sur vos activite.
-              {% endif %}
-#}
-              
+{% block javascripts %}
+{% endblock %}

@@ -13,7 +13,7 @@ use Doctrine\ORM\QueryBuilder;
  */
 class ParticiperRepository extends EntityRepository
 {
-    public function findByOrganisateur($idOrganisateur, $accepter = null)
+    public function findByOrganisateur($idOrganisateur, $accepter = null, $terminer = null)
     {
         $requete = $this->_em->createQueryBuilder() 
             ->select('p')
@@ -33,6 +33,12 @@ class ParticiperRepository extends EntityRepository
             ;
         }
         
+        if(!is_null($terminer))
+        {
+            $requete->andWhere('a.estTerminee = :terminer')
+                    ->setParameter('terminer', $terminer)
+            ;
+        }
         // on récupère la commande DQL
         $query = $requete->getQuery();
         
