@@ -18,7 +18,7 @@
         {% endif %}
         <div class="col-md-6">
             <div class="panel panel-default">
-                <div class="panel-heading text-center">Les activités des autres</div>
+                <div class="panel-heading text-center">Les activités des autres auxquelles je participe</div>
                 <div class="panel-body">
                     <div class="col-md-6">
                         <div class="panel status panel-success">
@@ -67,8 +67,8 @@
                                             <a href="{{ path('moove_utilisateur_profileUtilisateur', {idUtilisateur: liste.activite.organisateur.id}) }}">
                                                 {{ liste.activite.organisateur.prenom ~ " " ~ liste.activite.organisateur.nom }}
                                             </a> 
-                                            {% set tempsAvantDebut = (liste.activite.dateHeureRDV | date("U") - "now" | date("U")) %}
-                                            démarre dans {{ tempsAvantDebut | date("d \\j\\o\\u\\r\\s h \\h\\e\\u\\r\\e\\s i \\m\\i\\n\\u\\t\\e\\s") }}  .
+                                            {#{% set tempsAvantDebut = (liste.activite.dateHeureRDV | date("U") - "now" | date("U")) %}#}
+                                            démarre {{ liste.activite.dateHeureRDV | time_diff}}.
                                         </p>
                                     {% endif %}
                                 {% endfor %}
@@ -140,7 +140,7 @@
                         
                         <div class="panel panel-primary">
                             <div class="panel-heading">
-                                <h3 class="panel-title">Mes organisations en approche</h3>
+                                <h3 class="panel-title">Mes activités que j'organise en approche</h3>
                             </div>
                             <div class="panel-body">
                                 {% set auMoinsUneParticipationHorsMoi = false %}
@@ -151,8 +151,8 @@
                                             <a href="{{ path('moove_activite_detailsActivite', {idActivite: liste.activite.id}) }}" >
                                                   {{ liste.activite.sportPratique.nom | lower }} du {{ liste.activite.dateHeureRDV | date("d/m/y") }}
                                             </a> 
-                                            {% set tempsAvantDebut = (liste.activite.dateHeureRDV | date("U") - "now" | date("U")) %}
-                                            démarre dans {{ tempsAvantDebut | date("m \\m\\o\\i\\s d \\j\\o\\u\\r\\s h \\h\\e\\u\\r\\e\\s i \\m\\i\\n\\u\\t\\e\\s") }}.
+                                            {#{% set tempsAvantDebut = (liste.activite.dateHeureRDV | date("U") - "now" | date("U")) %}#}
+                                            démarre {{ (liste.activite.dateHeureRDV) | time_diff }}.
                                         </p>
                                     {% endif %}
                                 {% endfor %}
@@ -184,7 +184,7 @@
                                                 <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
                                               </div>
                                               <div class="modal-body">
-                                                <p>Êtes-vous sur de vouloir refuser la participation de {{ participation.utilisateur.prenom ~ " " ~ participation.utilisateur.prenom }} à votre activité ?</p>
+                                                <p>Êtes-vous sur de vouloir refuser la participation de {{ participation.utilisateur.prenom ~ " " ~ participation.utilisateur.nom }} à votre activité ?</p>
                                               </div>
                                               <div class="modal-footer">
                                                 <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>

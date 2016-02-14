@@ -14,7 +14,7 @@ use Doctrine\ORM\QueryBuilder;
  */
 class ActiviteRepository extends EntityRepository
 {
-    public function findByUtilisateurAccepter($idUtilisateur, $estAccepter, $terminer = null)
+        public function findByUtilisateurAccepter($idUtilisateur, $estAccepter, $terminer = null)
     {
         $requete = $this->getAllActivityForUser($idUtilisateur)
                         ->andWhere('p.estAccepte = :estAccepte')

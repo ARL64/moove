@@ -10,6 +10,25 @@ use moove\ActiviteBundle\Entity\Activite;
 
 class PeuplerActivite extends AbstractFixture implements FixtureInterface, OrderedFixtureInterface
 {
+    protected function getTime($line)
+    {
+        if(substr_compare($line,"NOW", 0, 3, true) == 0)
+		{
+		    $date = new \DateTime('NOW');;
+		    $argDuree = new \DateInterval('PT' . substr($line, 4, 2) . 'H' . substr($line, 7, 2) . 'M' . substr($line, 10, 2) . 'S');
+		    if($line[3] == '+')
+		        $date->add($argDuree);
+		    else if ($line[3] == '-')
+		        $date->sub($argDuree);
+		    
+		    return $date;
+		}
+		else
+		{
+            return new \DateTime($line);
+		}
+    }
+    
     
     public function load(ObjectManager $manager)
     {
@@ -23,9 +42,9 @@ class PeuplerActivite extends AbstractFixture implements FixtureInterface, Order
             if(empty($line) || is_null($line))
                 break;
             $temps = new Activite();
-            $temps  ->setDateHeureRDV(new \DateTime($line[1]))
-            		->setDateCreation($dateActuel)
-		            ->setDateFermeture(new \DateTime($line[2]))
+            $temps  ->setDateHeureRDV($this->getTime($line[1]))
+		            ->setDateFermeture($this->getTime($line[2]))
+		            ->setDateCreation($dateActuel)
 		            ->setDuree(new \DateTime($line[3]))
 		            ->setNbPLaces(intval($line[4]))
 		            ->setEstTerminee($line[5])
@@ -34,8 +53,10 @@ class PeuplerActivite extends AbstractFixture implements FixtureInterface, Order
 		            ->setSportPratique($this->getReference('sport-' . $line[8]))
 		            ->setLieuRDV($this->getReference('lieu-' . $line[9]))
 		            ->setDescription($line[12])
+
 		            ;
-		            
+		         
+    
 		if($line[10] != "")
 		    $temps->setLieuDepart($this->getReference('lieu-' . $line[10]));
 		if($line[11] != "")

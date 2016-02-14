@@ -1,277 +1,334 @@
-{% extends "::vueMere.html.twig" %}
-{% block title %}Détails activité {{activite.id}} {% endblock %}
-{% block stylesheets %}
-  <link rel="stylesheet" href="{{ asset('bundles/mooveactivite/css/details/style.css') }}">
-  <link rel="stylesheet" href="{{ asset('css/Glyphter.css') }}">
-{% endblock %}
-{% block body %} 
-    <!-- Titre de la page -->
-    <section class="content-header">
-      <h1><h2><span class="label label-primary"> {{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }} propose une activité {{ activite.sportPratique.nom | lower }}</span></h2></h1>
-    </section>
+{% extends "::vueMere.html.twig" %} {% block title %}Détails activité {{activite.id}} {% endblock %} {% block stylesheets %}
+<link rel="stylesheet" href="{{ asset('bundles/mooveactivite/css/details/style.css') }}">
+<link rel="stylesheet" href="{{ asset('css/Glyphter.css') }}"> {% endblock %} {% block body %}
+
+
+
+
+<!-- Titre de la page -->
+<section class="content-header">
+  <h1><h2><span class="label label-primary"> {{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }} propose une activité {{ activite.sportPratique.nom | lower }}</span></h2></h1>
+</section>
+
+
+
+
+
+
+<!-- Contenu principal -->
+
+<!-- Message flash -->
+<section class="content">
+  <div class="row">
+    {% if app.session.flashbag.has('notice') %}
+    <div class="alert alert-success alert-dismissible" role="alert">
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      <ul>
+        {% for flashMessage in app.session.flashbag.get('notice') %}
+        <li>{{ flashMessage }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+    <div class="col-md-12">
+      <div class="media">
+        <div class="media-left">
+          <img class="media-object" src="{{ asset(activite.organisateur.URLAvatar) }}" alt="photo de l'utilisateur" width="75" height="75">
+        </div>
+        <div class="media-body">
+          <h4 class="media-heading">{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</h4>
+          <p>
+            {% if niveauOrganisateur != null %} {{ niveauOrganisateur }} {% else %} {% if activite.organisateur.sexe == 'femme' %} Non pratiquante {% else %} Non pratiquant {% endif %} {% endif %}
+          </p>
+          <small>Annonce publiée le {{ activite.dateCreation | localizeddate('none', 'none', null, null, "d MMMM Y à H'h'mm") }}</small>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br>
+  
+  
+  <div class="row">
+    <!-- colone où se trouve les panneaux informations sur l'activité et information -->
+    <div class="col-md-8">
+      <!-- panel principal avec les informations de l'activité -->
+      <div class="panel panel-default">
+        <!-- titre du panel -->
+        <div class="panel-heading">
+          <h3 class="panel-title">Informations sur l'activité</h3>
+        </div>
+        <!-- Corps du panel -->
+        <div class="panel-body">
+          <div class="infos">
+            <p><span class="info-label text-muted">Sport</span><span class="info-valeur"><i class="icon-{{ activite.sportPratique.nomIcone }}"></i>{{ activite.sportPratique.nom }}</span></p>
+          </div>
+          <div class="infos">
+            <p><span class="info-label text-muted">Niveau requis</span><span class="info-valeur"><i class="fa fa-bar-chart"></i>{{ activite.niveauRequis.libelle }}</span></p>
+          </div>
+          <div class="infos">
+            <p><span class="info-label text-muted">Ville</span><span class="info-valeur"><i class="fa fa-building-o"></i>{{ activite.lieuRDV.ville ~ ", " ~ activite.lieuRDV.codePostal }}</span></p>
+          </div>
+          <div class="infos">
+            <p><span class="info-label text-muted">Lieu de rendez-vous</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#ff9800"></i>{% if activite.lieuRDV.numeroRue != 0 %}{{ activite.lieuRDV.numeroRue ~ ", " }}{% endif %}{{ activite.lieuRDV.nomRue }}</span></p>
+          </div>
+          {% if activite.lieuDepart is not null %}
+          <div class="infos">
+            <p><span class="info-label text-muted">Lieu de départ</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#4caf50"></i>{% if activite.lieuDepart.numeroRue != 0 %}{{ activite.lieuDepart.numeroRue ~ ", " }}{% endif %}{{ activite.lieuDepart.nomRue }}</span></p>
+          </div>
+          {% else %}
+          <div class="infos">
+            <p><span class="info-label text-muted">Lieu de départ</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#4caf50"></i>Non spécifié</span></p>
+          </div>
+          {% endif %} {% if activite.lieuArrivee is not null %}
+          <div class="infos">
+            <p><span class="info-label text-muted">Lieu d'arrivée</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#e51c23"></i>{% if activite.lieuArrivee.numeroRue != 0 %}{{ activite.lieuArrivee.numeroRue ~ ", "}}{% endif %}{{ activite.lieuArrivee.nomRue }}</span></p>
+          </div>
+          {% else %}
+          <div class="infos">
+            <p><span class="info-label text-muted">Lieu d'arrivée</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#e51c23"></i>Non spécifié</span></p>
+          </div>
+          {% endif %}
+          <div class="infos">
+            <p><span class="info-label text-muted">Date de départ</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateHeureRDV | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm") }}</span></p>
+          </div>
+          <div class="infos">
+            <p><span class="info-label text-muted">Date de fin d'inscription  l'activité</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateFermeture | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm") }}</span></p>
+          </div>
+          <div class="infos">
+            <p><span class="info-label text-muted">Temps estimé</span><span class="info-valeur"><i class="fa fa-clock-o"></i>{{ activite.duree | localizeddate('none', 'none', null, null, "H 'h' mm") }}</span></p>
+          </div>
+          <div class="infos">
+            <p><span class="info-label text-muted">Nombre de places (vous inclus)</span><span class="info-valeur"><i class="fa fa-users"></i>{{ activite.nbPlaces }} places</span></p>
+          </div>
+        </div>
+      </div>
+      
+      
+      
+      
+      <!-- Panel information -->
+      <div class="panel panel-default">
+        <!-- titre du pannel -->
+        <div class="panel-heading">
+          <h3 class="panel-title">Informations</h3>
+        </div>
+        <!-- corps du pannel -->
+        <div class="panel-body">
+          {{activite.description}}
+        </div>
+      </div>
+    </div>
     
-    <!-- Contenu principal -->
-    <section class="content">
-      <div class="row">
-        {% if app.session.flashbag.has('notice') %}
-        <div class="alert alert-success alert-dismissible" role="alert">
-          <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <ul>
-            {% for flashMessage in app.session.flashbag.get('notice') %}
-              <li>{{ flashMessage }}</li>
-            {% endfor %}
-          </ul>
+    
+    
+    <!-- Panel participant -->
+    <div class="col-md-4">
+      <div class="panel panel-default">
+        <!-- titre du panel -->
+        <div class="panel-heading">
+          <h3 class="panel-title">Participants ({% if activite.nbPlaces - nbParticipants <= 1 %}<span class="text-red">{{ activite.nbPlaces - nbParticipants }}  place restante</span>{% else %}{{ activite.nbPlaces - nbParticipants }}  places restantes{% endif %})</h3>
+        </div>
+        <!-- corps du panel -->
+        <div class="panel-body">
+          <!-- bouton particpants -->
+          <!-- Button trigger modal -->
+          <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalParticipants">
+            Participants
+          </button>
+
+          <!-- Modal lorsque l'on clique sur le bouton participant -->
+          <div class="modal fade" id="modalParticipants" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h4 class="modal-title" id="myModalLabel">Participants</h4>
+                </div>
+                <div class="modal-body">
+                  <div>
+                    <!-- Nav tabs correspondant aux deux onglets-->
+                    <ul class="nav nav-tabs" role="tablist">
+                      <!-- Onglet particpants -->
+                      <li role="presentation" class="active"><a href="#participantsAcceptes" aria-controls="participant" role="tab" data-toggle="tab">Participants</a></li>
+                      <!-- Onglet en attente -->
+                      <li role="presentation"><a href="#participantsEnAttente" aria-controls="enAttente" role="tab" data-toggle="tab">En attente</a></li>
+                    </ul>
+
+
+                    <!-- Tab panes -->
+                     <!-- Onglet particiapnts de la boite modale lorsqu'on clique sur participant -->
+                    <div class="tab-content">
+                      <div role="tabpanel" class="tab-pane fade in active" id="participantsAcceptes">
+                        <br>
+                        {% for participationCourant in tabParticipants if participationCourant.estAccepte == 1 %}
+                        <a href="{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}" class="list-group-item">
+
+                          <div class="media-left">
+                            <img class="media-object" src="{{ asset(participationCourant.utilisateur.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
+                          </div>
+                            <!-- Permet l'inclusion de menus des utilisateurs a peu près n'importe ou. -->
+                            {% include "mooveActiviteBundle:Activite:blockListeUtiisateutDetail.html.twig" %}
+                        </a>
+                        {% endfor %}
+                      </div>
+                      
+                      <!-- Onglet en attente de la boite modale lorsqu'on clique sur paticipant -->
+                      <div role="tabpanel" class="tab-pane fade" id="participantsEnAttente">
+                        {% for participationCourant in tabParticipants if participationCourant.estAccepte == 0 %}
+                        <a href="{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}" class="list-group-item">
+
+                          <div class="media-left">
+                            <img class="media-object" src="{{ asset(participationCourant.utilisateur.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
+                          </div>
+                            {% include "mooveActiviteBundle:Activite:blockListeUtiisateutDetail.html.twig" %}
+                        </a>
+
+                        <!-- Modal -->
+                        <!-- Boite modal pour refuser un participant -->
+                        <div class="modal fade" id="modalRefus{{participationCourant.utilisateur.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
+                              </div>
+                              <div class="modal-body">
+                                <p>Êtes-vous sur de vouloir refuser la participation de {{ participationCourant.utilisateur.prenom ~ " " ~ participationCourant.utilisateur.nom }} à votre activité ?</p>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                                <a href="{{ path('moove_activite_refuser_demande_participation', {'idActivite': participationCourant.activite.id, 'idUtilisateur': participationCourant.utilisateur.id}) }}">
+                                  <button type="button" class="btn btn-danger">Oui, refuser</button>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        {% else %}
+                          <br>Aucun utilisateur n'a envoyé de demande de participation à l'activité
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Fermer</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- affichage des particpants -->
+          {% for participationCourant in tabParticipants %}
+            <a id="lienUtilisateur{{participationCourant.utilisateur.id}}" href="{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}" class="list-group-item">
+              <div class="media-left">
+                <img class="media-object" src="{{ asset(participationCourant.utilisateur.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
+              </div>
+              <div class="media-body">
+                {% include "mooveActiviteBundle:Activite:blockListeUtiisateutDetail.html.twig" %}
+              </div>
+            </a>
+            
+            <!-- Modal -->
+            <!-- Modal lordque l'on clique sur le bouton refusé -->
+            {% if estOrganisateur and participationCourant.estAccepte == 0 %}
+            <div class="modal fade" id="modalRefus" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
+                  </div>
+                  <div class="modal-body">
+                    <p>Êtes-vous sur de vouloir refuser la participation de {{ participationCourant.utilisateur.prenom ~ " " ~ participationCourant.utilisateur.nom }} à votre activité ?</p>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                    <a href="{{ path('moove_activite_refuser_demande_participation', {'idActivite': participationCourant.activite.id, 'idUtilisateur': participationCourant.utilisateur.id}) }}">
+                      <button type="button" class="btn btn-danger">Oui, refuser</button>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+          {% endfor %} 
+        {# estAccepter == 1 :> validé | estAccepter == 2 :> refusé | estAccepter == 0 :> en attente #} 
+        {% if estOrganisateur %} {% if ("now" | date("Ymd") > activite.dateHeureRDV | date("Ymd")) %}
+          <button type="button" class="btn btn-primary btn-lg disabled">Activité terminée</button>
+        {% else %}
+          <button type="button" class="btn btn-primary btn-lg">Modifier l'activité</button>
+          <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#modalSupprimer">Supprimer l'activité</button>
+        {% endif %}
+
+        <!-- Modal -->
+        <div class="modal fade" id="modalSupprimer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
+              </div>
+              <div class="modal-body">
+                <p>Êtes-vous sur de vouloir supprimer cette activité ?</p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+                <a href="{{ path('moove_activite_supprimer_activite', {'idActivite': activite.id, 'organisateur': app.user.id}) }}">
+                  <button type="button" class="btn btn-danger">Oui, supprimer l'activité</button>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        {#</div>#} {% else %} {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) %} {% if estAccepte == 1 %}
+      <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
+      {% elseif estAccepte == 2 %}
+      <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
+      {% else %}
+      <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
+      {% endif %} {% else %} {% if estParticipant %} {% if estAccepte == 1 %}
+      <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#quitterActivite">Quitter l'activité</button>
+      {% elseif estAccepte == 2 %}
+      <button type="button" class="btn btn-danger btn-lg disabled">Vous avez été refusé</button>
+      {% else %}
+      <button type="button" class="btn btn-warning btn-lg disabled">Demande envoyée</button>
+      {% endif %} {% else %}
+      <a href="{{ path('moove_activite_demande_participation', {'idActivite': activite.id, 'idUtilisateur': app.user.id}) }}">
+        <button type="button" class="btn btn-primary btn-lg">Je veux participer</button>
+        {% endif %} {% endif %}
+        <!-- Modal -->
+        <div class="modal fade" id="quitterActivite" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Quitter</h4>
+              </div>
+              <div class="modal-body">
+                Voulez-vous vraiment quitter cette activité?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Annuler</button>
+                <a href="{{ path( 'moove_activite_quitter_activite', { 'idActivite': activite.id, 'idUtilisateur': app.user.id})}}">
+                  <button type="button" class="btn btn-danger">Quitter l'activité</button>
+                </a>
+              </div>
+            </div>
+          </div>
         </div>
         {% endif %}
-        <div class="col-md-12">
-            <div class="media">
-                <div class="media-left">
-                    <img class="media-object" src="{{ asset(activite.organisateur.URLAvatar) }}" alt="photo de l'utilisateur" width="75" height="75">
-                </div>
-                <div class="media-body">
-                  <h4 class="media-heading">{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</h4>
-                  <p>
-                    {% if niveauOrganisateur != null %}
-                      {{ niveauOrganisateur }}
-                    {% else %}
-                      Non pratiquant
-                    {% endif %}
-                  </p>
-                  <small>Annonce publiée le {{ activite.dateCreation | localizeddate('none', 'none', null, null, "d MMMM Y à H'h'mm") }}</small>
-                </div>
-              </div>
-        </div>
-      </div>
-      <br> <!-- A enlever plus tard et faire le positionnement en CSS -->
-      <div class="row">
-        <div class="col-md-8">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h3 class="panel-title">Informations sur l'activité</h3>
-            </div>
-              <div class="panel-body">
-                <div class="infos">
-                  <p><span class="info-label text-muted">Sport</span><span class="info-valeur"><i class="icon-{{ activite.sportPratique.nomIcone }}"></i>{{ activite.sportPratique.nom }}</span></p>
-                </div>
-                <div class="infos">
-                  <p><span class="info-label text-muted">Niveau requis</span><span class="info-valeur"><i class="fa fa-bar-chart"></i>{{ activite.niveauRequis.libelle }}</span></p>
-                </div>
-                <div class="infos">
-                  <p><span class="info-label text-muted">Ville</span><span class="info-valeur"><i class="fa fa-building-o"></i>{{ activite.lieuRDV.ville ~ ", " ~ activite.lieuRDV.codePostal }}</span></p>
-                </div>
-                <div class="infos">
-                  <p><span class="info-label text-muted">Lieu de rendez-vous</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#ff9800"></i>{{ activite.lieuRDV.numeroRue ~ ", " ~ activite.lieuRDV.nomRue }}</span></p>
-                </div>
-                {% if activite.lieuDepart is not null  %}
-                  <div class="infos">
-                    <p><span class="info-label text-muted">Lieu de départ</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#4caf50"></i>{{ activite.lieuDepart.numeroRue ~ ", " ~ activite.lieuDepart.nomRue }}</span></p>
-                  </div>
-                {% else %}
-                  <div class="infos">
-                    <p><span class="info-label text-muted">Lieu de départ</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#4caf50"></i>Non spécifié</span></p>
-                  </div>
-                {% endif %}
-                {% if activite.lieuArrivee is not null  %}
-                  <div class="infos">
-                    <p><span class="info-label text-muted">Lieu d'arrivée</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#e51c23"></i>{{ activite.lieuArrivee.numeroRue ~ ", " ~ activite.lieuArrivee.nomRue }}</span></p>
-                  </div>
-                {% else %}
-                  <div class="infos">
-                    <p><span class="info-label text-muted">Lieu d'arrivée</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#e51c23"></i>Non spécifié</span></p>
-                  </div>
-                {% endif %}
-                <div class="infos">
-                  <p><span class="info-label text-muted">Date de départ</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateHeureRDV | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm") }}</span></p>
-                </div>
-                <div class="infos">
-                  <p><span class="info-label text-muted">Date de fin d'inscription  l'activité</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateFermeture | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm") }}</span></p>
-                </div>
-                <div class="infos">
-                  <p><span class="info-label text-muted">Temps estimé</span><span class="info-valeur"><i class="fa fa-clock-o"></i>{{ activite.duree | localizeddate('none', 'none', null, null, "H 'h' mm") }}</span></p>
-                </div>
-                <div class="infos">
-                  <p><span class="info-label text-muted">Nombre de places (vous inclus)</span><span class="info-valeur"><i class="fa fa-users"></i>{{ activite.nbPlaces }} places</span></p>
-                </div>
-              </div>
-          </div>
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h3 class="panel-title">Informations</h3>
-            </div>
-              <div class="panel-body">
-                {{activite.description}}
-              </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h3 class="panel-title">Participants ({% if activite.nbPlaces - nbParticipants <= 1 %}<span class="text-red">{{ activite.nbPlaces - nbParticipants }}  place restante</span>{% else %}{{ activite.nbPlaces - nbParticipants }}  places restantes{% endif %})</h3>
-            </div>
-              <div class="panel-body">
-                {% for participationCourant in tabParticipants %}
-                  {#<div class="media">#}
-                  
-                    <a href="{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}" class="list-group-item">
-                    
-                      <div class="media-left">
-                          <img class="media-object" src="{{ asset(participationCourant.utilisateur.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
-                      </div>
-                      <div class="media-body">
-                        <h4 class="media-heading">{{ participationCourant.utilisateur.prenom ~ " " ~ participationCourant.utilisateur.nom }}</h4>
-                          {# <p>
-                            {% if estOrganisateur and participationCourant.estAccepte == 0 %}
-                              <button type="button" class="btn btn-success btn-xs ">Accepter</button>
-                              <button type="button" class="btn btn-danger btn-xs">Refuser</button>
-                            {% endif %}
-                          </p> #}
-                        {# <p>{{ participationCourant.utilisateur.dateNaissance | date("d/m/y") }}</p> #}
-                        <p>Niveau : 
-                          {% set find = false %}
-                          {% for prati in participationCourant.utilisateur.pratiquer %}
-                            {% if prati.sport == activite.sportPratique %}
-                                {{ prati.niveau.libelle }} <i>({{ prati.sport.nom }})</i>
-                              {% set find = true %}
-                            {% endif %}
-                          {% endfor %}
-                          {% if not find %}
-                            Non pratiquant
-                          {% endif %}
-                          <p>
-                            {% if estOrganisateur and participationCourant.estAccepte == 0 %}
-                            
-                              <a href="{{ path('moove_activite_accepter_demande_participation', {'idActivite': participationCourant.activite.id, 'idUtilisateur': participationCourant.utilisateur.id}) }}"><button type="mini-button" class="btn btn-success btn-xs ">Accepter</button></a>
-                              <button type="mini-button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#modalRefus">Refuser</button>
-                            {% endif %}
-                          </p>
-                        </p> 
-                      </div>
-                    
-                    </a>
-                  <!-- Modal -->
-                  <div class="modal fade" id="modalRefus" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                    <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
-                          <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
-                        </div>
-                        <div class="modal-body">
-                          <p>Êtes-vous sur de vouloir refuser la participation de {{ participationCourant.utilisateur.prenom ~ " " ~ participationCourant.utilisateur.prenom }} à votre activité ?</p>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-                          <a href="{{ path('moove_activite_refuser_demande_participation', {'idActivite': participationCourant.activite.id, 'idUtilisateur': participationCourant.utilisateur.id}) }}"><button type="button" class="btn btn-danger">Oui, refuser</button></a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {#</div>#}
-                  
-                {% endfor %}
-                {# estAccepter == 1 :> validé | estAccepter == 2 :> refusé | estAccepter == 0 :> en attente #}
-                {% if estOrganisateur %}
-                  {% if ("now" | date("Ymd") > activite.dateHeureRDV | date("Ymd")) %}
-                    <button type="button" class="btn btn-primary btn-lg disabled">Activité terminée</button>
-                  {% else %}
-                    <button type="button" class="btn btn-primary btn-lg">Modifier l'activité</button>
-                    <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#modalSupprimer">Supprimer l'activité</button>
-                  {% endif %}
-                  
-                  <!-- Modal -->
-                  <div class="modal fade" id="modalSupprimer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                    <div class="modal-dialog" role="document">
-                      <div class="modal-content">
-                        <div class="modal-header">
-                          <button type="button" class="close" data-dismiss="modal" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
-                          <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
-                        </div>
-                        <div class="modal-body">
-                          <p>Êtes-vous sur de vouloir supprimer cette activité ?</p>
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-                          <a href="{{ path('moove_activite_supprimer_activite', {'idActivite': activite.id, 'organisateur': app.user.id}) }}"><button type="button" class="btn btn-danger">Oui, supprimer l'activité</button></a>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {#</div>#}
-                {% else %}
-                  {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) %}
-                    {% if estAccepte == 1 %}
-                      <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
-                    {% elseif estAccepte == 2 %}
-                      <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
-                    {% else %}
-                      <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
-                    {% endif %}
-                  {% else %}
-                    {% if estParticipant %}
-                      {% if estAccepte == 1 %}
-                        <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#quitterActivite">Quitter l'activité</button>
-                      {% elseif estAccepte == 2 %}
-                        <button type="button" class="btn btn-danger btn-lg disabled">Vous avez été refusé</button>
-                      {% else %}
-                        <button type="button" class="btn btn-warning btn-lg disabled">Demande envoyée</button>
-                      {% endif %}
-                      
-                    {% else %}
-                      <a href="{{ path('moove_activite_demande_participation', {'idActivite': activite.id, 'idUtilisateur': app.user.id}) }}"><button type="button" class="btn btn-primary btn-lg">Je veux participer</button>
-                    {% endif %}
-                  {% endif %}
-                <!-- Modal -->
-                <div class="modal fade" id="quitterActivite" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                  <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">Quitter</h4>
-                      </div>
-                      <div class="modal-body">
-                        Voulez-vous vraiment quitter cette activité?
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Annuler</button>
-                        <a href= {{ path('moove_activite_quitter_activite', {'idActivite': activite.id, 'idUtilisateur': app.user.id})}}><button type="button" class="btn btn-danger">Quitter l'activité</button></a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {# A VERIFIER
-                
-                {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) and estAccepte %}
-                    <button type="button" class="btn btn-primary btn-lg disabled">Activité terminée</button>
-                  {% endif %}
-                  {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and not estParticipant %}
-                    <button type="button" class="btn btn-primary btn-lg">Je veux participer</button>
-                  {% endif %}
-                  {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and estAccepte and estParticipant %}
-                    <button type="button" class="btn btn-primary btn-lg">Quitter l'activité</button>
-                  {% endif %}
-                  {% if ("now" | date("Ymd") < activite.dateFermeture | date("Ymd")) and not estAccepte and estParticipant %}
-                    <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyée</button>
-                  {% endif %}
-                  {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) and not estAccepte and estParticipant %}
-                    <button type="button" class="btn btn-primary btn-lg disabled">Demande envoyée</button>
-                  {% endif %}
-                  
-                  #}
-                
-                
-                {% endif %}
-              </div>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <h1>Carte</h1>
-          <div id="map" style="height: 500px;"></div>
-        </div>
-      </div>
-    </section>
-    
+    </div>
+  </div>
+  </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <h1>Carte</h1>
+      <div id="map" style="height: 500px;"></div>
+    </div>
+  </div>
+</section>
+
 {% endblock %}
 {% block javascripts %}
   <script>

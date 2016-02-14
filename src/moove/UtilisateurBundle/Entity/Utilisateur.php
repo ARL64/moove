@@ -7,6 +7,7 @@ use moove\ActiviteBundle\Entity\Lieu;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use moove\UtilisateurBundle\Validator\Constraints as mooveAssert;
 
 /**
  * @ORM\Entity
@@ -27,6 +28,12 @@ class Utilisateur extends BaseUser
      * @var string
      * 
      * @ORM\Column(name="nom", type="string", length=255, nullable=true)
+     * @Assert\NotBlank(message = "Votre nom doit être spécifié.")
+     * @Assert\Length(min = "2", 
+     *                max = "50",
+     *                minMessage = "Votre nom doit comporter au moins {{ limit }} caractères.",
+     *                maxMessage = "Votre nom ne peut comporter que {{ limit }} caractères au maximum."
+     * )
      */
     private $nom;
     
@@ -34,6 +41,12 @@ class Utilisateur extends BaseUser
      * @var string
      * 
      * @ORM\Column(name="prenom", type="string", length=255, nullable=true)
+     * @Assert\NotBlank(message="Votre prénom doit être spécifié.")
+     * @Assert\Length(min = "3", 
+     *                max = "50",
+     *                minMessage = "Votre prénom doit comporter au moins {{ limit }} caractères.",
+     *                maxMessage = "Votre prénom ne peut comporter que {{ limit }} caractères au maximum."
+     * )
      */
     private $prenom;
     
@@ -48,6 +61,9 @@ class Utilisateur extends BaseUser
      * @var string
      * 
      * @ORM\Column(name="sexe", type="string", length=255, nullable=true)
+     * @Assert\NotBlank(message = "Veuillez sélectionner un genre.")
+     * @Assert\Choice(choices = {"homme", "femme"},
+     *                message = "Le sexe sélectionné n'est pas valide.")
      */
     private $sexe;
     
@@ -70,6 +86,8 @@ class Utilisateur extends BaseUser
      * @var \DateTime
      * 
      * @ORM\Column(name="dateNaissance", type="datetime", nullable=true)
+     * @Assert\NotNull(message = "Veuillez indiquer votre date de naissance.")
+     * @mooveAssert\Age
      */
     private $dateNaissance;
     

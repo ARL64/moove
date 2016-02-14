@@ -8,6 +8,10 @@ services:
         class: Twig_Extensions_Extension_Intl
         tags:
             - { name: twig.extension }
+    twig.extension.date:
+        class: Twig_Extensions_Extension_Date
+        tags:
+            - { name: twig.extension }
             
     app.form.registration:
         class: moove\UtilisateurBundle\Form\Type\RegistrationFormType

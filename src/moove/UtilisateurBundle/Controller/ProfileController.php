@@ -90,6 +90,7 @@ class ProfileController extends Controller
         if (!is_object($user) || !$user instanceof UserInterface) {
             throw new AccessDeniedException('This user does not have access to this section.');
         }
+        
 
         /** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
         $dispatcher = $this->get('event_dispatcher');
@@ -115,26 +116,30 @@ class ProfileController extends Controller
 
             $event = new FormEvent($form, $request);
             $dispatcher->dispatch(FOSUserEvents::PROFILE_EDIT_SUCCESS, $event);
-
-            $userManager->updateUser($user);
             
              // $file stores the uploaded PDF file
             /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
             $file = $user->getPhoto();
+            
+            if(!is_null($file))
+            {
+                    // Generate a unique name for the file before saving it
+                $fileName = md5(uniqid()).'.'.$file->guessExtension();
+    
+                // Move the file to the directory where brochures are stored
+                $photoDir = $this->container->getParameter('kernel.root_dir').'/../web/bundles/mooveutilisateur/images/avatars/';
+                $file->move($photoDir, $fileName);
+    
+                // Update the 'brochure' property to store the PDF file name
+                // instead of its contents
+                //$user->setURLAvatar($photoDir);
+                $user->setURLAvatar($fileName);
+            }
+            
+            
+            $userManager->updateUser($user);
 
-            // Generate a unique name for the file before saving it
-            $fileName = md5(uniqid()).'.'.$file->guessExtension();
-
-            // Move the file to the directory where brochures are stored
-            $photoDir = $this->container->getParameter('kernel.root_dir').'/../../Ressources/public/images/avatars';
-            $file->move($photoDir, $fileName);
-
-            // Update the 'brochure' property to store the PDF file name
-            // instead of its contents
-            $user->setURLAvatar($fileName);
-
-
-            if (null === $response = $event->getResponse()) {
+            if (null === ($response = $event->getResponse())) {
                 $url = $this->generateUrl('fos_user_profile_show');
                 $response = new RedirectResponse($url);
             }

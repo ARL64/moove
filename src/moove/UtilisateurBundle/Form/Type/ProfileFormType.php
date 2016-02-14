@@ -37,8 +37,8 @@ class ProfileFormType extends AbstractType
         $builder->add('plainPassword', LegacyFormHelper::getType('Symfony\Component\Form\Extension\Core\Type\RepeatedType'), array(
             'type' => LegacyFormHelper::getType('Symfony\Component\Form\Extension\Core\Type\PasswordType'),
             'options' => array('translation_domain' => 'FOSUserBundle'),
-            'first_options' => array('label' => 'form.new_password'),
-            'second_options' => array('label' => 'form.new_password_confirmation'),
+            'first_options' => array('label' => 'form.new_password', 'required'=> false),
+            'second_options' => array('label' => 'form.new_password_confirmation', 'required'=> false),
             'invalid_message' => 'fos_user.password.mismatch',
             'mapped' => false,
             'constraints' => new UserPassword(),
@@ -86,8 +86,8 @@ class ProfileFormType extends AbstractType
             ->add('nom', 'text', array('label' => 'form.nom', 'translation_domain' => 'FOSUserBundle'))
             ->add('prenom', 'text', array('label' => 'form.prenom', 'translation_domain' => 'FOSUserBundle'))
             ->add('dateNaissance', 'birthday', array('label' => 'form.birthday', 'translation_domain' => 'FOSUserBundle'))
-            ->add('photo','file', array('label'=>'form.photo', 'translation_domain'=>'FOSUserBundle'))
-            ->add('sexe','choice',array('label' => 'form.sexe','choices'=>array('sexeH'=>'homme', 'sexeF'=>'femme'), 'translation_domain'=>'FOSUserBundle'))
+            ->add('photo','file', array('label'=>'form.photo', 'translation_domain'=>'FOSUserBundle','required'=>false))
+            ->add('sexe','choice',array('label' => 'form.sexe','choices'=>array('homme'=>'homme', 'femme'=>'femme'), 'translation_domain'=>'FOSUserBundle'))
         ;
     }
 }

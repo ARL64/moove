@@ -24,9 +24,9 @@
           {% for activite in tabActivites %}
           <tr>
             <td>{{ activite.sportPratique.nom }}</td>
-            <td>{% if activite.lieuRDV is not null%}{{ activite.lieuRDV.nom }}{% endif %}</td>
-            <td>{% if activite.lieuDepart is not null%}{{ activite.lieuDepart.nom }}{% endif %}</td>
-            <td>{% if activite.lieuArrivee is not null%}{{ activite.lieuArrivee.nom }}{% endif %}</td>
+            <td>{% if activite.lieuRDV is not null%}{{ activite.lieuRDV.nom }}{% else %}Non spécifié{% endif %}</td>
+            <td>{% if activite.lieuDepart is not null%}{{ activite.lieuDepart.nom }}{% else %}Non spécifié{% endif %}</td>
+            <td>{% if activite.lieuArrivee is not null%}{{ activite.lieuArrivee.nom }}{% else %}Non spécifié{% endif %}</td>
             <td>{{ activite.dateHeureRDV | date("d/m/y") }}</td>
             <td>{{ tabNbParticipants[loop.index0] ~ "/" ~ activite.nbPlaces }}</td>
             <td>{% if activite.organisateur == app.user %} Moi {% else %}{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}{% endif %}</td>

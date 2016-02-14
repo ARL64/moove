@@ -18,16 +18,9 @@ class PeuplerParticiper extends AbstractFixture implements FixtureInterface, Ord
         $isFinish = false;
         while(!$isFinish)
         {
-            if($i < 10)
-                $suffixe = "00".$i;
-            else if($i < 100)
-                $suffixe = "0".$i;
-            else
-                $suffixe = $i;
-
             try
             {
-                $this->getReference('activite-' . $suffixe);
+                $this->getReference('activite-' . $i);
             }
             catch(Exception $e)
             {
@@ -37,12 +30,12 @@ class PeuplerParticiper extends AbstractFixture implements FixtureInterface, Ord
             if(!$isFinish)
             {
                 $temps = new Participer();
-	           	$temps->setUtilisateur($this->getReference('activite-' . $suffixe)->getOrganisateur())
-		                ->setActivite($this->getReference('activite-' . $suffixe))
+	           	$temps->setUtilisateur($this->getReference('activite-' . $i)->getOrganisateur())
+		                ->setActivite($this->getReference('activite-' . $i))
 		                ->setEstAccepte(1)
 		                ;
                 $manager->persist($temps);
-                $this->addReference('organisateur-' . $suffixe, $temps);  
+                $this->addReference('organisateur-' . $i, $temps);  
             }
             $i++;
             

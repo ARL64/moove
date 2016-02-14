@@ -9,6 +9,7 @@ use moove\ActiviteBundle\Entity\Lieu;
 use moove\ActiviteBundle\Entity\Participer;
 use Symfony\Component\HttpFoundation\Request;
 use \GeocodeMapsGeocoder;
+use moove\ActiviteBundle\Validator\Constraints\Adresse;
 require_once __DIR__ . '/../../../../vendor/jstayton/google-maps-geocoder/src/GoogleMapsGeocoder.php';
 
 class ActivitesController extends Controller
@@ -97,8 +98,6 @@ class ActivitesController extends Controller
            $niveauOrganisateur = $resultatNiveauOrganisateur->getLibelle();
         }
          
-         $arg = $estOrganisateur? array(1,0) : 1;   
-         
         // On récupère un tableau d'objet Participer $tabParticiper
         $tabParticiper = $repParticiper->findBy(array('activite' => $idActivite, 'estAccepte' => 1));
         // On récupère le nombre de participants de l'activité
@@ -130,7 +129,7 @@ class ActivitesController extends Controller
         
         $utilisateur = $this->getUser(); 
         $repActivite = $this->getRepository('Activite');
-        $tabActivites = $repActivite->findByUtilisateur($utilisateur->getId(), true);
+        $tabActivites = $repActivite->findByUtilisateurAccepter($utilisateur->getId(), 1, true);
         /** Liste du nombre de participations */
         $tabNbParticipants = $this->getNbParticipantsParActivite($tabActivites);
         return $this->render('mooveActiviteBundle:Accueil:tableauDeBordHistorique.html.twig',
@@ -196,7 +195,9 @@ class ActivitesController extends Controller
         // $nombreDeJoursMois = intval(date("t",$mois));
         // On initialise l'organisteur avec l'utilisateur qui est entrain de créer l'activité
         $activite   ->setOrganisateur($this->getUser())
-                    ->setDateCreation(new \Datetime("NOW"))
+                    ->setDateCreation(new \Datetime())
+                    ->setDateFermeture(new \Datetime())
+                    ->setDateHeureRDV(new \Datetime())
                     ->setEstTerminee(false)
                 ;
 
@@ -221,9 +222,9 @@ class ActivitesController extends Controller
                                    ->add('duree', 'time', array('label' => 'Durée estimée'))
                                    ->add('nbPlaces','integer', array('label'=> 'Nombre de places total (vous inclus)'))
                                    ->add('description', 'textarea', array ('label' => 'Informations'))
-                                   ->add('adresseLieuRDV', 'text')
-                                   ->add('adresseLieuDepart', 'text')
-                                   ->add('adresseLieuArrivee', 'text')
+                                   ->add('adresseLieuRDV', 'text', array('required'=>true, 'constraints' => new Adresse()))
+                                   ->add('adresseLieuDepart', 'text', array('required'=> false))
+                                   ->add('adresseLieuArrivee', 'text', array('required'=> false))
                                    ->getForm();
                                    
         /* On analyse la requête courante pour savoir si le formulaire a été soumis ou pas.
@@ -231,7 +232,7 @@ class ActivitesController extends Controller
         l'objet $activite*/
         $formulaireActivite->handleRequest($requeteUtilisateur);
         
-        if($formulaireActivite->isSubmitted()) // Le formulaire a été soumis
+        if($formulaireActivite->isValid()) // Le formulaire a été soumis
         {
             // On récupère l'adresse les adresses des lieux
             $adresseLieuRDV = $formulaireActivite->getData()->getAdresseLieuRDV();
@@ -240,21 +241,25 @@ class ActivitesController extends Controller
             
             // On récupère les infos de chaque lieu dans un nouvel objet
             $lieuRDV = $this->getInfosAdresse($adresseLieuRDV);
-            $lieuDepart = $this->getInfosAdresse($adresseLieuDepart);
-            $lieuArrivee = $this->getInfosAdresse($adresseLieuArrivee);
             
             // On appelle le gestionnaire d'entité
             $gestionnaireEntite = $this->getDoctrine()->getManager();
             
+            if(!(is_null($adresseLieuDepart) || (is_null($adresseLieuArrivee)))) {
+                $lieuDepart = $this->getInfosAdresse($adresseLieuDepart);
+                $lieuArrivee = $this->getInfosAdresse($adresseLieuArrivee);
+                $gestionnaireEntite->persist($lieuDepart);
+                $gestionnaireEntite->persist($lieuArrivee);
+                $activite->setLieuDepart($lieuDepart)
+                         ->setLieuArrivee($lieuArrivee);
+            }
+            
             // On persiste les lieux
             $gestionnaireEntite->persist($lieuRDV);
-            $gestionnaireEntite->persist($lieuDepart);
-            $gestionnaireEntite->persist($lieuArrivee);
+
             
             // On ajoute le lieu à l'activité
-            $activite->setLieuRDV($lieuRDV)
-                     ->setLieuDepart($lieuDepart)
-                     ->setLieuArrivee($lieuArrivee);
+            $activite->setLieuRDV($lieuRDV);
             
             // On créé un objet Participer
             $participer = new Participer();
@@ -364,13 +369,22 @@ class ActivitesController extends Controller
     
     public function supprimerActiviteAction($idActivite, $organisateur)
     {
-        //On récupère le répository d'Activité
-        $repActivite = $this->getRepository('Activite');
-        
-        //on supprimer l'activité
-        $supprimerActivite = $repActivite->supprimerActivite($idActivite, $organisateur);
-        $this->addFlash('notice', "Votre activité a bien été supprimée");
-        return $this->redirect($this->generateUrl('moove_activite_tableauDeBord'));
+        $utilisateur = $this->getUser()->getId();
+        if($organisateur == $utilisateur)
+        {
+            //On récupère le répository d'Activité
+            $repActivite = $this->getRepository('Activite');
+            
+            //on supprimer l'activité
+            $supprimerActivite = $repActivite->supprimerActivite($idActivite, $organisateur);
+            $this->addFlash('notice', "Votre activité a bien été supprimée");
+            return $this->redirect($this->generateUrl('moove_activite_tableauDeBord'));
+        }
+        else
+        {
+           $this->addFlash('notice', "Vous ne pouvez pas faire ça !");
+            return $this->redirect($this->generateUrl('moove_activite_tableauDeBord'));
+        }
     }
     
 
@@ -546,17 +560,34 @@ class ActivitesController extends Controller
         // On récupère la latitude et longitude sur le lieu
         $latLngLieu = $reponse['results'][0]['geometry']['location'];
         
-        $lieu = new Lieu();
-        // On hydrate le lieu avec les données précédemment récupérées
-        $lieu->setNom(null)
-             ->setNumeroRue($infosLieu[0]['long_name'])
-             ->setNomRue($infosLieu[1]['long_name'])
-             ->setComplementAdresse(null)
-             ->setCodePostal($infosLieu[6]['long_name'])
-             ->setVille($infosLieu[2]['long_name'])
-             ->setLatitude($latLngLieu['lat'])
-             ->setLongitude($latLngLieu['lng'])
-        ;
+        if(isset($infosLieu[6])) {
+            $lieu = new Lieu();
+            // On hydrate le lieu avec les données précédemment récupérées
+            $lieu->setNom(null)
+                 ->setNumeroRue($infosLieu[0]['long_name'])
+                 ->setNomRue($infosLieu[1]['long_name'])
+                 ->setComplementAdresse(null)
+                 ->setCodePostal($infosLieu[6]['long_name'])
+                 ->setVille($infosLieu[2]['long_name'])
+                 ->setLatitude($latLngLieu['lat'])
+                 ->setLongitude($latLngLieu['lng'])
+            ;            
+        }
+        else {
+            $lieu = new Lieu();
+            // On hydrate le lieu avec les données précédemment récupérées
+            $lieu->setNom(null)
+                 ->setNumeroRue(null)
+                 ->setNomRue($infosLieu[0]['long_name'])
+                 ->setComplementAdresse(null)
+                 ->setCodePostal($infosLieu[5]['long_name'])
+                 ->setVille($infosLieu[1]['long_name'])
+                 ->setLatitude($latLngLieu['lat'])
+                 ->setLongitude($latLngLieu['lng'])
+            ;               
+        }
+        
+
         return $lieu;
     }
     

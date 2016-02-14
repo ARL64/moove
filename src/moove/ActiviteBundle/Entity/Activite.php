@@ -4,6 +4,8 @@
 namespace moove\ActiviteBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use moove\ActiviteBundle\Validator\Constraints as mooveAssert;
 
 /**
  * Activite
@@ -26,7 +28,10 @@ class Activite
      * @var \DateTime
      * 
      * @ORM\Column(name="dateHeureRDV", type="datetime")
+     * @Assert\DateTime
+     * @Assert\GreaterThanOrEqual("today UTC+1")
      */
+     
     private $dateHeureRDV;
 
     /**
@@ -53,7 +58,7 @@ class Activite
 
     /**
      * @var \DateTime
-     * 
+     * @Assert\DateTime
      * @ORM\Column(name="dateCreation", type="datetime")
      */
     private $dateCreation;
@@ -62,6 +67,8 @@ class Activite
      * @var \DateTime
      * 
      * @ORM\Column(name="dateFermeture", type="datetime")
+     * @Assert\DateTime
+     * @Assert\GreaterThanOrEqual("today UTC+1")
      */
     private $dateFermeture;
 
@@ -102,9 +109,18 @@ class Activite
      */
     private $lieuArrivee;
     
-    
+    /*
+     * @Assert\NotBlank(message = "L'adresse du lieu de rendez-vous est obligatoire.")
+     * @mooveAssert\Adresse
+     */
     private $adresseLieuRDV;
+    /*
+     * @mooveAssert\Adresse
+     */
     private $adresseLieuDepart;
+    /*
+     * @mooveAssert\Adresse
+     */
     private $adresseLieuArrivee;
 
 

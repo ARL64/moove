@@ -1,6 +1,6 @@
 {% trans_default_domain 'FOSUserBundle' %}
 
-{{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'class': 'form-signin fos_user_registration_register'}}) }}
+{{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'novalidate': 'novalidate', 'class': 'form-signin fos_user_registration_register'}}) }}
     <h2 class="form-signin-heading">Inscrivez-vous</h2>
     {{ form_row(form.prenom) }}
     {{ form_row(form.nom) }}

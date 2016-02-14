@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use FOS\UserBundle\Doctrine\UserManager;
 
 
-class PeuplerUtilisatueur extends AbstractFixture implements FixtureInterface, ContainerAwareInterface, OrderedFixtureInterface
+class PeuplerUtilisateur extends AbstractFixture implements FixtureInterface, ContainerAwareInterface, OrderedFixtureInterface
 {
     /**
      * @var ContainerInterface
