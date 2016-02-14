@@ -20,7 +20,8 @@
         "incenteev/composer-parameter-handler": "~2.0",
         "friendsofsymfony/user-bundle": "~2.0@dev",
         "twig/extensions": "v1.2.0",
-        "jstayton/google-maps-geocoder": "^2.4"
+        "jstayton/google-maps-geocoder": "^2.4",
+        "knplabs/knp-paginator-bundle": "^2.5"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",
