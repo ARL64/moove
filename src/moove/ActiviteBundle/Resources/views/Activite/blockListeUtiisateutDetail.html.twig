@@ -1,4 +1,4 @@
-<!-- Affiche les détail d'un utilisateur selon une participation -->
+<!-- Affiche les détails d'un utilisateur selon une participation -->
 <a id="lienUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}" href="{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}" class="list-group-item">
   <div class="media-left">
     <img class="media-object" src="{{ asset(participationCourant.utilisateur.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
@@ -8,21 +8,26 @@
       <h4 class="media-heading">{{ participationCourant.utilisateur.prenom ~ " " ~ participationCourant.utilisateur.nom }}</h4>
       Niveau : 
         {% for prati in participationCourant.utilisateur.pratiquer if prati.sport == activite.sportPratique %}
-         {% if participationCourant.utilisateur.sexe =='femme' %} <!-- si l'utilisateur est une femme -->
-           {% if prati.niveau.libelle != 'Intermédiaire' %}<!-- si l'utilisateur est une femme et que son niveau n'est pas intermédiaire -->
-             {{ prati.niveau.libelle ~"e" }} <i>({{ prati.sport.nom }})</i>
-           {% else %} <!-- si l'utilisateur est une femme et que son niveau est intermédiaire -->
-             {{ prati.niveau.libelle }} <i>({{ prati.sport.nom }})</i>
-           {% endif %}
-         {% else %} <!-- si l'utilisateur est un homme -->
-           {{ prati.niveau.libelle }} <i>({{ prati.sport.nom }})</i>
-         {% endif %}
+            <!-- si l'utilisateur est une femme -->
+            {% if participationCourant.utilisateur.sexe =='femme' %} 
+               <!-- si l'utilisateur est une femme et que son niveau n'est pas intermédiaire -->
+               {% if prati.niveau.libelle != 'Intermédiaire' %}
+                   {{ prati.niveau.libelle ~"e" }} <i>({{ prati.sport.nom }})</i>
+                <!-- si l'utilisateur est une femme et que son niveau est intermédiaire -->
+               {% else %} 
+                    {{ prati.niveau.libelle }} <i>({{ prati.sport.nom }})</i>
+               {% endif %}
+            {% else %} 
+               <!-- si l'utilisateur est un homme -->
+               {{ prati.niveau.libelle }} <i>({{ prati.sport.nom }})</i>
+            {% endif %}
         {% else %}
-         {% if participationCourant.utilisateur.sexe == 'femme' %} <!-- si l'utilisateur est une femme -->
-           Non pratiquante 
-         {% else %} 
-           Non pratiquant 
-         {% endif %} 
+            <!-- si l'utilisateur est une femme -->
+            {% if participationCourant.utilisateur.sexe == 'femme' %} 
+                Non pratiquante 
+            {% else %} 
+                Non pratiquant 
+            {% endif %} 
         {% endfor %}
         
         {% if estOrganisateur and participationCourant.estAccepte == 0 %}

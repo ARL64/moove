@@ -7,8 +7,10 @@
     <br><br>
     <div class="table-responsive">
       <table class="table table-striped table-hover">
+        <!-- nom des colones du tableau -->
         <thead>
           <tr>
+            <!-- knp_pagination_sortable permet de rendre les colones triables -->
             <th>{{ knp_pagination_sortable(tabActivites, 'Sport', 'sport') }}{% if tabActivites.isSorted('sport') and tabActivites.direction == 'desc' %}<i class="fa fa-sort-desc"></i>{% elseif tabActivites.isSorted('sport') and tabActivites.direction == 'asc' %}<i class="fa fa-sort-asc"></i>{% else %}<i class="fa fa-sort"></i>{% endif %}</th>
             <th>{{ knp_pagination_sortable(tabActivites, 'Rendez-vous', 'rdv') }}{% if tabActivites.isSorted('rdv') and tabActivites.direction == 'desc' %}<i class="fa fa-sort-desc"></i>{% elseif tabActivites.isSorted('rdv') and tabActivites.direction == 'asc' %}<i class="fa fa-sort-asc"></i>{% else %}<i class="fa fa-sort"></i>{% endif %}</th>
             <th>{{ knp_pagination_sortable(tabActivites, 'Départ', 'depart') }}{% if tabActivites.isSorted('depart') and tabActivites.direction == 'desc' %}<i class="fa fa-sort-desc"></i>{% elseif tabActivites.isSorted('depart') and tabActivites.direction == 'asc' %}<i class="fa fa-sort-asc"></i>{% else %}<i class="fa fa-sort"></i>{% endif %}</th>

@@ -17,7 +17,7 @@ class ActiviteRepository extends EntityRepository
     // Requête type tous élément inclus (sauf date): 
     // http://moove-arl64.c9users.io/web/app_dev.php/rechercher?niveau=[intermediaire,expert]&sport=[Jogging,Cyclisme,Ski]&placeRestanteMax=8&placeRestanteMin=3&nbPlace=15&photo=yes&order=sport&type=asc&page=1
     // http://moove-arl64.c9users.io/web/app_dev.php/rechercher?date=2016-04-14&hMin=13h00&hMax=15h00&niveau=[intermediaire,expert]&sport=[Jogging,Cyclisme,Ski]&placeRestanteMax=8&placeRestanteMin=3&nbPlace=15&photo=yes&order=sport&type=asc&page=1
-    public function findWhitCondition($datePrecise, $heureMin, $heureMax, $sport, $niveau, $photo, $nbPlaceMax, $nbPlaceRestanteMin, $nbPlaceRestanteMax, $distanceMax, $order = "a.dateHeureRDV", $type = "ASC")
+    public function findWhitCondition($datePrecise, $heureMin, $heureMax, $sport, $niveau, $photo, $nbPlaceRestante, $nbPlaceMin, $nbPlaceMax, $distanceMax, $order = "a.dateHeureRDV", $type = "ASC")
     {
         // On créer notre grosse requete de base
         $requete = $this->_em->createQueryBuilder()
@@ -34,7 +34,7 @@ class ActiviteRepository extends EntityRepository
                     ->join('a.lieuRDV', 'lrdv')
                     ->addSelect('lrdv')
                     ->andWhere('a.estTerminee = 0')
-                    //->andWhere('p.estAccepte <> 2')
+                    ->andWhere('p.estAccepte = 1')
                     //->andWhere('p.estAccepte <> 1')
                     ->orderBy($order, $type)
         ;
@@ -84,7 +84,6 @@ class ActiviteRepository extends EntityRepository
         if(!is_null($sport))
         { // sport=[Jogging,Ski]&
             $tabSport = explode(',', substr($sport, 1, strlen($sport)-2));
-            var_dump($tabSport);
             $requete->andWhere('s.nom IN (:tabSport)')
                     ->setParameter('tabSport', $tabSport);
             ;
@@ -112,27 +111,27 @@ class ActiviteRepository extends EntityRepository
         }
     
         // Ici, on se contente d'ajouter la condition si la variable n'est pas null.
-        if(!is_null($nbPlaceMax))
+        if(!is_null($nbPlaceRestante))
         { // nbPlace=5&
-            $requete->andWhere('a.nbPlaces <= :nbPlaceMax')
-                    ->setParameter('nbPlaceMax', $nbPlaceMax);
+
+            $requete->addGroupBy('a.id')
+                    ->andHaving("COUNT(p.id) >= :nbPlaceRestante")
+                    ->setParameter('nbPlaceRestante', $nbPlaceRestante);
             ;
         }
 
         // GroupBy permet de regrouper les ligne par id d'activité. Ainsi, grace au "Having" on peu compté le nombre de participant a l'activité. On se contente ensuite de rajouté la condition adéquate.
-        if(!is_null($nbPlaceRestanteMin))
-        { // placeRestanteMin=3&
-            $requete->addGroupBy('a.id')
-                    ->andHaving("COUNT(p.id) >= :nbPlaceRestanteMin")
-                    ->setParameter('nbPlaceRestanteMin', $nbPlaceRestanteMin);
+        if(!is_null($nbPlaceMin))
+        { 
+            $requete->andWhere('a.nbPlaces >= :nbPlaceMin')
+                    ->setParameter('nbPlaceMin', $nbPlaceMin);
             ;
         }
       
-        if(!is_null($nbPlaceRestanteMax))
-        { // placeRestanteMax=8&
-            $requete->addGroupBy('a.id')
-                    ->andHaving("a.nbPlaces - COUNT(p.id) <= :nbPlaceRestanteMax")
-                    ->setParameter('nbPlaceRestanteMax', $nbPlaceRestanteMax);
+        if(!is_null($nbPlaceMax))
+        { 
+            $requete->andWhere('a.nbPlaces <= :nbPlaceMax')
+                    ->setParameter('nbPlaceMax', $nbPlaceMax);
             ;
         }
         

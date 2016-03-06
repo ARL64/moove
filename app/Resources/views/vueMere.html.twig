@@ -112,6 +112,13 @@
           </div>
           <ul class="sidebar-menu">
             <li class="header">MENU</li>
+            {% if is_granted('ROLE_ADMIN') %}
+              <li>
+                <a href="{{ path('sonata_admin_dashboard') }}">
+                  <i class="fa fa-shield"></i> <span>Administration</span>
+                </a>
+              </li>
+            {% endif %}
             <li class="{% block activeTableauDeBord %}{% endblock %}">
               <a href="{{ path('moove_activite_tableauDeBord') }}">
                 <i class="fa fa-dashboard">

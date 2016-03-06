@@ -240,12 +240,25 @@ class ActivitesController extends Controller
         
         if(!empty($_POST))
         {
-            $nbPlaceTab = explode(",", $_POST['nbPlaces']);
-
-            $datePrecise = $request->query->get('date');
-            $heureMin = $request->query->get('hMin');
-            $heureMax = $request->query->get('hMax');
             
+            //var_dump($_POST['date']);
+            
+            $tabHeure = explode(";", $_POST['heure']);
+            $nbPlaceTab = explode(";", $_POST['nbPlaces']);
+            if($_POST['date'] != "")
+            {
+                $tabDate = explode("/", $_POST['date']);
+                $datePrecise = $tabDate[2] . "-" . $tabDate[1] . "-" . $tabDate[0];
+            }
+            else
+            {
+                $datePrecise = null;
+            }
+
+            $heureMin = $tabHeure[0]. "h00";
+            $heureMax = $tabHeure[1]. "h00";
+            
+            //var_dump($heureMin);
 
             $sportSelected = false;
             $arraySport = "[";
@@ -281,10 +294,11 @@ class ActivitesController extends Controller
             
             
             $photo = $_POST['photo'];
-            $nbPlaceMax = null;//intval($_POST['nbPlacesRestantes']);
-            $nbPlaceRestanteMin = intval($nbPlaceTab[0]);
-            $nbPlaceRestanteMax = intval($nbPlaceTab[1]);
-            $distanceMax = $request->query->get('distance'); 
+            $nbPlaceRestante = intval($_POST['nbPlacesRestantes']);
+            $nbPlaceMin = intval($nbPlaceTab[0]);
+            $nbPlaceMax = intval($nbPlaceTab[1]);
+            
+            $distanceMax = intval($_POST['rayonRecherche']);
             
         }
         else 
@@ -295,9 +309,9 @@ class ActivitesController extends Controller
             $sport = $request->query->get('sport');                         // format : [Cyclisme,Jogging,Ski,Randonee] (array)
             $niveau = $request->query->get('niveau');                       // format : [Tous,Debutant,Intermediaire,Confirme] (array)
             $photo = $request->query->get('photo');                         // format : yes (bool)
-            $nbPlaceMax = $request->query->get('nbPlace');                  // format : 10  (int)
-            $nbPlaceRestanteMin = $request->query->get('placeRestanteMin'); // format : 2  (int)
-            $nbPlaceRestanteMax = $request->query->get('placeRestanteMax'); // format : 7  (int)
+            $nbPlaceRestante = $request->query->get('nbPlace');                  // format : 10  (int)
+            $nbPlaceMin = $request->query->get('placeRestanteMin'); // format : 2  (int)
+            $nbPlaceMax = $request->query->get('placeRestanteMax'); // format : 7  (int)
             $distanceMax = $request->query->get('distance');                // format : 10  NON DISPONIBLE
         }
 
@@ -312,7 +326,7 @@ class ActivitesController extends Controller
         $repActivite = $this->getRepository('Activite');
         // On récupère toutes les activités dans $tabActivites
         //$tabActivites = $repActivite->findAll();
-        $tabActivites = $repActivite->findWhitCondition($datePrecise, $heureMin, $heureMax, $sport, $niveau, $photo, $nbPlaceMax, $nbPlaceRestanteMin, $nbPlaceRestanteMax, $distanceMax, $order, $type);
+        $tabActivites = $repActivite->findWhitCondition($datePrecise, $heureMin, $heureMax, $sport, $niveau, $photo, $nbPlaceRestante, $nbPlaceMin, $nbPlaceMax, $distanceMax, $order, $type);
 
 
         

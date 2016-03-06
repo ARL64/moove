@@ -2,3 +2,8 @@ services:
 #    moove_activite.example:
 #        class: moove\ActiviteBundle\Example
 #        arguments: [@service_id, "plain_value", %parameter%]
+    moove_activite.admin.activite:
+        class: moove\ActiviteBundle\Admin\ActiviteAdmin
+        arguments: [~, moove\ActiviteBundle\Entity\Activite, SonataAdminBundle:CRUD]
+        tags:
+            - {name: sonata.admin, manager_type: orm, group: Gestion des activités, label: Activités}

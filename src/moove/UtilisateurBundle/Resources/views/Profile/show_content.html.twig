@@ -9,14 +9,18 @@
             <!-- partie correspondant au panel violet -->
             <div class="col-md-4">
                 <div class="panel panel-info">
+                            <!-- titre du panel -->
                             <div class="panel-heading">
                                 <h3 class="panel-title text-center">A propos de moi</h3>
                             </div>
+                            <!-- corps du panel -->
                             <div class="panel-body">
+                                <!-- Affiche la photo de l'utilisateur -->
                                 <div class="media">
                                     <div class="media-left">
                                         <img class="media-object" src="{{ asset(user.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
                                     </div>
+                                    <!-- Affiche dans l'ordre le prénom concaténé avec le nom, puis le username, email -->
                                     <div class="media-body">
                                         <p class="media-heading">{{ user.prenom ~ " " ~ user.nom }}</p>
                                         <p>{{ 'profile.show.username'|trans }} : {{ user.username }}</p>
@@ -24,6 +28,7 @@
                                     </div>
                                 </div>
                                 <div> 
+                                    <!-- Affiche l'age de l'utilisateur -->
                                      <p>Age : {{ ('now'|date('Y') - user.dateNaissance|date('Y') - 1) + ('now'|date('2010-m-d')|date('U') - user.dateNaissance|date('2010-m-d')|date('U') >= 0 ? 1 : 0) }} ans</p>
                                      <p>Genre : {{ user.sexe }}</p>
                                      <p>Ville : {{ user.lieuResidence.ville }}</p>
@@ -34,31 +39,42 @@
             <!-- partie correspondant au panel vert -->
             <div class="col-md-8">
                 <div class="panel panel-success">
+                    <!-- titre du panel -->
                     <div class="panel-heading">
                           <h3 class="panel-title text-center"> Vue d'ensemble de mes activités </h3>
                     </div>
+                    <!-- corps du panel -->
                     <div class="panel-body">
                         <div class="col-md-6">
+                            <!-- partie correspondant au premier panel gris dans le panel vert -->
                             <div class="panel panel-default">
+                                <!-- Titre du panel gris -->
                                 <div class="panel-heading">
                                     <p>Satistiques de mes activités en tant que participant</p>
                                 </div>
+                                <!-- corps du premier panel gris -->
                                 <div class="panel-body">
                                     <div class="col-md-6">
+                                        <!-- Premier panel dans le premier panel gris -->
                                         <div class="panel panel-success">
+                                            <!-- titre du premier panel dans le premier panel gris -->
                                             <div class="panel-heading">
                                                  <h3 class="panel-title">Activités à venir</h3>
                                             </div>
+                                            <!-- corps du premier panel dans le premier panel gris -->
                                             <div class="panel-body">
                                                  <p class="centrer"><font size="48pt">{{ nbParticipations }}</font></p>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
+                                        <!-- second panel dans le premier panel gris -->
                                         <div class="panel panel-success">
+                                            <!-- second du premier panel dans le premier panel gris -->
                                             <div class="panel-heading">
                                                  <h3 class="panel-title">Activités terminées</h3>
                                             </div>
+                                            <!-- corps du second panel dans le premier panel gris -->
                                             <div class="panel-body">
                                                  <p class="centrer"><font size="48pt">{{ nbParticipationsFinies }}</font></p>
                                             </div>
@@ -68,26 +84,35 @@
                             </div>
                         </div>
                         <div class="col-md-6">
+                            <!-- partie correspondant au second panel gris dans le panel vert -->
                             <div class="panel panel-default">
+                                <!-- titre du second pannel gris-->
                                 <div class="panel-heading">
                                     <p>Satistiques de mes activités en tant qu'organisateur</p>
                                 </div>
+                                <!-- corps du second panel gris -->
                                 <div class="panel-body">
                                     <div class="col-md-6">
+                                        <!-- premier panel vert dans dans le second panel gris -->
                                         <div class="panel panel-success">
+                                            <!-- titre du premier panel vert dans le second pannel gris -->
                                             <div class="panel-heading">
                                                  <h3 class="panel-title">Activités à venir</h3>
                                             </div>
+                                            <!-- corps du premier panel vert dans le second panel gris-->
                                             <div class="panel-body">
                                                  <p class="centrer"><font size="48pt">{{ nbOrganisations }}</font></p>
                                             </div>
                                         </div>
                                     </div>
+                                    <!-- second panel vert dans dans le second panel gris -->
                                     <div class="col-md-6">
                                         <div class="panel panel-success">
+                                            <!-- titre du second panel vert dans le second pannel gris -->
                                             <div class="panel-heading">
                                                 <h3 class="panel-title">Activités terminées</h3>
                                             </div>
+                                            <!-- corps du second panel vert dans le second panel gris-->
                                              <div class="panel-body">
                                                  <p class="centrer"><font size="48pt">{{ nbOrganisationsFinies }}</font></p>
                                              </div>
@@ -100,22 +125,28 @@
                 </div>
             </div>
         </div>
-        <!-- Partie correspondant au panel orange -->
         <div class="col-md-12">
+            <!-- div vide pour la mise en forme -->
             <div class="col-md-1"></div>
             <div class="col-md-10">
+                <!-- Partie correspondant au panel orange -->
                 <div class="panel panel-warning">
+                    <!-- titre du panel orange -->
                     <div class="panel-heading">
+                        <!-- si l'utilisateur est sur son profil on affiche le bouton éditer -->
                         {% if user.id == app.user.id %}
                                 <a href="{{ path('moove_utilisateur_editer_sports') }}" class="pull-right btn btn-success btn-s">Editer</a>
                         {% endif %}
+                        <!-- titre du panel orange -->
                         <h3 class="panel-title text-center">
+                            <!-- si l'utilisateur est sur son profil on affiche mon/ mes sport(s) -->
                             {% if user.id == app.user.id %}
                                 {% if nbSportNiveau > 1 %}
                                      Mes sports
                                 {% else %}
                                     Mon sport
                                 {% endif %}
+                            <!-- sinon on affiche son/ses sport(s)-->
                             {% else %}
                                 {% if nbSportNiveau > 1 %}
                                      Ses sports
@@ -126,13 +157,17 @@
                         </h3></br>
                         
                     </div>
+                    <!-- corps du panel orange -->
                     <div class="panel-body">
+                        <!-- pour chaque sport -->
                          {% for sportNiveau in tabSportNiveau %}
                          <div class="col-md-3">
                             <div class="media">
+                                <!-- On affiche l'icone du sport -->
                                 <div class="media-left">
                                     <img class="media-object" src="{{ asset(sportNiveau.sport.urlPictogramme) }}" alt="Photo du sport" width="75" height="75">
                                 </div>
+                                <!-- on affiche le nom du sport et le niveau de l'utilisateur dans celui-ci -->
                                 <div class="media-body">
                                     <p>{{ sportNiveau.sport.nom }}</p>
                                     <p>Niveau : {{ sportNiveau.niveau.libelle }}</p>

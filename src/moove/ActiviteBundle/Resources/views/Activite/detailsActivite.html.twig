@@ -30,10 +30,13 @@
     </div>
     {% endif %}
     <div class="col-md-12">
+      <!-- affiche la photo de l'organisateur -->
       <div class="media">
         <div class="media-left">
           <img class="media-object" src="{{ asset(activite.organisateur.URLAvatar) }}" alt="photo de l'utilisateur" width="75" height="75">
         </div>
+        <!-- Affiche dans l'ordre le prenom concaténé avec le nom, puis le niveau dans le sport de l'activité
+            et la date de publication --> 
         <div class="media-body">
           <h4 class="media-heading">{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</h4>
           <p>
@@ -66,50 +69,65 @@
     <div class="col-md-8">
       <!-- panel principal avec les informations de l'activité -->
       <div class="panel panel-default">
-        <!-- titre du panel -->
+        <!-- titre du panel avec les informations-->
         <div class="panel-heading">
           <h3 class="panel-title">Informations sur l'activité</h3>
         </div>
         <!-- Corps du panel -->
         <div class="panel-body">
+          <!-- Affiche le sport pratiqué -->
           <div class="infos">
             <p><span class="info-label text-muted">Sport</span><span class="info-valeur"><i class="icon-{{ activite.sportPratique.nomIcone }}"></i>{{ activite.sportPratique.nom }}</span></p>
           </div>
+          <!-- Affiche le niveau requis -->
           <div class="infos">
             <p><span class="info-label text-muted">Niveau requis</span><span class="info-valeur"><i class="fa fa-bar-chart"></i>{{ activite.niveauRequis.libelle }}</span></p>
           </div>
+          <!-- Affiche la ville et son code postal-->
           <div class="infos">
             <p><span class="info-label text-muted">Ville</span><span class="info-valeur"><i class="fa fa-building-o"></i>{{ activite.lieuRDV.ville ~ ", " ~ activite.lieuRDV.codePostal }}</span></p>
           </div>
+          <!-- Affiche le numero(s'il existe) et nom de rue du lieu de rdv-->
           <div class="infos">
             <p><span class="info-label text-muted">Lieu de rendez-vous</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#ff9800"></i>{% if activite.lieuRDV.numeroRue != 0 %}{{ activite.lieuRDV.numeroRue ~ ", " }}{% endif %}{{ activite.lieuRDV.nomRue }}</span></p>
           </div>
+          <!-- si le lieu de départ n'est pas nul -->
           {% if activite.lieuDepart is not null %}
+          <!-- Affiche le numero(s'il existe) et le nom de rue du lieu de départ -->
           <div class="infos">
             <p><span class="info-label text-muted">Lieu de départ</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#4caf50"></i>{% if activite.lieuDepart.numeroRue != 0 %}{{ activite.lieuDepart.numeroRue ~ ", " }}{% endif %}{{ activite.lieuDepart.nomRue }}</span></p>
           </div>
           {% else %}
+          <!-- s'il n'y a pas de lieu de départ on affiche non spécifié -->
           <div class="infos">
             <p><span class="info-label text-muted">Lieu de départ</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#4caf50"></i>Non spécifié</span></p>
           </div>
-          {% endif %} {% if activite.lieuArrivee is not null %}
+          {% endif %}
+          <!-- si le lieu d'arrivée n'est pas nul -->
+          {% if activite.lieuArrivee is not null %}
+          <!-- on affiche le numéro(s'il existe) et le nom du lieu d'arrivée-->
           <div class="infos">
             <p><span class="info-label text-muted">Lieu d'arrivée</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#e51c23"></i>{% if activite.lieuArrivee.numeroRue != 0 %}{{ activite.lieuArrivee.numeroRue ~ ", "}}{% endif %}{{ activite.lieuArrivee.nomRue }}</span></p>
           </div>
           {% else %}
+          <!-- s'il n'y a pas de lieu d'arrivée on affiche non spécifié -->
           <div class="infos">
             <p><span class="info-label text-muted">Lieu d'arrivée</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#e51c23"></i>Non spécifié</span></p>
           </div>
           {% endif %}
+          <!-- on affiche la daté de départ -->
           <div class="infos">
             <p><span class="info-label text-muted">Date de départ</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateHeureRDV | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm") }}</span></p>
           </div>
+          <!-- On affiche la date de fin d'inscription à l'activité -->
           <div class="infos">
             <p><span class="info-label text-muted">Date de fin d'inscription  l'activité</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateFermeture | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm") }}</span></p>
           </div>
+          <!-- On affiche le temps estimé -->
           <div class="infos">
             <p><span class="info-label text-muted">Temps estimé</span><span class="info-valeur"><i class="fa fa-clock-o"></i>{{ activite.duree | localizeddate('none', 'none', null, null, "H 'h' mm") }}</span></p>
           </div>
+          <!-- On affiche le nombre de places limite de l'activité -->
           <div class="infos">
             <p><span class="info-label text-muted">Nombre de places (vous inclus)</span><span class="info-valeur"><i class="fa fa-users"></i>{{ activite.nbPlaces }} places</span></p>
           </div>
@@ -125,7 +143,7 @@
         <div class="panel-heading">
           <h3 class="panel-title">Informations</h3>
         </div>
-        <!-- corps du pannel -->
+        <!-- corps du pannel qui affiche la description de l'activité -->
         <div class="panel-body">
           {{activite.description}}
         </div>

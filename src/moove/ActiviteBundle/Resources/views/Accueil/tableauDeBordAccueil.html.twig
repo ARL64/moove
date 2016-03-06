@@ -25,18 +25,22 @@
         
         
         <div class="col-md-6">
+            <!-- Grand panel de gauche -->
             <div class="panel panel-default">
-                <!-- Grand panel de gauche -->
+                <!-- Titre du grand panel -->
                 <div class="panel-heading text-center">Les activités des autres auxquelles je participe</div>
+                <!-- Corps du grand panel -->
                 <div class="panel-body">
                     <div class="col-md-6">
                         <!-- Panel vert avec les nombres-->
                         <!-- Code permettant d'afficher le nombre d'activités auxquelles l'utilisateur va participer
                             et où il est accepté par l'organisateur -->
                         <div class="panel status panel-success">
+                            <!-- Titre du premier panel vert-->
                             <div class="panel-heading">
                                 <h1 class="panel-title text-center">{{ nbParticipations }}</h1>
                             </div>
+                            <!-- corps du premier panel vert -->
                             <div class="panel-body text-center">
                                 {% if nbParticipations > 1 %}                    
                                     <strong>participations à venir</strong>
@@ -47,13 +51,15 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <!-- panel violet avec les nombres -->
+                        <!-- panel premier violet avec les nombres -->
                         <!-- Code permettant d'afficher le nombre d'activités auxquelles l'utilisateur a demandé à
                             participer mais l'organisateur ne l'a pas encore accepté -->
                         <div class="panel status panel-info">
+                            <!-- Titre du premier panel violet -->
                             <div class="panel-heading">
                                 <h1 class="panel-title text-center">{{ nbDemandesEnAttente }}</h1>
                             </div>
+                            <!-- corps du panel violet -->
                             <div class="panel-body text-center">                        
                                 {% if nbDemandesEnAttente > 1 %}                    
                                     <strong>demandes d'acceptation en attente</strong>
@@ -64,12 +70,14 @@
                         </div>
                     </div>
                     <div class="col-md-12">
-                        <!-- panel vert avec le texte correspondant aux nombre -->
+                        <!-- second panel vert avec le texte correspondant aux nombre -->
                         <!-- texte permettant d'afficher les activités où l'utilisateur va participer prochainement-->
                         <div class="panel panel-success">
+                            <!-- titre du second panel vert -->
                             <div class="panel-heading">
                                 <h3 class="panel-title">Mes participations en approche</h3>
                             </div>
+                            <!-- Corps du second panel vert -->
                             <div class="panel-body">
                                 {% set auMoinsUneParticipationHorsMoi = false %}
                                 {% for liste in listeParticipationEnApproche %}
@@ -93,13 +101,15 @@
                                 {% endif %}
                             </div>
                         </div>
-                        <!-- panel violet avec le texte correspondant aux nombre -->
+                        <!-- second panel violet avec le texte correspondant aux nombre -->
                         <!-- texte indiquant les activtés auxquelles l'utilisateur a demandé à partciper mais l'organisateur ne 
                         l'a pas encore accepté -->
                         <div class="panel panel-info">
+                            <!-- titre du second panel violet -->
                             <div class="panel-heading">
                                 <h3 class="panel-title">Mes demandes de participation</h3>
                             </div>
+                            <!-- corps du second panel violet -->
                             <div class="panel-body">
                                 {% for liste in listeDemandesEnAttente %}
                                     <p>Ma demande de participation à l'activité 
@@ -127,17 +137,21 @@
         
         
         <div class=" col-md-6">
+            <!-- Grand panel de droite -->
             <div class="panel panel-default">
-                <!-- Grand panel de droite -->
+                <!-- Titre du grand panel de droite -->
                 <div class="panel-heading text-center">Mes activités</div>
+                <!-- corps du grand panel de droite -->
                 <div class="panel-body">
                     <div class="col-md-6">
-                        <!-- panel bleu avec les nombres -->
+                        <!-- premier panel bleu avec les nombres -->
                         <!-- code permettant d'afficher le nombre d'activité que l'utilisateur organise-->
                         <div class="panel status panel-primary">
+                            <!-- titre du premier panel bleu -->
                             <div class="panel-heading">
                                 <h1 class="panel-title text-center">{{ nbOrganisations }}</h1>
                             </div>
+                            <!-- corps du premier panel bleu -->
                             <div class="panel-body text-center">
                                 {% if nbOrganisations > 1 %}                    
                                     <strong>organisations à venir</strong>
@@ -148,13 +162,15 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <!-- panel jaune avec les nombres -->
+                        <!-- premier panel jaune avec les nombres -->
                         <!-- code permettant d'afficher le nombre d'utilisateur que l'utilisateur connecté (organisateur)
                         n'a pas encore accepté dans l'une de ses activités-->
                         <div class="panel status panel-warning">
+                            <!-- Titre du premier panel jaune -->
                             <div class="panel-heading">
                                 <h1 class="panel-title text-center">{{ nbDemandesEnAttenteOrganisateur }}</h1>
                             </div>
+                            <!-- corps du premier panel jaune -->
                             <div class="panel-body text-center">                        
                                 {% if nbDemandesEnAttenteOrganisateur > 1 %}                    
                                     <strong>demandes de participation en attente</strong>
@@ -166,12 +182,14 @@
                     </div>
                     <div class="col-md-12">
                       
-                        <!-- panel bleu avec le texte correspondant aux nombres -->
+                        <!-- second panel bleu avec le texte correspondant aux nombres -->
                         <!-- code affichant les activités que l'utilisateur organise -->
                         <div class="panel panel-primary">
+                            <!-- titre du second panel bleu -->
                             <div class="panel-heading">
                                 <h3 class="panel-title">Mes activités que j'organise en approche</h3>
                             </div>
+                            <!-- corps du second panel bleu -->
                             <div class="panel-body">
                                 {% set auMoinsUneParticipationHorsMoi = false %}
                                 {% for liste in listeOrganisationEnApproche %}
@@ -181,7 +199,6 @@
                                             <a href="{{ path('moove_activite_detailsActivite', {idActivite: liste.activite.id}) }}" >
                                                   {{ liste.activite.sportPratique.nom | lower }} du {{ liste.activite.dateHeureRDV | date("d/m/y") }}
                                             </a> 
-                                            {#{% set tempsAvantDebut = (liste.activite.dateHeureRDV | date("U") - "now" | date("U")) %}#}
                                             démarre {{ (liste.activite.dateHeureRDV) | time_diff }}.
                                         </p>
                                     {% endif %}
@@ -192,13 +209,15 @@
                             </div>
                         </div>
                         
-                        <!-- panel jaune avec le texte correspondant aux nombres -->
+                        <!-- second panel jaune avec le texte correspondant aux nombres -->
                         <!-- code affichant les utilisateur qui n'ont pas encore accepté par l'utilisateur connecté (organisateur)
                         dans les activités que ce dernier organise -->
                         <div class="panel panel-warning">
+                            <!-- Titre du second panel jaune -->
                             <div class="panel-heading">
                                 <h3 class="panel-title">Demandes de participation à mes activités</h3>
                             </div>
+                            <!-- corps du second panel jaune -->
                             <div class="panel-body">
                                 {% if ListeDemandeAValide is not empty %}
                                     {% for participation in ListeDemandeAValide %}

@@ -562,4 +562,9 @@ class Activite
     {
         $this->participer->removeElement($participer);
     }
+    
+    public function __toString()
+    {
+       return 'Activité du ' . $this->dateHeureRDV->format('d/m/Y');
+    }
 }

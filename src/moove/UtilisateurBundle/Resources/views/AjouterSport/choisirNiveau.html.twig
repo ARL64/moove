@@ -1,7 +1,8 @@
 {% extends "::vueMere.html.twig" %}
 {% block stylesheets %}
-<link rel="stylesheet" href="{{ asset('css/Glyphter.css') }}"> 
-<link rel="stylesheet" href="{{ asset('bundles/mooveactivite/css/bootstrap-slider/bootstrap-slider.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/Glyphter.css') }}"> 
+    <link rel="stylesheet" href="{{ asset('css/slider/ion.rangeSlider.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/slider/ion.rangeSlider.skinFlat.css') }}">
 {% endblock %} 
 {% block title %}Ajouter un sport{% endblock %}
 
@@ -13,24 +14,23 @@
     <div class="container">
         <div class="row">
             <div class="col-md-12">
-                <p>Choisissez votre niveau pour le <i class="icon-{{ sport.nomIcone }}"></i>{{ sport.nom }}</p>
-                <input id="niveau" type="text"
-                  data-provide="slider"
-                  data-slider-ticks="[{% for niveauId in niveaux %}{% if loop.last %}"{{ niveauId.id }}"{% else %}"{{ niveauId.id }}",{% endif %}{% endfor %}]"
-                  data-slider-ticks-labels='[{% for niveauNom in niveaux %}{% if loop.last %}"{{ niveauNom.libelle }}"{% else %}"{{ niveauNom.libelle }}",{% endif %}{% endfor %}]'
-                  data-slider-min="1"
-                  data-slider-max="4"
-                  data-slider-step="1"
-                  data-slider-value="1"
-                  data-slider-tooltip="hide" />
-                  <button class="btn btn-primary" type="submit" method="POST">Ajouter le sport</button>
+                <p><i class="icon-{{ sport.nomIcone }}"></i> Choisissez votre niveau pour le {{ sport.nom }}</p>
+                <input id="niveau" type="text" />
+                <button class="btn btn-primary" type="submit" method="POST">Ajouter le sport</button>
             </div>
         </div>
     </div>
 {% endblock %}
 
 {% block javascripts %}
-    <script src="{{ asset('bundles/mooveactivite/js/bootstrap-slider.js') }}"></script>
+    <script src="{{ asset('js/ion.rangeSlider.min.js') }}"></script>
     <script type="text/javascript">
+        $("#niveau").ionRangeSlider({
+            grid: true,
+            from: 0,
+            hide_min_max: true,
+            hide_from_to: true,
+            values: [{% for niveau in niveaux %}{% if loop.last %}"{{ niveau.libelle }}"{% else %}"{{ niveau.libelle}}",{% endif %}{% endfor %}]
+        });    
     </script>
 {% endblock %}

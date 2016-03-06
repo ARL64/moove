@@ -13,38 +13,25 @@
         <div class="row">
             <div class="col-md-12">
                 <p>Cliquez sur le bouton ajouter associé au sport de votre choix pour y définir votre niveau.</p>
-                
-                {% set nbSportUser = 0 %}
-                
-                {% for sport in sports %}
-                
-                    {% set compteur = 0 %}
-                    
-                    {% for sportUtilisateur in sportUser %}
-                    
-                        {% if sportUtilisateur.sport.nom == sport.nom %}
-                            {% set compteur = compteur + 1 %}
-                            {% set nbSportUser = nbSportUser + 1 %}
+                {% if sportNonPratique[0] != null %}
+                    {% for sport in sportNonPratique %}
+                        {% if loop.first %}
+                        {% else %}
+                            <div class="col-sm-6 col-md-3">
+                                <div class="thumbnail">
+                                    <img src="{{ asset(sport.urlPictogramme) }}" alt="{{ sport.nom }}" width="100" height="100">
+                                    <div class="caption">
+                                        <h3>{{ sport.nom }}</h3>
+                                        <p><a href="{{ path('moove_utilisateur_choisir_niveau', {'idSport': sport.id}) }}" class="btn btn-primary" role="button">Ajouter</a></p>
+                                    </div>
+                                 </div>
+                            </div>
                         {% endif %}
-                    
-                    {% endfor %}
-                    
-                    {% if compteur == 0 %}
-                        
-                        <div class="col-sm-6 col-md-3">
-                            <div class="thumbnail">
-                                <img src="{{ asset(sport.urlPictogramme) }}" alt="{{ sport.nom }}" width="100" height="100">
-                                <div class="caption">
-                                    <h3>{{ sport.nom }}</h3>
-                                    <p><a href="{{ path('moove_utilisateur_choisir_niveau', {'idSport': sport.id}) }}" class="btn btn-primary" role="button">Ajouter</a></p>
-                                </div>
-                             </div>
-                        </div>
-                    {% endif %}
-                    {% if nbSportUser == nbSports %}
-                        <p>Vous n'avez plus de sport à ajouter !</p>
-                    {% endif %}
-                {% endfor %} 
+                        {% endfor %}
+                {% endif %}
+                {% if nbSportUser == nbSports %}
+                    <p>Vous n'avez plus de sport à ajouter !</p>
+                {% endif %}
             </div>
             <div class="col-md-12">
                 <div class="col-sm-6 col-md-3">

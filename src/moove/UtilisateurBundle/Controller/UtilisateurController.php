@@ -11,6 +11,44 @@ use moove\ActiviteBundle\Entity\Pratiquer;
 
 class UtilisateurController extends Controller
 {
+    private function RecupSportNonPratique()
+    {
+        $user = $this->getUser();
+        //On récupère le manager & le repository de pratiquer, d'activité et de participer
+        $repPratiquer = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Pratiquer');
+        $repActivite = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Activite');
+        $repParticipations = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Participer');
+        //On récupère un tableau de pratiquer où il y a l'id de l'utilisateur
+        $sportUser = $repPratiquer->findByUtilisateur($user);
+        // on récupère le répository de Sport
+        $repSport = $this->getRepository('Sport', 'Activite');
+        $sports = $repSport->findAll();
+        $sportNonPratique[0] = null;
+        $nbSports = count($sports);
+        $nbSportUser = 0;
+        foreach($sports as $toutSports)
+        {
+            $compteur = 0;
+            foreach($sportUser as $sportUtilisateur)
+            {
+                if($sportUtilisateur->getSport()->getNom() == $toutSports->getNom())
+                {
+                    $compteur = $compteur+1;
+                    $nbSportUser = $nbSportUser+1;
+                }
+            }
+            if($compteur == 0)
+            {
+                $sportNonPratique[0] = 1;
+                $sportNonPratique[] = $toutSports;
+            }
+        }
+        
+        $tabInfoSportNonPratique[0] = $sportNonPratique;
+        $tabInfoSportNonPratique[1] = $nbSportUser;
+        
+        return $tabInfoSportNonPratique;
+    }
     // /!\ Actions métier
     
     /**
@@ -146,15 +184,26 @@ class UtilisateurController extends Controller
         $repSport = $this->getRepository('Sport', 'Activite');
         $sports = $repSport->findAll();
         $nbSports = count($sports);
+        $tabInfoSportNonPratique = $this->RecupSportNonPratique();
+        $sportNonPratique = $tabInfoSportNonPratique[0];
+        $nbSportUser = $tabInfoSportNonPratique[1];
         return $this->render('mooveUtilisateurBundle:AjouterSport:choisirSport.html.twig', array(
-            'sports' => $sports,
-            'sportUser' => $sportUser,
+            'sportNonPratique' => $sportNonPratique,
+            'nbSportUser' => $nbSportUser,
             'nbSports' => $nbSports));
     }
     
     public function choisirNiveauAction($idSport)
     {
-        $sport = $this->getRepository('Sport', 'Activite')->find($idSport);
+        $tabInfoSportNonPratique = $this->RecupSportNonPratique();
+        var_dump($sportNonPratique = $tabInfoSportNonPratique[0]);
+        foreach($sportNonPratique as $sportNonPratiqueUser)
+        {
+            if($idSport == $sportNonPratiqueUser->getId())
+            {
+                $sport = $sportNonPratiqueUser;
+            }
+        }
         $niveaux = $this->getRepository('Niveau', 'Activite')->findAll();
         return $this->render('mooveUtilisateurBundle:AjouterSport:choisirNiveau.html.twig', 
             ['sport' => $sport,
