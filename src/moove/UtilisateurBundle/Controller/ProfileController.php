@@ -117,22 +117,40 @@ class ProfileController extends Controller
             $event = new FormEvent($form, $request);
             $dispatcher->dispatch(FOSUserEvents::PROFILE_EDIT_SUCCESS, $event);
             
-             // $file stores the uploaded PDF file
-            /** @var Symfony\Component\HttpFoundation\File\UploadedFile $file */
             $file = $user->getPhoto();
             
             if(!is_null($file))
             {
-                    // Generate a unique name for the file before saving it
+                // Genere un nom unique aléatoire avant d'enregistrer le fichier
                 $fileName = md5(uniqid()).'.'.$file->guessExtension();
     
                 // Move the file to the directory where brochures are stored
                 $photoDir = $this->container->getParameter('kernel.root_dir').'/../web/bundles/mooveutilisateur/images/avatars/';
-                $file->move($photoDir, $fileName);
+                
+                $dest_x = 0; // Abscisse de la copie (point de début) (pour plus tard, si l'on souhaite recadrer depuis un endroit précis)
+                $dest_y = 0; // Ordonnee de la copie (point de début) (pour plus tard, si l'on souhaite recadrer depuis un endroit précis)
+                $size = 256; // Taille de l'image final (/!\ IMPORTANT /!\ garder la proportionnalité ! 128px la taille original)
+                
+                $source = $this->imageCreateFromAny($file); // celle qui sera copiée
+                $destination = imagecreatetruecolor($size, $size); // on creer une image de la taille du cadre à copier
+                
+                list($width, $height) = getimagesize($file); // Taille Original de l'image
+                $ratio = $size / ($width<$height? $width:$height); // permet d'obtenir le plus petit ratio pour réduire la taille de l'image
+                $newWidth = $width * $ratio; // normalement, une de ces deux valeur est forcément égale à $size...
+                $newHeight = $height * $ratio;
+                
+                // Première couche : redimension en X*128 ou 128*X
+                $imgTemps = imagecreatetruecolor($newWidth, $newHeight); // on créer une image temporaire (la même forme que l'original, mais en proportion réduite)
+                imagecopyresized($imgTemps, $source, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height); // on y copie la 
+                
+                // Deuxième couche : recadrage a partir de dest_x et dest_y
+                imagecopy($destination, $imgTemps, $dest_x, $dest_y, 0, 0, $size, $size); // on copie l'image source dans l'image destination du pixel 0 au pixel 127
+                imagepng($destination, $photoDir.$fileName); // on créer l'image final (en png), directement dans le dossier des avatars.
+
+                imagedestroy($imgTemps); // Spécial dédicace à Roose ! :D
+
+                //$file->move($photoDir, $fileName);
     
-                // Update the 'brochure' property to store the PDF file name
-                // instead of its contents
-                //$user->setURLAvatar($photoDir);
                 $user->setURLAvatar($fileName);
             }
             
@@ -148,6 +166,10 @@ class ProfileController extends Controller
 
             return $response;
         }
+        //On récupère le répository de sport
+        $repSport = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Sport');
+        //On récupère un tableau de sport
+        $tabSport = $repSport->findAll();
         //on récupère le répository de pratiquer
         $repPratiquer = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Pratiquer');
          //On récupère un tableau de pratiquer où il y a l'id de l'utilisateur
@@ -157,16 +179,62 @@ class ProfileController extends Controller
         return $this->render('FOSUserBundle:Profile:edit.html.twig', array(
             'form' => $form->createView(),
             'tabSportNiveau' => $tabSportNiveau,
-            'nbSportNiveau' => $nbSportNiveau
+            'nbSportNiveau' => $nbSportNiveau,
+            'tabSport' => $tabSport
         ));
     }
-     public function supprimerSportAction($idSport)
+    
+   
+    
+    public function supprimerPhotoAction()
     {
+        // On récupère l'utilisateur
         $user = $this->getUser();
-        //on récupère le répository de pratiquer
-        $repPratiquer = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Pratiquer');
-        $suppressionSport = $repPratiquer->supprimerSport($user, $idSport);
-        return $this->redirect($this->generateUrl('fos_user_profile_edit'));
+        // On appelle le gestionnaire fos user
+        $userManager = $this->get('fos_user.user_manager');
+        // On remet son image de profil à default
+        $user->setURLAvatar('default.png');
+
+        // On enregistre les changements en BD
+        $userManager->updateUser($user);
         
+        // On redirige l'utilisateur vers l'édition de son profil
+        return $this->redirect($this->generateUrl('fos_user_profile_edit'));
+    }
+ 
+ 
+ 
+    /**
+     * @author Matt Squirrell
+     * @source http://php.net/manual/fr/function.imagecreatefromjpeg.php
+     * @licence none
+     */
+    protected function imageCreateFromAny($filepath) 
+    { 
+        $type = exif_imagetype($filepath); // [] if you don't have exif you could use getImageSize() 
+        $allowedTypes = array( 
+            1,  // [] gif 
+            2,  // [] jpg 
+            3,  // [] png 
+            6   // [] bmp 
+        ); 
+        if (!in_array($type, $allowedTypes)) 
+            return false; 
+        switch ($type) 
+        { 
+            case 1 : 
+                $im = imageCreateFromGif($filepath); 
+                break; 
+            case 2 : 
+                $im = imageCreateFromJpeg($filepath); 
+                break; 
+            case 3 : 
+                $im = imageCreateFromPng($filepath); 
+                break; 
+            case 6 : 
+                $im = imageCreateFromBmp($filepath); 
+                break; 
+        }    
+        return $im;  
     }
 }

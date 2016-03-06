@@ -8,7 +8,7 @@
     <!-- Titre de la page -->
     <section class="content-header">
       <h1>{% if user.id == app.user.id %}Mon Profil{% else %}{{ user.prenom ~ " " ~ user.nom }}{% endif %} {% if user.id == app.user.id %}
-          <a href="{{ path('fos_user_profile_edit') }}"><button type="button" class="pull-right btn btn-primary">Modifier mon profil</button></a>
+          <a href="{{ path('fos_user_profile_edit') }}" class="pull-right btn btn-primary">Modifier mon profil</a>
         {#{% else %}
           <a href="{{ path('notForNow_addUser') }}"><button type="button" class="btn btn-primary btn-lg">Envoyer demande ami</button></a>#}
         {% endif %}</h1>
@@ -21,7 +21,6 @@
             {% block bodyFOS %}
               {% include "FOSUserBundle:Profile:show_content.html.twig" %}
             {% endblock bodyFOS %}
-            
         </div>
        </div>
     </section>

@@ -21,7 +21,9 @@
         "friendsofsymfony/user-bundle": "~2.0@dev",
         "twig/extensions": "v1.2.0",
         "jstayton/google-maps-geocoder": "^2.4",
-        "knplabs/knp-paginator-bundle": "^2.5"
+        "knplabs/knp-paginator-bundle": "^2.5",
+        "sonata-project/admin-bundle": "^2.3",
+        "sonata-project/doctrine-orm-admin-bundle": "^2.3"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",

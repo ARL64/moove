@@ -10,7 +10,7 @@
             <div class="col-md-4">
                 <div class="panel panel-info">
                             <div class="panel-heading">
-                                <h3 class="panel-title text-center">Informations générales</h3>
+                                <h3 class="panel-title text-center">A propos de moi</h3>
                             </div>
                             <div class="panel-body">
                                 <div class="media">
@@ -26,6 +26,7 @@
                                 <div> 
                                      <p>Age : {{ ('now'|date('Y') - user.dateNaissance|date('Y') - 1) + ('now'|date('2010-m-d')|date('U') - user.dateNaissance|date('2010-m-d')|date('U') >= 0 ? 1 : 0) }} ans</p>
                                      <p>Genre : {{ user.sexe }}</p>
+                                     <p>Ville : {{ user.lieuResidence.ville }}</p>
                                 </div>
                             </div>
                 </div>
@@ -34,46 +35,64 @@
             <div class="col-md-8">
                 <div class="panel panel-success">
                     <div class="panel-heading">
-                          <h3 class="panel-title text-center"> Informations complémentaires </h3>
+                          <h3 class="panel-title text-center"> Vue d'ensemble de mes activités </h3>
                     </div>
                     <div class="panel-body">
-                        <div class="col-md-3">
-                            <div class="panel panel-success">
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
                                 <div class="panel-heading">
-                                     <h3 class="panel-title"> Organisations totales:</h3>
-                                         <div class="panel-body">
-                                             <p class="centrer"><font size="48pt">{{ nbOrganisationsFinies }}</font></p>
-                                         </div>
+                                    <p>Satistiques de mes activités en tant que participant</p>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="col-md-6">
+                                        <div class="panel panel-success">
+                                            <div class="panel-heading">
+                                                 <h3 class="panel-title">Activités à venir</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                 <p class="centrer"><font size="48pt">{{ nbParticipations }}</font></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="panel panel-success">
+                                            <div class="panel-heading">
+                                                 <h3 class="panel-title">Activités terminées</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                 <p class="centrer"><font size="48pt">{{ nbParticipationsFinies }}</font></p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="panel panel-success">
+                        <div class="col-md-6">
+                            <div class="panel panel-default">
                                 <div class="panel-heading">
-                                     <h3 class="panel-title"> Participations totales:</h3>
-                                         <div class="panel-body">
-                                             <p class="centrer"><font size="48pt">{{ nbParticipationsFinies }}</font></p>
-                                         </div>
+                                    <p>Satistiques de mes activités en tant qu'organisateur</p>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="panel panel-success">
-                                <div class="panel-heading">
-                                     <h3 class="panel-title">Organisations à venir:</h3>
-                                         <div class="panel-body">
-                                             <p class="centrer"><font size="48pt">{{ nbOrganisations }}</font></p>
-                                         </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="panel panel-success">
-                                <div class="panel-heading">
-                                     <h3 class="panel-title"> Participations à venir:</h3>
-                                         <div class="panel-body">
-                                             <p class="centrer"><font size="48pt">{{ nbParticipations }}</font></p>
-                                         </div>
+                                <div class="panel-body">
+                                    <div class="col-md-6">
+                                        <div class="panel panel-success">
+                                            <div class="panel-heading">
+                                                 <h3 class="panel-title">Activités à venir</h3>
+                                            </div>
+                                            <div class="panel-body">
+                                                 <p class="centrer"><font size="48pt">{{ nbOrganisations }}</font></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="panel panel-success">
+                                            <div class="panel-heading">
+                                                <h3 class="panel-title">Activités terminées</h3>
+                                            </div>
+                                             <div class="panel-body">
+                                                 <p class="centrer"><font size="48pt">{{ nbOrganisationsFinies }}</font></p>
+                                             </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -87,6 +106,9 @@
             <div class="col-md-10">
                 <div class="panel panel-warning">
                     <div class="panel-heading">
+                        {% if user.id == app.user.id %}
+                                <a href="{{ path('moove_utilisateur_editer_sports') }}" class="pull-right btn btn-success btn-s">Editer</a>
+                        {% endif %}
                         <h3 class="panel-title text-center">
                             {% if user.id == app.user.id %}
                                 {% if nbSportNiveau > 1 %}
@@ -101,7 +123,8 @@
                                     Son sport
                                 {% endif %}
                             {% endif %}
-                        </h3>
+                        </h3></br>
+                        
                     </div>
                     <div class="panel-body">
                          {% for sportNiveau in tabSportNiveau %}
@@ -111,8 +134,8 @@
                                     <img class="media-object" src="{{ asset(sportNiveau.sport.urlPictogramme) }}" alt="Photo du sport" width="75" height="75">
                                 </div>
                                 <div class="media-body">
-                                    <p>Niveau : {{ sportNiveau.niveau.libelle }}</p>
                                     <p>{{ sportNiveau.sport.nom }}</p>
+                                    <p>Niveau : {{ sportNiveau.niveau.libelle }}</p>
                                 </div>
                             </div>
                         </div>

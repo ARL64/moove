@@ -1,35 +1,53 @@
 <!-- Affiche les détail d'un utilisateur selon une participation -->
-<div class="media-body">
-    <h4 class="media-heading">{{ participationCourant.utilisateur.prenom ~ " " ~ participationCourant.utilisateur.nom }}</h4>
-    <p>Niveau : 
+<a id="lienUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}" href="{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}" class="list-group-item">
+  <div class="media-left">
+    <img class="media-object" src="{{ asset(participationCourant.utilisateur.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
+  </div>
+  
+  <div class="media-body">
+      <h4 class="media-heading">{{ participationCourant.utilisateur.prenom ~ " " ~ participationCourant.utilisateur.nom }}</h4>
+      Niveau : 
         {% for prati in participationCourant.utilisateur.pratiquer if prati.sport == activite.sportPratique %}
-          {% if participationCourant.utilisateur.sexe =='femme' %} <!-- si l'utilisateur est une femme -->
-            {% if prati.niveau.libelle != 'Intermédiaire' %}<!-- si l'utilisateur est une femme et que son niveau n'est pas intermédiaire -->
-              {{ prati.niveau.libelle ~"e" }} <i>({{ prati.sport.nom }})</i>
-            {% else %} <!-- si l'utilisateur est une femme et que son niveau est intermédiaire -->
-              {{ prati.niveau.libelle }} <i>({{ prati.sport.nom }})</i>
-            {% endif %}
-          {% else %} <!-- si l'utilisateur est un homme -->
-            {{ prati.niveau.libelle }} <i>({{ prati.sport.nom }})</i>
-          {% endif %}
+         {% if participationCourant.utilisateur.sexe =='femme' %} <!-- si l'utilisateur est une femme -->
+           {% if prati.niveau.libelle != 'Intermédiaire' %}<!-- si l'utilisateur est une femme et que son niveau n'est pas intermédiaire -->
+             {{ prati.niveau.libelle ~"e" }} <i>({{ prati.sport.nom }})</i>
+           {% else %} <!-- si l'utilisateur est une femme et que son niveau est intermédiaire -->
+             {{ prati.niveau.libelle }} <i>({{ prati.sport.nom }})</i>
+           {% endif %}
+         {% else %} <!-- si l'utilisateur est un homme -->
+           {{ prati.niveau.libelle }} <i>({{ prati.sport.nom }})</i>
+         {% endif %}
         {% else %}
-          {% if participationCourant.utilisateur.sexe == 'femme' %} <!-- si l'utilisateur est une femme -->
-            Non pratiquante 
-          {% else %} 
-            Non pratiquant 
-          {% endif %} 
-    {% endfor %}
-    
-        <p>
-            {% if estOrganisateur and participationCourant.estAccepte == 0 %}
-                <!-- Lorsque la souris passe sur un des deux bouton, on désactive celui situé dessous. Lorsque la souris en quitte un des deux, alors on le ré-active. -->
-                     
-                <!-- action correspondant au bouton accepté -->
-                <button onMouseOver='javascripts:document.getElementById("lienUtilisateur{{participationCourant.utilisateur.id}}").removeAttribute("href");' onMouseOut='javascripts:document.getElementById("lienUtilisateur{{participationCourant.utilisateur.id}}").setAttribute("href","{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}");' type="mini-button" class="btn btn-success btn-xs" value="{{ path('moove_activite_accepter_demande_participation', {'idActivite': participationCourant.activite.id, 'idUtilisateur': participationCourant.utilisateur.id}) }}">Accepter</button>
-                     
-                <!-- action correspondant au bouton refusé -->
-                <button onMouseOver='javascripts:document.getElementById("lienUtilisateur{{participationCourant.utilisateur.id}}").removeAttribute("href");' onMouseOut='javascripts:document.getElementById("lienUtilisateur{{participationCourant.utilisateur.id}}").setAttribute("href","{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}");' type="mini-button" class="btn btn-danger btn-xs" data-toggle="modal" data-target="#modalRefus">Refuser</button>
-            {% endif %}
-        </p>
-    </p>
-</div>
+         {% if participationCourant.utilisateur.sexe == 'femme' %} <!-- si l'utilisateur est une femme -->
+           Non pratiquante 
+         {% else %} 
+           Non pratiquant 
+         {% endif %} 
+        {% endfor %}
+        
+        {% if estOrganisateur and participationCourant.estAccepte == 0 %}
+         <p>
+           <!-- Lorsque la souris passe sur un des deux bouton, on désactive celui situé dessous. Lorsque la souris en quitte un des deux, alors on le ré-active. -->
+                
+           <!-- action correspondant au bouton accepté -->
+           <button onMouseOver='javascripts:document.getElementById("lienUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}").removeAttribute("href");' 
+                   onMouseOut='javascripts:document.getElementById("lienUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}").setAttribute("href","{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}");'
+                   onClick='self.location.href="{{ path('moove_activite_accepter_demande_participation', {'idActivite': participationCourant.activite.id, 'idUtilisateur': participationCourant.utilisateur.id}) }}"'
+                   type=button 
+                   class="btn btn-success btn-xs">
+             Accepter
+           </button>
+                
+           <!-- action correspondant au bouton refusé -->
+           <button onMouseOver='javascripts:document.getElementById("lienUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}").removeAttribute("href");' 
+                   onMouseOut='javascripts:document.getElementById("lienUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}").setAttribute("href","{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}");' 
+                   type="mini-button" 
+                   class="btn btn-danger btn-xs" 
+                   data-toggle="modal" 
+                   data-target="#modalRefus-{{prefixButton}}{{participationCourant.utilisateur.id}}">
+             Refuser
+           </button>
+         </p>
+        {% endif %}
+  </div>
+</a>

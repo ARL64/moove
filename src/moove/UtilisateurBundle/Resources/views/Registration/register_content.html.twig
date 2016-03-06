@@ -2,16 +2,20 @@
 
 {{ form_start(form, {'method': 'post', 'action': path('fos_user_registration_register'), 'attr': {'novalidate': 'novalidate', 'class': 'form-signin fos_user_registration_register'}}) }}
     <h2 class="form-signin-heading">Inscrivez-vous</h2>
-    {{ form_row(form.prenom) }}
-    {{ form_row(form.nom) }}
-    {{ form_row(form.email) }}
-    {{ form_row(form.username) }}
-    {{ form_row(form.plainPassword) }}
-    <div id="datePicker">
-    {{ form_row(form.dateNaissance) }}
-    </div>
-    {{ form_row(form.sexe) }}
-    <div>
-        <input type="submit" class="btn btn-lg btn-primary-outline btn-block" value="{{ 'registration.submit'|trans }}" />
-    </div>
+         <div class="col-md-6">
+            {{ form_row(form.prenom) }}
+            {{ form_row(form.nom) }}
+            {{ form_row(form.email) }}
+            {{ form_row(form.username) }}
+        </div>
+        <div class="col-md-6">
+            {{ form_row(form.plainPassword) }}
+            <div id="datePicker">
+            {{ form_row(form.dateNaissance) }}
+            </div>
+            {{ form_row(form.sexe) }}
+        </div>
+        <div class="text-center">
+            <input type="submit" class="btn btn-lg btn-primary-outline spaced" value="{{ 'registration.submit'|trans }}" />
+        </div>
 {{ form_end(form) }}

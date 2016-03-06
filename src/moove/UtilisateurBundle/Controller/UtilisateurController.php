@@ -7,6 +7,7 @@ use moove\ActiviteBundle\Entity\Activite;
 use moove\ActiviteBundle\Entity\Sport;
 use moove\ActiviteBundle\Entity\Lieu;
 use Symfony\Component\HttpFoundation\Request;
+use moove\ActiviteBundle\Entity\Pratiquer;
 
 class UtilisateurController extends Controller
 {
@@ -82,7 +83,83 @@ class UtilisateurController extends Controller
         
         
     }
+    public function editerSportsAction()
+    {
+        $utilisateur = $this->getUser();
+        $repPratiquer = $this->getRepository('Pratiquer', 'Activite');
+         // On récupère un tableau de pratiquer où il y a l'id de l'utilisateur
+        $tabSportNiveau = $repPratiquer->findByUtilisateur($utilisateur);
+        // $nbSportNiveau = count($repPratiquer->findByUtilisateur($user));
+        $nbSportNiveau = count($tabSportNiveau);
+        return $this->render('mooveUtilisateurBundle:EditerSports:editerSports.html.twig', array(
+            'tabSportNiveau' => $tabSportNiveau,
+            'nbSportNiveau' => $nbSportNiveau
+        ));
+    }
     
+    
+    
+    public function supprimerSportAction($idSport)
+    {
+        $user = $this->getUser();
+        //on récupère le répository de pratiquer
+        $repPratiquer = $this->getRepository('Pratiquer', 'Activite');
+        $suppressionSport = $repPratiquer->supprimerSport($user, $idSport);
+        return $this->redirect($this->generateUrl('moove_utilisateur_editer_sports'));
+        
+    }
+    
+    public function ajouterSportAction($idSport, $idNiveau)
+    {
+        // on récupère l'utilisateur qui accède à la page
+        $user = $this->getUser();
+        // on récupère le répository de Pratiquer
+        $repPratiquer = $this->getRepository('Pratiquer', 'Activite');
+        // on récupère le répository de Sport
+        $repSport = $this->getRepository('Sport', 'Activite');
+        // on récupère le sport sélectionné par l'utilisateur
+        $sport = $repSport->find($id);
+        // on récupère le niveau entré par l'utilisateur
+        $niveau = $repNiveau->find($id);
+        // on créé un nouvel objet Pratiquer que l'on hydrate
+        $nouveauPratiquer = new Pratiquer();
+        $nouveauPratiquer->setUtilisateur($user)
+                         ->setSport($sport)
+                         ->setNiveau($niveau);
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($nouveauPratiquer);
+        $em->flush();
+        
+        return $this->redirect($this->generateUrl('fos_user_profile_show'));
+    }
+    
+    public function choisirSportAction()
+    {
+        $user = $this->getUser();
+        //On récupère le manager & le repository de pratiquer, d'activité et de participer
+        $repPratiquer = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Pratiquer');
+        $repActivite = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Activite');
+        $repParticipations = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Participer');
+        //On récupère un tableau de pratiquer où il y a l'id de l'utilisateur
+        $sportUser = $repPratiquer->findByUtilisateur($user);
+        // on récupère le répository de Sport
+        $repSport = $this->getRepository('Sport', 'Activite');
+        $sports = $repSport->findAll();
+        $nbSports = count($sports);
+        return $this->render('mooveUtilisateurBundle:AjouterSport:choisirSport.html.twig', array(
+            'sports' => $sports,
+            'sportUser' => $sportUser,
+            'nbSports' => $nbSports));
+    }
+    
+    public function choisirNiveauAction($idSport)
+    {
+        $sport = $this->getRepository('Sport', 'Activite')->find($idSport);
+        $niveaux = $this->getRepository('Niveau', 'Activite')->findAll();
+        return $this->render('mooveUtilisateurBundle:AjouterSport:choisirNiveau.html.twig', 
+            ['sport' => $sport,
+             'niveaux' => $niveaux]);
+    }
     
     
     // /!\ Fonction à partir d'ici 

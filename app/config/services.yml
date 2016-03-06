@@ -24,3 +24,7 @@ services:
         arguments: [%fos_user.model.user.class%]
         tags:
             - { name: form.type, alias: app_user_profile }
+
+    moove.update.activites:
+        class: moove\ActiviteBundle\Command\UpdateActivitesCommand
+        arguments: [ @doctrine.orm.entity_manager ]

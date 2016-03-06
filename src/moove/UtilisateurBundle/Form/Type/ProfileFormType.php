@@ -33,16 +33,6 @@ class ProfileFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->buildUserForm($builder, $options);
-
-        $builder->add('plainPassword', LegacyFormHelper::getType('Symfony\Component\Form\Extension\Core\Type\RepeatedType'), array(
-            'type' => LegacyFormHelper::getType('Symfony\Component\Form\Extension\Core\Type\PasswordType'),
-            'options' => array('translation_domain' => 'FOSUserBundle'),
-            'first_options' => array('label' => 'form.new_password', 'required'=> false),
-            'second_options' => array('label' => 'form.new_password_confirmation', 'required'=> false),
-            'invalid_message' => 'fos_user.password.mismatch',
-            'mapped' => false,
-            'constraints' => new UserPassword(),
-        ));
     }
 
     public function configureOptions(OptionsResolver $resolver)

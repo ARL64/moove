@@ -29,4 +29,5 @@ class PratiquerRepository extends EntityRepository
         return $query->getResult();   
 
     }
+    
 }

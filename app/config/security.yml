@@ -46,3 +46,5 @@ security:
         - { path: ^/activite, role: ROLE_USER }
         - { path: ^/rechercher, role: ROLE_USER }
         - { path: ^/proposer, role: ROLE_USER }
+        - { path: ^/profile, role: ROLE_USER }
+        - { path: ^/utilisateur, role: ROLE_USER }

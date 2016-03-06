@@ -29,7 +29,7 @@ class PeuplerUtilisateur extends AbstractFixture implements FixtureInterface, Co
 
     public function load(ObjectManager $manager)
     {
-                $userManager = $this->container->get('fos_user.user_manager');
+         $userManager = $this->container->get('fos_user.user_manager');
 
          $file = fopen(__DIR__ . "/peuplerUtilisateur.csv", "r");
 

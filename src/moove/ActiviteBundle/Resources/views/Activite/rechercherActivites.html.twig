@@ -3,6 +3,7 @@
 {% block activeRechercher %}active{% endblock %}
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('bundles/mooveactivite/css/rechercher.css') }}">
+    <link rel="stylesheet" href="{{ asset('bundles/mooveactivite/css/bootstrap-slider/bootstrap-slider.css') }}">
 {% endblock %}
 
 {% block body %} 
@@ -23,6 +24,50 @@
             </div>
             <div class="col-md-4 pull-right">
                 <h2>Filtres de recherche</h2>
+                
+                <form name="filtre" method="post">
+                <!-- le formulaire doit ressembler a ca
+                                        heure de départ & arriver (un double)
+                                        liste a puce sport    | liste a puce niveau (en parallel)
+                                        bouton radio avec photo  |   spinner (order by)
+                                        nbPlace max (de 0 a 20)
+                                        nbPlaceRestante (un double avec min et max)
+                                        distance max du pts (qu'on a pas regler du tout)-->
+                <label for="heure">Heure de départ</label><br>
+                <input id="heure" name="heure" type="text"/><br><br>
+                <div class="col-md-6">
+                <!-- Liste des sports. Le premier cochera / décochera tout les autres. -->
+                    <label>Sport</label><br/>
+                    <input type="checkbox" name="name_allSport" id="name_allSport" onChange='javascript:checkSport()' value=""/> Tous les sports<br/>
+                    {% for sport in tabSport %}    
+                        <input type="checkbox" name="name_{{ sport.nom }}" id="id_{{ sport.nom }}" value="{{ sport.nom }}" /> {{ sport.nom }}<br/>
+                    {% endfor %}
+                </div>
+                <div class="col-md-6">
+                <!-- Liste des Niveaux. Le premier cochera / décochera tout les autres. -->
+                    <label>Niveau</label> <br/>
+                    <input type="checkbox" name="name_allNiveau" id="name_allNiveau" onChange='javascript:checkNiveau()' value=""/> Tous les niveaux<br/>
+                    {% for niveau in tabNiveau %}    
+                        <input type="checkbox" name="name_{{ niveau.libelle }}" id="id_{{ niveau.libelle }}" /> {{ niveau.libelle }}<br/>
+                    {% endfor %}
+                </div>
+                <br>
+                <!-- Radio groupe des photos -->
+                    <label> Photo </label></br>
+                    <input type="radio" name="photo" id="tous" value="all" checked> Tout<br/>
+                    <input type="radio" name="photo" id="avec" value="yes"> Avec photo<br/><br>
+                    <!--<input type="radio" name="photo" id="sans" value="no" >Sans photo<br/>-->
+
+                    <label for="nbPlaces">Nombres de places</label><br>
+                    <input id="nbPlaces" name="nbPlaces" type="text"/><br><br>
+                    <label for="nbPlacesRestantes">Nombres de places restantes</label><br>
+                    <input id="nbPlacesRestantes" name="nbPlacesRestantes" type="text"/><br><br>
+                    <label for="rayonRecherche">Rayon de recherche en km</label><br>
+                    <input id="rayonRecherche" name="rayonRecherche" type="text"/><br><br>
+                    <button type="submit" class="btn btn-primary">Filtrer</button>
+        		</form>
+                
+                
             </div>
             <div class="col-md-8">
                 <div class="list-group">
@@ -57,8 +102,55 @@
             </div>
         </div>
     </section>
+    
 {% endblock %}
 {% block javascripts %}
+    <script src="{{ asset('bundles/mooveactivite/js/bootstrap-slider.js') }}"></script>
+    <script type="text/javascript">
+        $("#heure").slider({
+          tooltip_split: true,
+          formatter: function(value) {
+            return value + 'h';
+          },
+          min: 0,
+          max: 24,
+          value: [0, 24],
+          focus: true,
+          handle: 'square',
+        });
+        
+        $("#nbPlaces").slider({
+          tooltip_split: true,
+          formatter: function(value) {
+            return value + ' places';
+          },
+          min: 1,
+          max: 20,
+          value: [1, 20],
+          focus: true,
+          handle: 'square',
+        });
+        $("#nbPlacesRestantes").slider({
+          formatter: function(value) {
+            return 'Au moins ' + value + ' places restantes';
+          },
+          min: 1,
+          max: 19,
+          value: 1,
+          focus: true,
+          handle: 'square',
+        });
+        $("#rayonRecherche").slider({
+          formatter: function(value) {
+            return 'Rayon de ' + value + 'km';
+          },
+          min: 1,
+          max: 100,
+          value: 1,
+          focus: true,
+          handle: 'square',
+        });
+    </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDmo1B7t569caLPAVZZNdcoH97JCnHRqNM&signed_in=true&libraries=places&callback=initAutocomplete"
         async defer></script>
     <script>
@@ -70,5 +162,26 @@
           // location types.
           autocomplete = new google.maps.places.Autocomplete(input, {types: ['geocode']});
         }
+    </script>
+    <script>
+    	function checkSport()
+    	{
+    		var form = document.filtre;
+    		var isChecked = form.name_allSport.checked;
+    		
+    		{% for sport in tabSport %}    
+    			form.name_{{ sport.nom }}.checked = isChecked
+            {% endfor %}	
+    	}
+    	
+    	function checkNiveau()
+    	{
+    		var form = document.filtre;
+    		var isChecked = form.name_allNiveau.checked;
+    		
+    		{% for niveau in tabNiveau %}    
+    			form.name_{{ niveau.libelle }}.checked = isChecked
+            {% endfor %}	
+    	}
     </script>
 {% endblock %}

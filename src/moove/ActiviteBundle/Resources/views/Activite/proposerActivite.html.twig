@@ -8,23 +8,25 @@
     <!-- Titre de la page -->
     <section class="content-header">
       <h1>Proposer une activité</h1>
+    </section>
       <section class="content">
         <div class="row">
           <div class="col-md-5">
+            <small>Les champs marqués par une * sont obligatoires.</small>
             <form method="post" {{ form_enctype(formulaireActivite) }}>
               {{form_start(formulaireActivite)}}
               <div>
-                {{ form_label(formulaireActivite.sportPratique) }}
+                {{ form_label(formulaireActivite.sportPratique) }} *
                 {{ form_errors(formulaireActivite.sportPratique) }}
                 {{ form_widget(formulaireActivite.sportPratique) }}
               </div>
                <div>
-                {{ form_label(formulaireActivite.niveauRequis) }}
+                {{ form_label(formulaireActivite.niveauRequis) }} *
                 {{ form_errors(formulaireActivite.niveauRequis) }}
                 {{ form_widget(formulaireActivite.niveauRequis) }}
               </div>
               <div>
-                {{ form_label(formulaireActivite.dateHeureRDV) }}
+                {{ form_label(formulaireActivite.dateHeureRDV) }} 
                 {{ form_errors(formulaireActivite.dateHeureRDV) }}
                 {{ form_widget(formulaireActivite.dateHeureRDV) }}
               </div>
@@ -50,15 +52,15 @@
               </div></br>
             </div>
             <div class="col-md-6">
-                {{ form_label(formulaireActivite.adresseLieuRDV, 'Lieu de rendez-vous') }}
+                {{ form_label(formulaireActivite.adresseLieuRDV, 'Adresse du lieu de rendez-vous') }} *
                 {{ form_errors(formulaireActivite.adresseLieuRDV) }}
                 {{ form_widget(formulaireActivite.adresseLieuRDV) }}
-                {{ form_label(formulaireActivite.adresseLieuDepart, 'Lieu de départ') }}
+                {{ form_label(formulaireActivite.adresseLieuDepart, 'Adresse du lieu de départ') }}
                 {{ form_errors(formulaireActivite.adresseLieuDepart) }}
                 {{ form_widget(formulaireActivite.adresseLieuDepart) }}
-                {{ form_label(formulaireActivite.adresseLieuArrivee, "Lieu d'arrivée") }}
+                {{ form_label(formulaireActivite.adresseLieuArrivee, "Adresse du lieu d'arrivée") }}
                 {{ form_errors(formulaireActivite.adresseLieuArrivee) }}
-                {{ form_widget(formulaireActivite.adresseLieuArrivee) }}
+                {{ form_widget(formulaireActivite.adresseLieuArrivee) }} <br>
                 <div id="map" style="height:400px;"></div>
             </div>
             <div class="row">
@@ -78,9 +80,9 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDmo1B7t569caLPAVZZNdcoH97JCnHRqNM&signed_in=true&libraries=places&callback=initialize"
         async defer></script>
     <script>
-      var inputAdresseRDV = (document.getElementById('form_adresseLieuRDV'));
-      var inputAdresseDepart = (document.getElementById('form_adresseLieuDepart'));
-      var inputAdresseArrivee = (document.getElementById('form_adresseLieuArrivee'));
+      var inputAdresseRDV = (document.getElementById('moove_activitebundle_activite_adresseLieuRDV'));
+      var inputAdresseDepart = (document.getElementById('moove_activitebundle_activite_adresseLieuDepart'));
+      var inputAdresseArrivee = (document.getElementById('moove_activitebundle_activite_adresseLieuArrivee'));
       var autocompleteLieuRDV;
       var autocompleteLieuDepart;
       var autocompleteLieuArrivee;
@@ -92,7 +94,7 @@
       
         var mapOptions = {
           center: {lat: 46.686111, lng: 1.875278}, // centre de la carte, ici de la France
-          zoom: 6,                                 // niveau de zoom pour afficher correctement la france
+          zoom: 5,                                 // niveau de zoom pour afficher correctement la france
           scrollwheel: true
         };
         var map = new google.maps.Map(document.getElementById('map'), mapOptions); // initilisation de la carte
@@ -113,15 +115,11 @@
       var infowindowRDV = new google.maps.InfoWindow();
       var infowindowDepart = new google.maps.InfoWindow();
       var infowindowArrivee = new google.maps.InfoWindow();
-      var markerRDV = new google.maps.Marker({
-        map: map
-      });
-      var markerDepart = new google.maps.Marker({
-        map: map
-      });
-      var markerArrivee = new google.maps.Marker({
-        map: map
-      });
+      
+      var markerRDV = new google.maps.Marker({map: map});
+      var markerDepart = new google.maps.Marker({map: map});
+      var markerArrivee = new google.maps.Marker({map: map});
+      
       google.maps.event.addListener(markerRDV, 'click', function() {
         infowindowRDV.open(map, markerRDV);
       });

@@ -52,7 +52,7 @@ class Activite
     /**
      * @var string
      * 
-     * @ORM\Column(name="description", type="text")
+     * @ORM\Column(name="description", type="text", nullable=true)
      */
     private $description;
 
@@ -110,8 +110,8 @@ class Activite
     private $lieuArrivee;
     
     /*
-     * @Assert\NotBlank(message = "L'adresse du lieu de rendez-vous est obligatoire.")
      * @mooveAssert\Adresse
+     * @Assert\NotBlank(message = "L'adresse du lieu de rendez-vous est obligatoire.")
      */
     private $adresseLieuRDV;
     /*
@@ -122,6 +122,13 @@ class Activite
      * @mooveAssert\Adresse
      */
     private $adresseLieuArrivee;
+
+
+    /**
+     * @ORM\OneToMany(targetEntity="moove\ActiviteBundle\Entity\Participer", mappedBy="activite")
+     */
+    private $participer;
+
 
 
     /* /!\ Début des get & set /!\ */
@@ -512,5 +519,47 @@ class Activite
         $this->adresseLieuArrivee = $adresseLieuArrivee;
 
         return $this;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->participer = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+
+
+    /**
+     * Get participer
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getParticiper()
+    {
+        return $this->participer;
+    }
+
+    /**
+     * Add participer
+     *
+     * @param \moove\ActiviteBundle\Entity\Participer $participer
+     * @return Activite
+     */
+    public function addParticiper(\moove\ActiviteBundle\Entity\Participer $participer)
+    {
+        $this->participer[] = $participer;
+
+        return $this;
+    }
+
+    /**
+     * Remove participer
+     *
+     * @param \moove\ActiviteBundle\Entity\Participer $participer
+     */
+    public function removeParticiper(\moove\ActiviteBundle\Entity\Participer $participer)
+    {
+        $this->participer->removeElement($participer);
     }
 }

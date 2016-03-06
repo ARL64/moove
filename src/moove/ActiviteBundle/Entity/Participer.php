@@ -28,7 +28,7 @@ class Participer
     private $utilisateur;
     
     /**
-     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Activite")
+     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Activite", inversedBy="participer")
      */
     private $activite;
 

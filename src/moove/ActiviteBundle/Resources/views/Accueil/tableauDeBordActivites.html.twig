@@ -6,22 +6,26 @@
     <h3>Liste de toutes les activités auxquelles vous participez ou que vous organisez.</h3>
     <br><br>
     <div class="table-responsive">
-      <table class="table table-striped table-hover ">
+      <table class="table table-striped table-hover">
         <thead>
           <tr>
-            <th>Sport</th>
-            <th>Rendez-vous</th>
-            <th>Départ</th>
-            <th>Arrivée</th>
-            <th>Date</th>
-            <th>Participants</th>
-            <th>Organisateur</th>
-            <th>Demande</th>
+            <th>{{ knp_pagination_sortable(tabActivites, 'Sport', 'sport') }}{% if tabActivites.isSorted('sport') and tabActivites.direction == 'desc' %}<i class="fa fa-sort-desc"></i>{% elseif tabActivites.isSorted('sport') and tabActivites.direction == 'asc' %}<i class="fa fa-sort-asc"></i>{% else %}<i class="fa fa-sort"></i>{% endif %}</th>
+            <th>{{ knp_pagination_sortable(tabActivites, 'Rendez-vous', 'rdv') }}{% if tabActivites.isSorted('rdv') and tabActivites.direction == 'desc' %}<i class="fa fa-sort-desc"></i>{% elseif tabActivites.isSorted('rdv') and tabActivites.direction == 'asc' %}<i class="fa fa-sort-asc"></i>{% else %}<i class="fa fa-sort"></i>{% endif %}</th>
+            <th>{{ knp_pagination_sortable(tabActivites, 'Départ', 'depart') }}{% if tabActivites.isSorted('depart') and tabActivites.direction == 'desc' %}<i class="fa fa-sort-desc"></i>{% elseif tabActivites.isSorted('depart') and tabActivites.direction == 'asc' %}<i class="fa fa-sort-asc"></i>{% else %}<i class="fa fa-sort"></i>{% endif %}</th>
+            <th>{{ knp_pagination_sortable(tabActivites, 'Arrivée', 'arrivee') }}{% if tabActivites.isSorted('arrivee') and tabActivites.direction == 'desc' %}<i class="fa fa-sort-desc"></i>{% elseif tabActivites.isSorted('arrivee') and tabActivites.direction == 'asc' %}<i class="fa fa-sort-asc"></i>{% else %}<i class="fa fa-sort"></i>{% endif %}</th>
+            <th>{{ knp_pagination_sortable(tabActivites, 'Date', 'date') }}{% if tabActivites.isSorted('date') and tabActivites.direction == 'desc' %}<i class="fa fa-sort-desc"></i>{% elseif tabActivites.isSorted('date') and tabActivites.direction == 'asc' %}<i class="fa fa-sort-asc"></i>{% else %}<i class="fa fa-sort"></i>{% endif %}</th>
+            <th>{{ knp_pagination_sortable(tabActivites, 'Participants', 'participants') }}{% if tabActivites.isSorted('participants') and tabActivites.direction == 'desc' %}<i class="fa fa-sort-desc"></i>{% elseif tabActivites.isSorted('participants') and tabActivites.direction == 'asc' %}<i class="fa fa-sort-asc"></i>{% else %}<i class="fa fa-sort"></i>{% endif %}</th>
+            <th>{{ knp_pagination_sortable(tabActivites, 'Organisateur', 'organisateur') }}{% if tabActivites.isSorted('organisateur') and tabActivites.direction == 'desc' %}<i class="fa fa-sort-desc"></i>{% elseif tabActivites.isSorted('organisateur') and tabActivites.getDirection == 'asc' %}<i class="fa fa-sort-asc"></i>{% else %}<i class="fa fa-sort"></i>{% endif %}</th>
+            <th>{{ knp_pagination_sortable(tabActivites, 'Demande', 'demande') }}{% if tabActivites.isSorted('demande') and tabActivites.direction == 'desc' %}<i class="fa fa-sort-desc"></i>{% elseif tabActivites.isSorted('demande') and tabActivites.direction == 'asc' %}<i class="fa fa-sort-asc"></i>{% else %}<i class="fa fa-sort"></i>{% endif %}</th>
+            <th></th>
+            <th></th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           {% for activite in tabActivites %}
+          <!-- On calcul l'index de l'occurence actuel en prenant en compte le fait de ne pas forcément être sur la premier page -->
+          {% set indexResultat = loop.index0 + (tabActivites.currentPageNumber - 1) * nbResultatParPage %}
           <a href="{{ path('moove_activite_detailsActivite', {idActivite: activite.id}) }}">
             <tr>
               <td>{{ activite.sportPratique.nom }}</td>
@@ -29,11 +33,14 @@
               <td>{% if activite.lieuDepart is not null%}{% if activite.lieuDepart.numeroRue != 0 %}{{ activite.lieuDepart.numeroRue }}{% endif %}{{ " " ~ activite.lieuDepart.nomRue ~ " " ~ activite.lieuDepart.ville  }}{% else %}Non spécifié{% endif %}</td>
               <td>{% if activite.lieuArrivee is not null%}{% if activite.lieuArrivee.numeroRue != 0 %}{{ activite.lieuArrivee.numeroRue }}{% endif %}{{ " " ~ activite.lieuArrivee.nomRue ~ " " ~ activite.lieuArrivee.ville  }}{% else %}Non spécifié{% endif %}</td>
               <td>{{ activite.dateHeureRDV | date("d/m/y") }}</td>
-              <td>{{ tabNbParticipants[loop.index0] ~ "/" ~ activite.nbPlaces }}</td>
+              <!-- le nombre de participant est situer sur un 2nd tableau. Chaque case de ce tableau coincide les cases des autres tableaux. 
+                  Ainsi, la case situer a "indexResultat" correspond au nombre de participation dans l'activité actuel. -->
+              <td>{{ tabNbParticipants[indexResultat] ~ "/" ~ activite.nbPlaces }}</td>
               <td>{% if activite.organisateur == app.user %} Moi {% else %}{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}{% endif %}</td>
-              {% if tabEstAccepte[loop.index0] == 1 %}
+              <!-- On applique ici le même résonnement que pour le tableau du nombres de participation -->
+              {% if tabEstAccepte[indexResultat] == 1 %}
                 <td><p><span class="label label-success">Acceptée</span></p></td>
-              {% elseif tabEstAccepte[loop.index0] == 2 %}
+              {% elseif tabEstAccepte[indexResultat] == 2 %}
                 <td><p><span class="label label-danger">Refusée</span></p></td>
               {% else %}
                 <td><p><span class="label label-warning">En attente</span></p></td>
@@ -49,39 +56,7 @@
 {% endblock %}
 
 {% block navTableau %}
-{#
-<nav>
-  <ul class="pagination">
-    {% if page > 1 %}
-        <li><a href="{{ path('moove_activite_historiqueActivite', {page: 1}) }}">&laquo;</a></li>
-    {% else %}
-        <li class="disabled"><a aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
-    {% endif %}
-    {% if page > 1 %}
-        <li><a href="{{ path('moove_activite_historiqueActivite', {page: page - 1}) }}">&lsaquo;</a></li>
-    {% else %}
-        <li class="disabled"><a aria-label="Previous"><span aria-hidden="true">&lsaquo;</span></a></li>
-    {% endif %}
-
-    {% for i in 1..nbPage %}
-      {% if i != page %}
-        <li><a href="{{ path('moove_activite_historiqueActivite', {page: i}) }}">{{i}}</a></li>
-      {% else %}
-        <li class="active"><a aria-label=""><span aria-hidden="true">{{page}}</span></a></li>
-      {% endif %}
-    {% endfor %}
-
-    {% if page < nbPage %}
-      <li><a href="{{ path('moove_activite_historiqueActivite', {page: page + 1}) }}">&rsaquo;</a></li>
-    {% else %}
-      <li class="disabled"><a aria-label=""><span aria-hidden="true">&rsaquo;</span></a></li>
-    {% endif %}
-    {% if page < nbPage %}
-      <li><a href="{{ path('moove_activite_historiqueActivite', {page: nbPage}) }}">&raquo;</a></li>
-    {% else %}
-      <li class="disabled"><a aria-label=""><span aria-hidden="true">&raquo;</span></a></li>
-    {% endif %}
-  </ul>
-</nav>
-#}
+  <div class="navigation pull-right">
+      {{ knp_pagination_render(tabActivites) }}
+  </div>
 {% endblock %}

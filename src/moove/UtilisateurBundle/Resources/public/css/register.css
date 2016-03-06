@@ -16,7 +16,6 @@
 .form-signin input[id="fos_user_registration_form_nom"],
 .form-signin input[id="fos_user_registration_form_email"],
 .form-signin input[id="fos_user_registration_form_plainPassword_first"],
-.form-signin input[id="fos_user_registration_form_username"],
 .form-signin input[id="fos_user_registration_form_plainPassword_second"]
  {
   margin-bottom: -1px;
@@ -25,7 +24,6 @@
 }
 .form-signin input[id="fos_user_registration_form_nom"],
 .form-signin input[id="fos_user_registration_form_email"],
-.form-signin input[id="fos_user_registration_form_plainPassword_first"],
 .form-signin input[id="fos_user_registration_form_plainPassword_second"],
 .form-signin input[id="inputBirthday"],
 .form-signin input[id="fos_user_registration_form_username"],
@@ -61,4 +59,12 @@ div[id="fos_user_registration_form_sexe"] {
 
 .form-group .control-label {
   display: none;
+}
+
+.form-signin {
+  max-width: 660px;
+}
+
+.spaced {
+  margin-top: 1em;
 }

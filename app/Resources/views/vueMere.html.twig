@@ -1,6 +1,23 @@
 {# app/Resources/views/vueMere.html.twig #}
 <!DOCTYPE html>
 <html>
+  <!-- 
+                         .-'''-.        .-'''-.                                      
+                       '   _    \     '   _    \                                    
+     __  __   ___    /   /` '.   \  /   /` '.   \.----.     .----.   __.....__      
+    |  |/  `.'   `. .   |     \  ' .   |     \  ' \    \   /    /.-''         '.    
+    |   .-.  .-.   '|   '      |  '|   '      |  ' '   '. /'   //     .-''"'-.  `.  
+    |  |  |  |  |  |\    \     / / \    \     / /  |    |'    //     /________\   \ 
+    |  |  |  |  |  | `.   ` ..' /   `.   ` ..' /   |    ||    ||                  | 
+    |  |  |  |  |  |    '-...-'`       '-...-'`    '.   `'   .'\    .-------------' 
+    |  |  |  |  |  |    DUT Informatique Anglet     \        /  \    '-.____...---. 
+    |__|  |__|  |__|          2015-2016              \      /    `.             .'  
+                                                      '----'       `''-...... -'    
+  
+  
+  -->
+  
+  
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -58,10 +75,11 @@
                 <ul class="dropdown-menu">
                   <!-- Image utilisateur -->
                   <li class="user-header">
-                    <img src="{{ asset(app.user.URLAvatar) }}" class="img-circle" alt="User Image">
+                    <img src="{{ asset(app.user.URLAvatar) }}" class="img-circle" alt="User Image" width="75" height="75">
                     <p>
                       {{ app.user.prenom ~ " " ~ app.user.nom }}
                     </p>
+                     <a href="{{ path('fos_user_change_password') }}" class="btn btn-default btn-flat">Modifier mon mot de passe</a>
                   </li>
                   <!-- Footer dropdown -->
                   <li class="user-footer">

@@ -1,19 +1,18 @@
-{% extends "::vueMere.html.twig" %} {% block title %}Détails activité {{activite.id}} {% endblock %} {% block stylesheets %}
+{% extends "::vueMere.html.twig" %}
+{% block title %}Détails activité {{activite.id}} {% endblock %} 
+
+{% block stylesheets %}
 <link rel="stylesheet" href="{{ asset('bundles/mooveactivite/css/details/style.css') }}">
-<link rel="stylesheet" href="{{ asset('css/Glyphter.css') }}"> {% endblock %} {% block body %}
+<link rel="stylesheet" href="{{ asset('css/Glyphter.css') }}"> 
+{% endblock %} 
 
-
+{% block body %}
 
 
 <!-- Titre de la page -->
 <section class="content-header">
   <h1><h2><span class="label label-primary"> {{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }} propose une activité {{ activite.sportPratique.nom | lower }}</span></h2></h1>
 </section>
-
-
-
-
-
 
 <!-- Contenu principal -->
 
@@ -38,7 +37,21 @@
         <div class="media-body">
           <h4 class="media-heading">{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</h4>
           <p>
-            {% if niveauOrganisateur != null %} {{ niveauOrganisateur }} {% else %} {% if activite.organisateur.sexe == 'femme' %} Non pratiquante {% else %} Non pratiquant {% endif %} {% endif %}
+            {% if niveauOrganisateur != null %} 
+              {% if activite.organisateur.sexe == 'femme' %}
+                {% if niveauOrganisateur != 'intermédiaire' %}
+                  {{ niveauOrganisateur ~'e' }}
+                {% else %}
+                  {{ niveauOrganisateur }}
+                {% endif %}
+              {% endif %}
+            {% else %}
+              {% if activite.organisateur.sexe == 'femme' %} 
+                Non pratiquante 
+              {% else %}
+                Non pratiquant
+              {% endif %} 
+            {% endif %}
           </p>
           <small>Annonce publiée le {{ activite.dateCreation | localizeddate('none', 'none', null, null, "d MMMM Y à H'h'mm") }}</small>
         </div>
@@ -132,9 +145,9 @@
         <div class="panel-body">
           <!-- bouton particpants -->
           <!-- Button trigger modal -->
-          <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalParticipants">
+          {#<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalParticipants">
             Participants
-          </button>
+          </button>#}
 
           <!-- Modal lorsque l'on clique sur le bouton participant -->
           <div class="modal fade" id="modalParticipants" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
@@ -150,8 +163,10 @@
                     <ul class="nav nav-tabs" role="tablist">
                       <!-- Onglet particpants -->
                       <li role="presentation" class="active"><a href="#participantsAcceptes" aria-controls="participant" role="tab" data-toggle="tab">Participants</a></li>
-                      <!-- Onglet en attente -->
-                      <li role="presentation"><a href="#participantsEnAttente" aria-controls="enAttente" role="tab" data-toggle="tab">En attente</a></li>
+                      {% if estOrganisateur %}
+                        <!-- Onglet en attente -->
+                        <li role="presentation"><a href="#participantsEnAttente" aria-controls="enAttente" role="tab" data-toggle="tab">En attente</a></li>
+                      {% endif %}
                     </ul>
 
 
@@ -161,49 +176,19 @@
                       <div role="tabpanel" class="tab-pane fade in active" id="participantsAcceptes">
                         <br>
                         {% for participationCourant in tabParticipants if participationCourant.estAccepte == 1 %}
-                        <a href="{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}" class="list-group-item">
-
-                          <div class="media-left">
-                            <img class="media-object" src="{{ asset(participationCourant.utilisateur.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
-                          </div>
-                            <!-- Permet l'inclusion de menus des utilisateurs a peu près n'importe ou. -->
-                            {% include "mooveActiviteBundle:Activite:blockListeUtiisateutDetail.html.twig" %}
-                        </a>
+                          <!-- Affiche un block utilisateur prefixButton permet de différencier les bouttons de la liste principal, et de la liste dans un modal. -->
+                          {% set prefixButton = "ModalAccepter" %}
+                          {% include "mooveActiviteBundle:Activite:blockListeUtiisateutDetail.html.twig" %}
                         {% endfor %}
                       </div>
                       
                       <!-- Onglet en attente de la boite modale lorsqu'on clique sur paticipant -->
                       <div role="tabpanel" class="tab-pane fade" id="participantsEnAttente">
                         {% for participationCourant in tabParticipants if participationCourant.estAccepte == 0 %}
-                        <a href="{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}" class="list-group-item">
-
-                          <div class="media-left">
-                            <img class="media-object" src="{{ asset(participationCourant.utilisateur.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
-                          </div>
-                            {% include "mooveActiviteBundle:Activite:blockListeUtiisateutDetail.html.twig" %}
-                        </a>
-
-                        <!-- Modal -->
-                        <!-- Boite modal pour refuser un participant -->
-                        <div class="modal fade" id="modalRefus{{participationCourant.utilisateur.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                          <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                              <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
-                                <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
-                              </div>
-                              <div class="modal-body">
-                                <p>Êtes-vous sur de vouloir refuser la participation de {{ participationCourant.utilisateur.prenom ~ " " ~ participationCourant.utilisateur.nom }} à votre activité ?</p>
-                              </div>
-                              <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-                                <a href="{{ path('moove_activite_refuser_demande_participation', {'idActivite': participationCourant.activite.id, 'idUtilisateur': participationCourant.utilisateur.id}) }}">
-                                  <button type="button" class="btn btn-danger">Oui, refuser</button>
-                                </a>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                          {% set prefixButton = "ModalEnAttente" %}
+                          <!-- Affiche un block utilisateur comme dessus, et y adjoint la modal de refus. -->
+                          {% include "mooveActiviteBundle:Activite:blockListeUtiisateutDetail.html.twig" %}
+                          {% include "mooveActiviteBundle:Activite:blockModalRefuser.html.twig" %}
                         {% else %}
                           <br>Aucun utilisateur n'a envoyé de demande de participation à l'activité
                         {% endfor %}
@@ -218,115 +203,90 @@
             </div>
           </div>
           <!-- affichage des particpants -->
-          {% for participationCourant in tabParticipants %}
-            <a id="lienUtilisateur{{participationCourant.utilisateur.id}}" href="{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}" class="list-group-item">
-              <div class="media-left">
-                <img class="media-object" src="{{ asset(participationCourant.utilisateur.URLAvatar) }}" alt="Photo de l'utilisateur" width="75" height="75">
-              </div>
-              <div class="media-body">
-                {% include "mooveActiviteBundle:Activite:blockListeUtiisateutDetail.html.twig" %}
-              </div>
-            </a>
+          {% set nbParticipantsAfficher = 3 %} <!-- nombre de participant total a afficher -->
             
-            <!-- Modal -->
-            <!-- Modal lordque l'on clique sur le bouton refusé -->
+          {% for participationCourant in tabParticipants|slice(0, nbParticipantsAfficher) %}
+            {% set prefixButton = "ListeRandom" %}
+            <!-- Permet d'affiché une utilisateur de participationCourant, et d'y adjoindre la modal de refus, uniquement si nécessaire. -->
+            {% include "mooveActiviteBundle:Activite:blockListeUtiisateutDetail.html.twig" %}
             {% if estOrganisateur and participationCourant.estAccepte == 0 %}
-            <div class="modal fade" id="modalRefus" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
-                  </div>
-                  <div class="modal-body">
-                    <p>Êtes-vous sur de vouloir refuser la participation de {{ participationCourant.utilisateur.prenom ~ " " ~ participationCourant.utilisateur.nom }} à votre activité ?</p>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-                    <a href="{{ path('moove_activite_refuser_demande_participation', {'idActivite': participationCourant.activite.id, 'idUtilisateur': participationCourant.utilisateur.id}) }}">
-                      <button type="button" class="btn btn-danger">Oui, refuser</button>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
+              <!-- On ajoute la modal uniquement si nécessaire -->
+              {% include "mooveActiviteBundle:Activite:blockModalRefuser.html.twig" %}
             {% endif %}
           {% endfor %} 
-        {# estAccepter == 1 :> validé | estAccepter == 2 :> refusé | estAccepter == 0 :> en attente #} 
-        {% if estOrganisateur %} {% if ("now" | date("Ymd") > activite.dateHeureRDV | date("Ymd")) %}
-          <button type="button" class="btn btn-primary btn-lg disabled">Activité terminée</button>
-        {% else %}
-          <button type="button" class="btn btn-primary btn-lg">Modifier l'activité</button>
-          <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#modalSupprimer">Supprimer l'activité</button>
-        {% endif %}
-
-        <!-- Modal -->
-        <div class="modal fade" id="modalSupprimer" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
-              </div>
-              <div class="modal-body">
-                <p>Êtes-vous sur de vouloir supprimer cette activité ?</p>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
-                <a href="{{ path('moove_activite_supprimer_activite', {'idActivite': activite.id, 'organisateur': app.user.id}) }}">
-                  <button type="button" class="btn btn-danger">Oui, supprimer l'activité</button>
+          <!-- Ajoute le lien vers la modal qui affiche l'intégralité de la liste des participants.-->
+          {% if nbParticipantsAfficher < tabParticipants|length %}
+            <button type="button" class="list-group-item" data-toggle="modal" data-target="#modalParticipants">
+              <center><i>+ {{tabParticipants|length - nbParticipantsAfficher}} participant{% if (tabParticipants|length - nbParticipantsAfficher) > 1 %}s{% endif %}</i></center>
+            </button>
+          {% endif %}
+          {# estAccepter == 1 :> validé | estAccepter == 2 :> refusé | estAccepter == 0 :> en attente #} 
+          {% if estOrganisateur %} 
+            {% if ("now" | date("Ymd") > activite.dateHeureRDV | date("Ymd")) %}
+              <button type="button" class="btn btn-primary btn-lg disabled">Activité terminée</button>
+            {% else %}
+              <button type="button" class="btn btn-primary btn-lg">Modifier l'activité</button>
+              <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#modalSupprimer">Supprimer l'activité</button>
+            {% endif %}
+            <!-- Modal de suppression d'activité -->
+            {% include "mooveActiviteBundle:Activite:blockModalSupprimer.html.twig" %}
+          {% else %} 
+            <!-- Si l'on n'est pas organisateur -->
+            {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) %} 
+              {% if estAccepte == 1 %}
+                <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
+              {% elseif estAccepte == 2 %}
+                <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
+              {% else %} <!-- estAccepter == 0 -->
+                <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
+              {% endif %} 
+            {% else %} 
+              <!-- si l'activite n'est pas fermé -->
+              {% if estParticipant %} 
+                {% if estAccepte == 1 %}
+                  <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#quitterActivite">Quitter l'activité</button>
+                {% elseif estAccepte == 2 %}
+                  <button type="button" class="btn btn-danger btn-lg disabled">Vous avez été refusé</button>
+                {% else %} <!-- estAccepter == 0 -->
+                  <button type="button" class="btn btn-warning btn-lg disabled">Demande envoyée</button>
+                {% endif %} 
+              {% else %}
+                <a href="{{ path('moove_activite_demande_participation', {'idActivite': activite.id, 'idUtilisateur': app.user.id}) }}">
+                  <button type="button" class="btn btn-primary btn-lg">Je veux participer</button>
                 </a>
-              </div>
+              {% endif %} 
+            {% endif %} <!-- fini le si l'activite n'est pas finis -->
+            <!-- Modal -->
+            <div class="modal fade" id="quitterActivite" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+             <div class="modal-dialog" role="document">
+               <div class="modal-content">
+                 <div class="modal-header">
+                   <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                   <h4 class="modal-title" id="myModalLabel">Quitter</h4>
+                 </div>
+                 <div class="modal-body">
+                   Voulez-vous vraiment quitter cette activité?
+                 </div>
+                 <div class="modal-footer">
+                   <button type="button" class="btn btn-primary" data-dismiss="modal">Annuler</button>
+                   <a href="{{ path( 'moove_activite_quitter_activite', { 'idActivite': activite.id, 'idUtilisateur': app.user.id})}}">
+                     <button type="button" class="btn btn-danger">Quitter l'activité</button>
+                   </a>
+                 </div>
+               </div>
+             </div>
             </div>
-          </div>
-        </div>
-        {#</div>#} {% else %} {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) %} {% if estAccepte == 1 %}
-      <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
-      {% elseif estAccepte == 2 %}
-      <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
-      {% else %}
-      <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
-      {% endif %} {% else %} {% if estParticipant %} {% if estAccepte == 1 %}
-      <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#quitterActivite">Quitter l'activité</button>
-      {% elseif estAccepte == 2 %}
-      <button type="button" class="btn btn-danger btn-lg disabled">Vous avez été refusé</button>
-      {% else %}
-      <button type="button" class="btn btn-warning btn-lg disabled">Demande envoyée</button>
-      {% endif %} {% else %}
-      <a href="{{ path('moove_activite_demande_participation', {'idActivite': activite.id, 'idUtilisateur': app.user.id}) }}">
-        <button type="button" class="btn btn-primary btn-lg">Je veux participer</button>
-        {% endif %} {% endif %}
-        <!-- Modal -->
-        <div class="modal fade" id="quitterActivite" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Quitter</h4>
-              </div>
-              <div class="modal-body">
-                Voulez-vous vraiment quitter cette activité?
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal">Annuler</button>
-                <a href="{{ path( 'moove_activite_quitter_activite', { 'idActivite': activite.id, 'idUtilisateur': app.user.id})}}">
-                  <button type="button" class="btn btn-danger">Quitter l'activité</button>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-        {% endif %}
-    </div>
+          {% endif %} <!-- finis le si on est organisateur -->
+      </div>
+    </div> <!-- fini le panel participant -->
+  </div> <!-- fini le "colone où se trouve les panneaux informations sur l'activité et information" -->
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <h1>Carte</h1>
+    <div id="map" style="height: 500px;"></div>
   </div>
-  </div>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <h1>Carte</h1>
-      <div id="map" style="height: 500px;"></div>
-    </div>
-  </div>
+</div>
 </section>
 
 {% endblock %}
