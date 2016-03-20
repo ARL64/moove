@@ -17,6 +17,59 @@ class ActiviteRepository extends EntityRepository
     // Requête type tous élément inclus (sauf date): 
     // http://moove-arl64.c9users.io/web/app_dev.php/rechercher?niveau=[intermediaire,expert]&sport=[Jogging,Cyclisme,Ski]&placeRestanteMax=8&placeRestanteMin=3&nbPlace=15&photo=yes&order=sport&type=asc&page=1
     // http://moove-arl64.c9users.io/web/app_dev.php/rechercher?date=2016-04-14&hMin=13h00&hMax=15h00&niveau=[intermediaire,expert]&sport=[Jogging,Cyclisme,Ski]&placeRestanteMax=8&placeRestanteMin=3&nbPlace=15&photo=yes&order=sport&type=asc&page=1
+    
+    /**
+     * remplace find
+     * @param $idActivite <i>int</i> id de l'activité rechercher
+     * @return <i>Activite</i> activité demandé, plus tous les détails liée.
+     */
+    public function findWhitDetail($idActivite)
+    {
+        $requete = $this->_em->createQueryBuilder()
+                    ->select('a')
+                    ->from($this->_entityName, 'a')
+                    ->join('a.organisateur', 'u')
+                    ->addSelect('u')
+                    ->join('a.sportPratique', 's')
+                    ->addSelect('s')
+                    ->join('a.niveauRequis', 'n')
+                    ->addSelect('n')
+                    ->join('a.lieuRDV', 'lrdv')
+                    ->addSelect('lrdv')
+                    ->leftJoin('a.lieuDepart', 'ld')
+                    ->addSelect('ld')
+                    ->leftJoin('a.lieuArrivee', 'la')
+                    ->addSelect('la')
+                    ->where('a.id = :idActivite')
+                    ->setParameter('idActivite', $idActivite)
+        ;
+        
+        $query = $requete->getQuery();
+
+        return $query->getSingleResult();
+    }
+    
+    /**
+     * retourne une liste complète de toute les activités répondant au nombreux critère
+     * 
+     * @param $idUtilisateur <i>Utilisateur</i> utilisateur concerné
+     * @param $estAccepter <i>Integer</i> etat de sa demande (0:en cours, 1:accepter, 2:refuser)
+     * @param $terminer <i>boolean</i>=null etat de l'activité (true:fini, false:en cours)
+     * 
+     * @param $datePrecise <i>String</i> format YYYY-mm-dd
+     * @param $heureMin <i>String</i> format 00h00. Nécessire une date Précise pour fonctionné
+     * @param $heureMax <i>String</i> format 00h00. Nécessire une date Précise pour fonctionné
+     * @param $sport <i>String</i> format [Nom1,Nom2]. substitut de tupe array contenant la liste des sports concerné
+     * @param $niveau <i>String</i> format [Nom1,Nom2]. substitut de tupe array contenant la liste des niveaux concerné
+     * @param $photo <i>String</i> constante 'yes' ou 'no' indiquant la précense ou non de la photo. 
+     * @param $nbPlaceRestante <i>String</i> valeur sous forme de string indiquant le nombre de place restante minimum.
+     * @param $nbPlaceMin <i>String</i> valeur sous forme de string indiquant le nombre de place minimum
+     * @param $nbPlaceMax <i>String</i> valeur sous forme de string indiquant le nombre de place maximum
+     * @param $distanceMax <i>String</i> valeur
+     * @param $order <i>String</i>="a.dateHeureRDV" schema de la base de donnée correspondente pour le 'orderBy'
+     * @param $type <i>String</i>="DESC" constante correspondante pour l'ordre de try (ASC ou DESC)
+     * @return <i>Array<Activite></i> liste de toute les activité correspondante
+     */
     public function findWhitCondition($datePrecise, $heureMin, $heureMax, $sport, $niveau, $photo, $nbPlaceRestante, $nbPlaceMin, $nbPlaceMax, $distanceMax, $order = "a.dateHeureRDV", $type = "ASC")
     {
         // On créer notre grosse requete de base
@@ -113,7 +166,7 @@ class ActiviteRepository extends EntityRepository
         // Ici, on se contente d'ajouter la condition si la variable n'est pas null.
         if(!is_null($nbPlaceRestante))
         { // nbPlace=5&
-
+            
             $requete->addGroupBy('a.id')
                     ->andHaving("COUNT(p.id) >= :nbPlaceRestante")
                     ->setParameter('nbPlaceRestante', $nbPlaceRestante);
@@ -138,13 +191,22 @@ class ActiviteRepository extends EntityRepository
           
         // on récupère la commande DQL
         $query = $requete->getQuery();
-        //var_dump($query);
+        //var_dump($query->getResult());
 
         // on retourne un tableau de résultat
         return $query->getResult();
     }
     
-    
+    /**
+     * retourne une liste complète de toute les activités dont l'état de la participation pour l'utilisateur conerné correspond a l'état passer en paramètre
+     * 
+     * @param $idUtilisateur <i>Utilisateur</i> utilisateur concerné
+     * @param $estAccepter <i>Integer</i> etat de sa demande (0:en cours, 1:accepter, 2:refuser)
+     * @param $terminer <i>boolean</i>=null etat de l'activité (true:fini, false:en cours)
+     * @param $order <i>String</i>="a.dateHeureRDV" schema de la base de donnée correspondente pour le 'orderBy'
+     * @param $type <i>String</i>="DESC" constante correspondante pour l'ordre de try (ASC ou DESC)
+     * @return <i>Array<Activite></i> liste de toute les activité correspondante
+     */
     public function findByUtilisateurAccepter($idUtilisateur, $estAccepter, $terminer = null, $order = "a.dateHeureRDV", $type = "DESC")
     {
         $requete = $this->getAllActivityForUser($idUtilisateur, $order, $type)
@@ -166,6 +228,15 @@ class ActiviteRepository extends EntityRepository
         return $query->getResult();
     }
     
+    /**
+     * retourne la liste de toute les activités auquel participe l'utilisateur.
+     * 
+     * @param $idUtilisateur <i>Utilisateur</i> utilisateur concerné
+     * @param $terminer <i>boolean</i>=null etat de l'activité (true:fini, false:en cours)
+     * @param $order <i>String</i>="a.dateHeureRDV" schema de la base de donnée correspondente pour le 'orderBy'
+     * @param $type <i>String</i>="DESC" constante correspondante pour l'ordre de try (ASC ou DESC)
+     * @return <i>Array<Activite></i> liste de toute les activité correspondante
+     */
     public function findByUtilisateur($idUtilisateur, $terminer = null, $order = "a.dateHeureRDV", $type = "DESC")
     {
         // on récupère la query de base de séléction des activités par utilisateur
@@ -189,8 +260,40 @@ class ActiviteRepository extends EntityRepository
 
     /**
      * 
-     * @param $idUtilisateur integer de l'user
-     * @return (queryBuilder)
+     * @param $idActivite <i>Activite</i> activite concerné
+     * @param $organisateur <i>Utilisateur</i> 
+     * @return <i>Array<></i> 
+     */ 
+    public function supprimerActivite($idActivite, $organisateur)
+    {
+         $requete1 = $this->createQueryBuilder('p')
+                        ->delete('mooveActiviteBundle:Participer', 'p')
+                        ->where('p.activite = :activite')
+                        ->setParameter('activite', $idActivite)
+                        ;
+                        
+        $requete2 = $this->_em->createQueryBuilder()
+            ->delete($this->_entityName, 'a')
+            ->where('a.organisateur = :organisateur')
+            ->setParameter('organisateur', $organisateur)
+            ->andWhere('a.id = :activite')
+            ->setParameter('activite', $idActivite)
+            ;
+                        
+         // on récupère la commande DQL
+        $query1 = $requete1->getQuery();
+        $query2 = $requete2->getQuery();
+        
+        // on retourne un tableau de résultat
+        return array($query1->getResult(), $query2->getResult());  
+    }
+    
+    /**
+     * 
+     * @param $idUtilisateur <i>Utilisateur</i> utilisateur concerné
+     * @param $order <i>String</i> schema de la base de donnée correspondente pour le 'orderBy'
+     * @param $type <i>String</i> constante correspondante pour l'ordre de try (ASC ou DESC)
+     * @return <i>queryBuilder</i> base de toute querry souhaitant faire apelle a une activité, et ses détails
      */
     protected function getAllActivityForUser($idUtilisateur, $order, $type)
     {
@@ -216,30 +319,6 @@ class ActiviteRepository extends EntityRepository
             //->orderBy('a.dateHeureRDV', 'DESC')
             ->setParameter('idUtilisateur', $idUtilisateur)
         ;
-        
         return $requete;
-    }
-    public function supprimerActivite($idActivite, $organisateur)
-    {
-         $requete1 = $this->createQueryBuilder('p')
-                        ->delete('mooveActiviteBundle:Participer', 'p')
-                        ->where('p.activite = :activite')
-                        ->setParameter('activite', $idActivite)
-                        ;
-                        
-        $requete2 = $this->_em->createQueryBuilder()
-            ->delete($this->_entityName, 'a')
-            ->where('a.organisateur = :organisateur')
-            ->setParameter('organisateur', $organisateur)
-            ->andWhere('a.id = :activite')
-            ->setParameter('activite', $idActivite)
-            ;
-                        
-         // on récupère la commande DQL
-        $query1 = $requete1->getQuery();
-        $query2 = $requete2->getQuery();
-        
-        // on retourne un tableau de résultat
-        return array($query1->getResult(), $query2->getResult());  
     }
 }

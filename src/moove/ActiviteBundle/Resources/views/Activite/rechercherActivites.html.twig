@@ -2,124 +2,150 @@
 {% block title %}Rechercher des activités{% endblock %}
 {% block activeRechercher %}active{% endblock %}
 {% block stylesheets %}
-    <link rel="stylesheet" href="{{ asset('bundles/mooveactivite/css/rechercher.css') }}">
+    {#<link rel="stylesheet" href="{{ asset('bundles/mooveactivite/css/rechercher.css') }}">#}
     <link rel="stylesheet" href="{{ asset('css/slider/ion.rangeSlider.css') }}">
     <link rel="stylesheet" href="{{ asset('css/slider/ion.rangeSlider.skinFlat.css') }}">
     <link rel="stylesheet" href="{{ asset('css/bootstrap-datepicker.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/Glyphter.css') }}"> 
 {% endblock %}
 
 {% block body %} 
-    <!-- Titre de la page -->
+    {# Titre de la page #}
     <section class="content-header">
       <h1>Rechercher</h1>
     </section>
      
-    <!-- Contenu principal -->
+    {# Contenu principal #}
     <section class="content">
         <div class="row">
             <div class="col-md-12">
                 <form name="base" class="form-inline">
-                    <input id="autocomplete" type="text" class="form-control" placeholder="Entrez une ville..." name="ville">
+                    <input id="autocomplete" type="text" class="form-control" placeholder="Entrez une ville..." {% if app.request.get('ville') %}value="{{ app.request.get('ville') }}"{% endif %} name="ville">
                     <div class="input-group date">
-                      <input type="text" placeholder="Date de l'activité" class="form-control" name="date"><span class="input-group-addon" ><i class="fa fa-calendar"></i></span>
+                      <input type="text" placeholder="Date de l'activité" {% if app.request.get('date') %}value="{{ app.request.get('date') }}"{% endif %} class="form-control" name="date"><span class="input-group-addon" ><i class="fa fa-calendar"></i></span>
                     </div>
-                    <!-- On utilise ici la fonction sumbit() du 2nd formulaire pour envoyer le résultat. On dois donc rajouté majDate() car on ne clique pas sur le bouton.-->
-                    <button type="button" class="btn btn-default" onclick="javascript:majDate();document.filtre.submit()">Rechercher</button>
-                    <select class="form-control" id="select">
-                      <option selected>Trier par</option>
-                      <option value="dateHeureRDV">Heure de départ</option>
-                      <option value="date">Date</option>
-                      <option value="niveau">Niveau</option>
-                      <option value="sport">Sport</option>
-                      <option value="ville">Ville</option>
+                    <select name="order" class="form-control" id="select">
+                      <option>Trier par</option>
+                      <option value="dateHeureRDV" {% if app.request.get('order') == "dateHeureRDV" %}selected{% endif %}>Date</option>
+                      {#<option value="date">Date</option>#}
+                      <option value="niveau" {% if app.request.get('order') == "niveau" %}selected{% endif %}>Niveau</option>
+                      <option value="sport" {% if app.request.get('order') == "sport" %}selected{% endif %}>Sport</option>
+                      {#<option value="ville">Ville</option>#}
                     </select>
+                    {# On utilise ici la fonction sumbit() du 2nd formulaire pour envoyer le résultat. On dois donc rajouté majDate() car on ne clique pas sur le bouton.#}
+                    <button type="button" class="btn btn-default" onclick="javascript:majDate();document.filtre.submit()">Rechercher</button>
                 </form>
                 <p>{{ nbActivites }} résultats</p>
             </div>
-            <div class="col-md-4 pull-right">
-            <div>
-                <h2>Filtres de recherche</h2>
-                
-                <form name="filtre" method="post">
-                <!-- le formulaire doit ressembler a ca
-                                        heure de départ & arriver (un double)
-                                        case à cocher sports | case à cocher niveaux
-                                        bouton radio avec photo  |  spinner (order by)
-                                        nbPlace max (de 0 a 20)
-                                        nbPlaceRestante (un double avec min et max)
-                                        distance max du pts (qu'on a pas regler du tout)-->
-                <!-- hidden (mise a jour par javascript a partir de l'autre formulaire -->
-                <input type="hidden" name="ville" value="">
-                <input type="hidden" name="date" value="">
-
-                <label for="heure">Heure de départ</label><br>
-                <input id="heure" name="heure" type="text"/><br><br>
-                <div class="col-md-6">
-                <!-- Liste des sports. Le premier cochera / décochera tous les autres. -->
-                    <label>Sport</label><br/>
-                    <input type="checkbox" name="name_allSport" id="name_allSport" onChange='javascript:checkSport()' value=""/> Tous les sports<br/>
-                    {% for sport in tabSport %}    
-                        <input type="checkbox" name="name_{{ sport.nom }}" id="id_{{ sport.nom }}" value="{{ sport.nom }}" /> {{ sport.nom }}<br/>
-                    {% endfor %}
+            <div class="col-lg-12">
+                <div class="col-lg-4 col-md-12  col-xs-12">
+                    <div>
+                        <h2>Filtres de recherche</h2>
+                        
+                        <form name="filtre" method="post">
+                        {# le formulaire doit ressembler a ca
+                                                heure de départ & arriver (un double)
+                                                case à cocher sports | case à cocher niveaux
+                                                bouton radio avec photo  |  spinner (order by)
+                                                nbPlace max (de 0 a 20)
+                                                nbPlaceRestante (un double avec min et max)
+                                                distance max du pts (qu'on a pas regler du tout)#}
+                        {# hidden (mise a jour par javascript a partir de l'autre formulaire #}
+                        <input type="hidden" name="ville" value="">
+                        <input type="hidden" name="date" value="">
+                        <input type="hidden" name="order" value="">
+        
+                        <label for="heure">Heure de départ</label><br>
+                        <input id="heure" name="heure" type="text"/><br><br>
+                        <div class="col-md-6">
+                        {# Liste des sports. Le premier cochera / décochera tous les autres. #}
+                            <label>Sport</label><br/>
+                            <input type="checkbox" name="name_allSport" id="name_allSport" onChange='javascript:checkSport()' value=""/> Tous les sports<br/>
+                            {% for sport in tabSport %}
+                                {% set nameSport = "name_" ~ sport.nom %}
+                                {% if app.request.get(nameSport) %}
+                                    <input type="checkbox" name="name_{{ sport.nom }}" id="id_{{ sport.nom }}" value="{{ sport.nom }}" checked/> {{ sport.nom }}<br/>
+                                {% else %}
+                                    <input type="checkbox" name="name_{{ sport.nom }}" id="id_{{ sport.nom }}" value="{{ sport.nom }}" /> {{ sport.nom }}<br/>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                        {# Liste des Niveaux. Le premier cochera / décochera tous les autres. #}
+                            <label>Niveau</label> <br/>
+                            <input type="checkbox" name="name_allNiveau" id="name_allNiveau" onChange='javascript:checkNiveau()' value=""/> Tous les niveaux<br/>
+                            {% for niveau in tabNiveau %}
+                                {% set nameNiveau = "name_" ~ niveau.libelle %}
+                                {% if app.request.get(nameNiveau) %}
+                                    <input type="checkbox" name="name_{{ niveau.libelle }}" id="id_{{ niveau.libelle }}" checked/> {{ niveau.libelle }}<br/>
+                                {% else %}
+                                    <input type="checkbox" name="name_{{ niveau.libelle }}" id="id_{{ niveau.libelle }}" /> {{ niveau.libelle }}<br/>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <br>
+                        {# Radio groupe des photos #}
+                            <label> Photo </label></br>
+                            <input type="radio" name="photo" id="tous" value="all" {% if app.request.get('photo') %}{% if app.request.get('photo') == "all" %}checked{% endif %}{% else %}checked{% endif %}> Tous<br/>
+                            <input type="radio" name="photo" id="avec" value="yes" {% if app.request.get('photo') == "yes" %}checked{% endif %}> Avec photo<br/><br>
+                            {#<input type="radio" name="photo" id="sans" value="no" >Sans photo<br/>#}
+        
+                            <label for="nbPlaces">Nombres de places</label>
+                            <input id="nbPlaces" name="nbPlaces" type="text"/><br>
+                            <label for="nbPlacesRestantes">Nombres de places restantes</label>
+                            <input id="nbPlacesRestantes" name="nbPlacesRestantes" type="text"/><br>
+                            <label for="rayonRecherche">Rayon de recherche en km</label>
+                            <input id="rayonRecherche" name="rayonRecherche" type="text"/><br>
+                            {# Avec la fonction onClick, on copie la valeur des champs du 1er formulaire dans le 2nd car on ne pue pas submit deux form en une fois. #}
+                            {#<button name= "filtrer" type="submit" class="btn btn-primary" onclick="javascript:majDate()">Filtrer</button>#}
+                		</form>
+                    </div>
                 </div>
-                <div class="col-md-6">
-                <!-- Liste des Niveaux. Le premier cochera / décochera tous les autres. -->
-                    <label>Niveau</label> <br/>
-                    <input type="checkbox" name="name_allNiveau" id="name_allNiveau" onChange='javascript:checkNiveau()' value=""/> Tous les niveaux<br/>
-                    {% for niveau in tabNiveau %}    
-                        <input type="checkbox" name="name_{{ niveau.libelle }}" id="id_{{ niveau.libelle }}" /> {{ niveau.libelle }}<br/>
-                    {% endfor %}
-                </div>
-                <br>
-                <!-- Radio groupe des photos -->
-                    <label> Photo </label></br>
-                    <input type="radio" name="photo" id="tous" value="all" checked> Tous<br/>
-                    <input type="radio" name="photo" id="avec" value="yes"> Avec photo<br/><br>
-                    <!--<input type="radio" name="photo" id="sans" value="no" >Sans photo<br/>-->
-
-                    <label for="nbPlaces">Nombres de places</label>
-                    <input id="nbPlaces" name="nbPlaces" type="text"/><br>
-                    <label for="nbPlacesRestantes">Nombres de places restantes</label>
-                    <input id="nbPlacesRestantes" name="nbPlacesRestantes" type="text"/><br>
-                    <label for="rayonRecherche">Rayon de recherche en km</label>
-                    <input id="rayonRecherche" name="rayonRecherche" type="text"/><br>
-                    <!-- Avec la fonction onClick, on copie la valeur des champs du 1er formulaire dans le 2nd car on ne pue pas submit deux form en une fois. -->
-                    <button name= "filtrer" type="submit" class="btn btn-primary" onclick="javascript:majDate()">Filtrer</button>
-        		</form>
-                
-                
-            </div>
-            </div>
-            <div class="col-md-8">
-                <div class="list-group">
+                <div class="col-lg-8 col-md-6 col-xs-12">
                     {% for activite in tabActivites %}
-                      <a href="{{ path('moove_activite_detailsActivite', {idActivite: activite.id}) }}" class="list-group-item">
-                        <div class="col-md-2 media">
-                            <div class="media-left">
-                                <img class="media-object img-rounded img-responsive"  src="{{ asset(activite.organisateur.URLAvatar) }}" alt="Photo de l'organisateur" >
+                    <a class="list-group-item" href="{{ path('moove_activite_detailsActivite', {idActivite: activite.id}) }}">
+                        <article class="row">
+                            <div class="col-lg-4">
+                                <div class="media">
+                                    <div class="media-left">
+                                        <img class="media-object" src="{{ asset(activite.organisateur.URLAvatar) }}" alt="Photo de l'organisateur" width="64" height="64">
+                                    </div>
+                                    <div class="media-body">
+                                        <h4 class="media-heading">{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</h4>
+                                        <p>{{ ('now'|date('Y') - activite.organisateur.dateNaissance|date('Y') - 1) + ('now'|date('2010-m-d')|date('U') - activite.organisateur.dateNaissance|date('2010-m-d')|date('U') >= 0 ? 1 : 0) }} ans<br>Niveau organisateur</vr></p>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-3">
-                            <p>{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</p>
-                            <p>{{ ('now'|date('Y') - activite.organisateur.dateNaissance|date('Y') - 1) + ('now'|date('2010-m-d')|date('U') - activite.organisateur.dateNaissance|date('2010-m-d')|date('U') >= 0 ? 1 : 0) }} ans</p>
-                            <p>Niveau organisateur</p>
-                        </div>
-                        <div class="col-md-4 text-center">
-                            <h4 class="list-group-item-heading">{{ activite.dateHeureRDV | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm")}}</h4>
-                            <p>Lieu RDV : {{ activite.lieuRDV.ville }}</p>
-                            <p>Sport : {{ activite.sportPratique.nom }}</p>
-                        </div>
-                        <div class="col-md-3 text-right">
-                            <h3>{# nbParticipants #} <small> participants</small></h3>
-                            <p>{{ activite.nbPlaces }} places restantes</p>
-                            <p>Niveau : {{ activite.niveauRequis.libelle }}</p>
-                        </div>
-                      </a>
-
+                            <div class="col-lg-4">
+                                <div class="media">
+                                    <div class="media-body">
+                                        <h4 class="media-heading">{{ activite.dateHeureRDV | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm")|capitalize }}</h4>
+                                        <p><i data-toggle="tooltip" data-placement="top" title="Ville correspondante au lieu de rendez-vous" class="fa fa-circle-o" style="color:#ff9800"></i> {{ activite.lieuRDV.ville }}<br>
+                                        {# si le lieu d'arrivée a été spécifié on affiche la ville du lieu d'arrivée #}
+                                        {% if activite.lieuArrivee is not null %}
+                                            <i data-toggle="tooltip" data-placement="top" title="Ville correspondante au lieu d'arrivée" class="fa fa-circle-o" style="color:#e51c23"></i> {{ activite.lieuArrivee.ville }}<br>
+                                        {# sinon on affiche "Non spécifié" #}
+                                        {% else %}
+                                            <i data-toggle="tooltip" data-placement="top" title="Ville correspondante au lieu d'arrivée" class="fa fa-circle-o" style="color:#e51c23"></i> Non spécifié<br>
+                                        {% endif %}
+                                        <i class="icon-{{ activite.sportPratique.nomIcone }}"></i> {{ activite.sportPratique.nom }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="media">
+                                    <div class="media-body">
+                                        <h4 class="media-heading">xx participants</h4>
+                                        <p><i class="fa fa-users"></i> {{ activite.nbPlaces }} {% if activite.nbPlaces > 1 %} places restantes {% else %} place restante {% endif %}<br><i class="fa fa-bar-chart"></i> {{ activite.niveauRequis.libelle }}</p>
+                                </div>
+                            </div>
+                        </article>
+                    </a>
                     {% else %}
-                        Aucune activité
+                        <h4>Aucune activité</h4>
                     {% endfor %}
                 </div>
+                
             </div>
         </div>
     </section>
@@ -130,23 +156,28 @@
     <script src="{{ asset('js/bootstrap-datepicker.min.js') }}" charset="utf-8"></script>
     <script src="{{ asset('locales/bootstrap-datepicker.fr.min.js') }}" charset="UTF-8"></script>
     <script type="text/javascript">
+        $(function () {
+          $('[data-toggle="tooltip"]').tooltip()
+        })
         $("#heure").ionRangeSlider({
+            {% set heure = app.request.get('heure')|split(';') %}
             type: "double",
             grid: true,
             min: 0,
             max: 24,
-            from: 0,
-            to: 24,
+            from: {% if app.request.get('heure') %}{{ heure[0] }}{% else %}0{% endif %},
+            to: {% if app.request.get('heure') %}{{ heure[1] }}{% else %}24{% endif %},
             postfix: 'h'
         });
         
         $("#nbPlaces").ionRangeSlider({
+            {% set nbPlaces = app.request.get('nbPlaces')|split(';') %}
             type: "double",
             grid: true,
             min: 1,
-            max: 20,
-            from: 0,
-            to: 20,
+            max: 19,
+            from: {% if app.request.get('nbPlaces') %}{{ nbPlaces[0] }}{% else %}0{% endif %},
+            to: {% if app.request.get('nbPlaces') %}{{ nbPlaces[1] }}{% else %}19{% endif %},
             postfix: ' places'
         });
 
@@ -154,7 +185,7 @@
             grid: true,
             min: 1,
             max: 19,
-            from: 1,
+            from: {% if app.request.get('nbPlacesRestantes') %}{{ app.request.get('nbPlacesRestantes') }}{% else %}1{% endif %},
             postfix: ' places restantes',
             prefix: 'Au moins '
         });
@@ -162,8 +193,8 @@
         $("#rayonRecherche").ionRangeSlider({
             grid: true,
             min: 1,
-            max: 100,
-            from: 1,
+            max: 99,
+            from: {% if app.request.get('rayonRecherche') %}{{ app.request.get('rayonRecherche') }}{% else %}1{% endif %},
             postfix: ' km',
             prefix: 'Rayon de '
         });
@@ -196,6 +227,7 @@
         {
             document.filtre.date.value = document.base.date.value;
             document.filtre.ville.value = document.base.ville.value;
+            document.filtre.order.value = document.base.order.value;
         }
     
     	function checkSport()
@@ -219,3 +251,35 @@
     	}
     </script>
 {% endblock %}
+
+{#
+                <div class="list-group">
+                    {% for activite in tabActivites %}
+                      <a href="{{ path('moove_activite_detailsActivite', {idActivite: activite.id}) }}" class="list-group-item">
+                        <div class="col-sm-2 media">
+                            <div class="media-left">
+                                <img class="media-object img-rounded img-responsive"  src="{{ asset(activite.organisateur.URLAvatar) }}" alt="Photo de l'organisateur" >
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <p>{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</p>
+                            <p>{{ ('now'|date('Y') - activite.organisateur.dateNaissance|date('Y') - 1) + ('now'|date('2010-m-d')|date('U') - activite.organisateur.dateNaissance|date('2010-m-d')|date('U') >= 0 ? 1 : 0) }} ans</p>
+                            <p>Niveau organisateur</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h4 class="list-group-item-heading">{{ activite.dateHeureRDV | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm")}}</h4>
+                            <p>Lieu RDV : {{ activite.lieuRDV.ville }}</p>
+                            <p>Sport : {{ activite.sportPratique.nom }}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <h4 class="list-group-item-heading">  participants </h4>
+                            <p> {{ activite.nbPlaces }} {% if activite.nbPlaces > 1 %} places restantes {% else %} place restante {% endif %}</p>
+                            <p>Niveau : {{ activite.niveauRequis.libelle }}</p>
+                        </div>
+                      </a>
+
+                    {% else %}
+                        Aucune activité
+                    {% endfor %}
+                </div>
+#}

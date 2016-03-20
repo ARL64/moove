@@ -11,52 +11,14 @@ use moove\ActiviteBundle\Entity\Pratiquer;
 
 class UtilisateurController extends Controller
 {
-    private function RecupSportNonPratique()
-    {
-        $user = $this->getUser();
-        //On récupère le manager & le repository de pratiquer, d'activité et de participer
-        $repPratiquer = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Pratiquer');
-        $repActivite = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Activite');
-        $repParticipations = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Participer');
-        //On récupère un tableau de pratiquer où il y a l'id de l'utilisateur
-        $sportUser = $repPratiquer->findByUtilisateur($user);
-        // on récupère le répository de Sport
-        $repSport = $this->getRepository('Sport', 'Activite');
-        $sports = $repSport->findAll();
-        $sportNonPratique[0] = null;
-        $nbSports = count($sports);
-        $nbSportUser = 0;
-        foreach($sports as $toutSports)
-        {
-            $compteur = 0;
-            foreach($sportUser as $sportUtilisateur)
-            {
-                if($sportUtilisateur->getSport()->getNom() == $toutSports->getNom())
-                {
-                    $compteur = $compteur+1;
-                    $nbSportUser = $nbSportUser+1;
-                }
-            }
-            if($compteur == 0)
-            {
-                $sportNonPratique[0] = 1;
-                $sportNonPratique[] = $toutSports;
-            }
-        }
-        
-        $tabInfoSportNonPratique[0] = $sportNonPratique;
-        $tabInfoSportNonPratique[1] = $nbSportUser;
-        
-        return $tabInfoSportNonPratique;
-    }
     // /!\ Actions métier
     
     /**
      * Renvoie à la page "http://moove-arl64.c9users.io/web/app_dev.php/utilisateur/{idUtilisateur}"
-     * 
      * @param idUtilisateur (integer) id de l'utilisateur 
+     * @return <i>Render</i> redirige sur mooveUtilisateurBundle:Profile:show.html.twig
      */
-    public function profileAction($idUtilisateur)
+     public function profileAction($idUtilisateur)
     {   
         $this->checkAuthorization();
         
@@ -114,13 +76,13 @@ class UtilisateurController extends Controller
             'nbOrganisationsFinies' => $nbOrganisationsFinies,
             'nbParticipationsFinies' => $nbParticipationsFinies
         ));
-
-  
-        
-        
-        
-        
+ 
     }
+    
+    /**
+     * Renvois sur la page d'édition des sports
+     * @return <i>Render</i> redirige sur mooveUtilisateurBundle:EditerSports:editerSports.html.twig
+     */
     public function editerSportsAction()
     {
         $utilisateur = $this->getUser();
@@ -135,8 +97,10 @@ class UtilisateurController extends Controller
         ));
     }
     
-    
-    
+    /**
+     * supprime le sport passer en paramêtre pour l'utilisateur authentifié
+     * @return <i>Render</i> redirige sur moove_utilisateur_editer_sports
+     */
     public function supprimerSportAction($idSport)
     {
         $user = $this->getUser();
@@ -147,6 +111,10 @@ class UtilisateurController extends Controller
         
     }
     
+    /**
+     * Ajoute le sport, couplé avec le niveau, le tous passés en paramètre dans la fonction 
+     * @return <i>Render</i> redirige sur fos_user_profile_show
+     */
     public function ajouterSportAction($idSport, $idNiveau)
     {
         // on récupère l'utilisateur qui accède à la page
@@ -171,6 +139,10 @@ class UtilisateurController extends Controller
         return $this->redirect($this->generateUrl('fos_user_profile_show'));
     }
     
+    /**
+     * renvois sur la page de choix des sports
+     * @return <i>Render</i> redirige sur mooveUtilisateurBundle:AjouterSport:choisirSport.html.twig
+     */
     public function choisirSportAction()
     {
         $user = $this->getUser();
@@ -193,16 +165,32 @@ class UtilisateurController extends Controller
             'nbSports' => $nbSports));
     }
     
+    /**
+     * 
+     * @param $idSport <i>Sport</i> id du sport 
+     * @return <i>Render</i> redirige sur mooveUtilisateurBundle:AjouterSport:choisirNiveau.html.twig
+     */
     public function choisirNiveauAction($idSport)
     {
+        //On fait appel à la fonction qui va récupérer tout les sports que ne pratique pas l'utilisateur
         $tabInfoSportNonPratique = $this->RecupSportNonPratique();
-        var_dump($sportNonPratique = $tabInfoSportNonPratique[0]);
+        //Cette fonction retourne un tableau de 3 cases contenant dans la 3ème case un tableau d'id des sports non pratiqué par l'utilisateur.
+        $sportNonPratique = $tabInfoSportNonPratique[2];
+        //On récupère le nombre d'éléments présent dans $sportNonPratique
+        $taille = count($sportNonPratique);
+        //On récupère le manager & le repository de sport
+        $repSport = $this->getRepository('Sport','Activite');
+        
         foreach($sportNonPratique as $sportNonPratiqueUser)
         {
-            if($idSport == $sportNonPratiqueUser->getId())
+            if($idSport == $sportNonPratiqueUser)
             {
-                $sport = $sportNonPratiqueUser;
+                $sport = $repSport->find($sportNonPratiqueUser);
             }
+        }
+        if(!isset($sport))
+        {
+            return $this->redirect($this->generateUrl('moove_utilisateur_choisir_sport'));
         }
         $niveaux = $this->getRepository('Niveau', 'Activite')->findAll();
         return $this->render('mooveUtilisateurBundle:AjouterSport:choisirNiveau.html.twig', 
@@ -210,9 +198,79 @@ class UtilisateurController extends Controller
              'niveaux' => $niveaux]);
     }
     
+        
+    /**
+     * supprime l'utilisateur passer en paramètre
+     * @param $idUtilisateur <i>Utilisateur</i> id de l'utilisateur 
+     * @return <i>Render</i> redirige sur moove_activite_tableauDeBord si la procédure est arreté, OU fos_user_security_logout si ça à fonctionné
+     */
+    public function supprimerUtilisateurAction($idUtilisateur)
+    {
+        //Récupération de l'utilisateur et des divers répository
+        $user = $this->getUser();
+        $em = $this->getDoctrine()->getManager();
+        $repPratiquer = $this->getRepository('Pratiquer','Activite');
+        $repParticiper = $this->getRepository('Participer','Activite');
+        $repActivite = $this->getRepository('Activite','Activite');
+        $repUtilisateur = $this->getRepository('Utilisateur');
+        
+        //On vérifie que l'utilisateur qui demande à supprimer son compte est bien l'utilisateur connecté
+        if($user->getId() == $idUtilisateur)
+        {
+            //On récupère un tableau de Participation où l'id de l'utilisateur est présent
+            $tabParticipation = $repParticiper->findBy(array('utilisateur' => $user->getId()));
+            //On récupère un tableau de Pratiquer où l'id de l'utilisateur est présent
+            $tapPratiquer = $repPratiquer->findBy(array('utilisateur' => $user->getId()));
+            //On parcourt de le tableau de particper
+            foreach($tabParticipation as $participation)
+            {
+                //On regarde si l'utilisateur est l'organisateur de l'activité
+                if($participation->getActivite()->getOrganisateur()->getId() == $user->getId())
+                {
+                    //on supprimer l'activité
+                    $supprimerActivite = $repActivite->supprimerActivite($participation->getActivite()->getId(), $user->getId());
+                }
+                else
+                {
+                    //sinon on regarde si la demande de l'utilisateur est en attente ou refusée 
+                    // auquel cas on la passe a accepté pour qu'il puisse quitter l'activité
+                    if ($participation->getEstAccepte()==0 || $participation->getEstAccepte()==2 )
+                    {
+                        $participation->setEstAccepte(1);
+                        $quitterActivite = $repParticiper->quitterActivite($participation->getActivite()->getId(), $user->getId());
+                    }
+                    else
+                    {
+                        //sinon on quitte simplement l'activité
+                        $quitterActivite = $repParticiper->quitterActivite($participation->getActivite()->getId(), $user->getId());
+                    }
+                    
+                }
+            }
+            //On parcour le tableau des sports afin de les supprimer
+            foreach ($tapPratiquer as $pratiquer) 
+            {
+                $supprimerSport  = $repPratiquer->supprimerSport($user->getId(),$pratiquer->getSport()->getId());
+            }
+            //on supprimer l'utilisateur
+            $em->remove($user);
+            $em->flush();
+            $this->addFlash('notice', "Votre compte a bien été supprimé");
+            return $this->redirect($this->generateUrl('fos_user_security_logout'));
+        }
+        else
+        {
+            $this->addFlash('notice', "Vous ne pouvez pas faire ça !");
+            return $this->redirect($this->generateUrl('moove_activite_tableauDeBord'));
+        }
+    }
     
     // /!\ Fonction à partir d'ici 
     
+    /**
+     */
+     
+             
     /**
      * Vérifie que l'utilisateur soit connecter. Si ce n'est pas le cas, il est re-dirigé
      */
@@ -224,17 +282,76 @@ class UtilisateurController extends Controller
             throw $this->createAccessDeniedException(); 
         }   
     }
-     /**
+    
+    /**
      * simplifie : $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:MonRepository');
      * en $this->getRepository('MonRepository');
      * 
-     * @param $nomRepository (string) nom du repository souhaité
-     * @param $nomBundle (string = 'Activite') nom du bundle (si différent de celui actuel)
-     * @return (repository)
+     * @param $nomRepository <i>string<i> nom du repository souhaité
+     * @param $nomBundle <i>string</i>='Utilisateur' nom du bundle (si différent de celui actuel)
+     * @return </i>repository</i>
      */
     protected function getRepository($nomRepository, $nomBundle = 'Utilisateur')
     {
         return $this->getDoctrine()->getManager()->getRepository('moove'.$nomBundle.'Bundle:'.$nomRepository);
     }
-    
+  
+    /**
+     * Récupère un tableau de 3 case.
+     * La premier case est un tableau regroupant les sports non pratiqué
+     * La deuxième case est un entier contenant le nombre de sport non pratiqué
+     * La troisième case est un array contenant les id de tous les sport non pratiqué
+     * @return Array<Array<Sport>, int, Array<int>> retourn un tableau contenant la liste des sports, le nombre total de sport correspondant, et l'id des sport ?
+     */  
+    private function RecupSportNonPratique()
+    {
+        $user = $this->getUser();
+        //On récupère le manager & le repository de pratiquer, d'activité et de participer
+        $repPratiquer = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Pratiquer');
+        $repActivite = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Activite');
+        $repParticipations = $this->getDoctrine()->getManager()->getRepository('mooveActiviteBundle:Participer');
+        //On récupère un tableau de pratiquer où il y a l'id de l'utilisateur
+        $sportUser = $repPratiquer->findByUtilisateur($user);
+        // on récupère le répository de Sport
+        $repSport = $this->getRepository('Sport', 'Activite');
+        $sports = $repSport->findAll();
+        $sportNonPratique[0] = null;
+        $nbSports = count($sports);
+        $nbSportUser = 0;
+        $idSportNonPratique[0] = null;
+        
+        //On parcourt tous les sports
+        foreach($sports as $toutSports)
+        {
+            //On initialise une variable qui prendra la valeur 1 si le sport est déjà pratiqué par l'utilisateur, 0 sinon
+            $compteur = 0;
+            
+            //On parcours tous les sports de l'utilisateur
+            foreach($sportUser as $sportUtilisateur)
+            {
+                //Si les 2 sports courant sont identiques on passe le compteur à 1 et 
+                //on incrémente nbSportUser qui permettra de savoir par la suite si l'utilisateur n'a aucun sport à ajouter pour adapter le message affiché
+                if($sportUtilisateur->getSport()->getNom() == $toutSports->getNom())
+                {
+                    $compteur = $compteur+1;
+                    $nbSportUser = $nbSportUser+1;
+                }
+            }
+            //Si les 2 sports courant ne sont pas identiques, cela signifie que l'utilisateur ne le pratique pas encore
+            if($compteur == 0)
+            {
+                //On place 1 dans la première case du tableau qui était initialisé à null (on pourra faire une vérifiction dans la vue pour adapter l'action d'affichage)
+                $sportNonPratique[0] = 1;
+                //On récupère l'objet sport contenu dans $toutSport
+                $sportNonPratique[] = $toutSports;
+                //On récupère l'id du sport pour l'action choisirNiveauAction
+                $idSportNonPratique[] = $toutSports->getId();
+            }
+        }
+        $tabInfoSportNonPratique[0] = $sportNonPratique;
+        $tabInfoSportNonPratique[1] = $nbSportUser;
+        $tabInfoSportNonPratique[2] = $idSportNonPratique;
+        
+        return $tabInfoSportNonPratique;
+    }
 } // fin de "class ActivitesController extends Controller"

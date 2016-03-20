@@ -12,6 +12,14 @@ use Doctrine\ORM\EntityRepository;
  */
 class PratiquerRepository extends EntityRepository
 {
+    
+    /**
+     * supprime la pratique du sport pour un utilisateur concerné
+     * 
+     * @param $idUtilisateur <i>Utilisateur</i> utilisateur concerné
+     * @param $type <i>$idSport</i> constante correspondante pour l'ordre de try (ASC ou DESC)
+     * @return <i>Array<Pratiquer></i> 
+     */
     public function supprimerSport($idUtilisateur, $idSport)
     {
         $requete = $this->_em->createQueryBuilder()
@@ -27,7 +35,6 @@ class PratiquerRepository extends EntityRepository
         
         // on retourne un tableau de résultat
         return $query->getResult();   
-
     }
     
 }

@@ -31,6 +31,7 @@ class ChangePasswordController extends Controller
 {
     /**
      * Change user password
+     * @return <i>Render</i> redirige sur FOSUserBundle:ChangePassword:changePassword.html.twig
      */
     public function changePasswordAction(Request $request)
     {

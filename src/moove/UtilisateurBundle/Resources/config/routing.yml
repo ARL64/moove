@@ -6,7 +6,7 @@ moove_utilisateur_profileUtilisateur:
         idUtilisateur: \d+
         
 moove_utilisateur_supprimer_sport:
-    path: /utilisateur/{idUtilisateur}/{idSport}
+    path: /utilisateur/supprimerSport/{idUtilisateur}/{idSport}
     defaults: { _controller: mooveUtilisateurBundle:Utilisateur:supprimerSport }
     
 moove_utilisateur_supprimer_photo:
@@ -28,3 +28,7 @@ moove_utilisateur_choisir_sport:
 moove_utilisateur_choisir_niveau:
     path: /utilisateur/ajouter/sport/{idSport}
     defaults: { _controller: mooveUtilisateurBundle:Utilisateur:choisirNiveau }
+    
+moove_utilisateur_supprimer_utilisateur:
+    path: /utilisateur/supprimerUtilisateur/{idUtilisateur}
+    defaults: { _controller: mooveUtilisateurBundle:Utilisateur:supprimerUtilisateur }

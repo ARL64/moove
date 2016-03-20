@@ -19,6 +19,12 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 class SecurityController extends Controller
 {
+    
+    /**
+     * 
+     * @param $request <i>Request</i> 
+     * @return <i>Render</i> 
+     */
     public function loginAction(Request $request)
     {
         /** @var $session \Symfony\Component\HttpFoundation\Session\Session */
@@ -70,9 +76,8 @@ class SecurityController extends Controller
      * Renders the login template with the given parameters. Overwrite this function in
      * an extended controller to provide additional data for the login template.
      *
-     * @param array $data
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @param $data <i>Array</i>
+     * @return <i>Response</i>
      */
     protected function renderLogin(array $data)
     {
@@ -82,6 +87,7 @@ class SecurityController extends Controller
         }
         return $this->render('FOSUserBundle:Security:login.html.twig', $data);
     }
+
 
     public function checkAction()
     {

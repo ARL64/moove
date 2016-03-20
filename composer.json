@@ -23,7 +23,9 @@
         "jstayton/google-maps-geocoder": "^2.4",
         "knplabs/knp-paginator-bundle": "^2.5",
         "sonata-project/admin-bundle": "^2.3",
-        "sonata-project/doctrine-orm-admin-bundle": "^2.3"
+        "sonata-project/doctrine-orm-admin-bundle": "^2.3",
+        "egeloen/ckeditor-bundle": "^4.0",
+        "helios-ag/fm-bbcode-bundle": "^6.8"
     },
     "require-dev": {
         "sensio/generator-bundle": "~2.3",

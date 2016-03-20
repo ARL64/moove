@@ -7,30 +7,41 @@
 {% block title %}Ajouter un sport{% endblock %}
 
 {% block body %}
-    <!-- Titre de la page -->
+    {# Titre de la page #}
     <section class="content-header">
       <h1>Ajouter un sport</h1>
     </section>
-    <div class="container">
+    
+    <section class="content">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
                 <p><i class="icon-{{ sport.nomIcone }}"></i> Choisissez votre niveau pour le {{ sport.nom }}</p>
-                <input id="niveau" type="text" />
-                <button class="btn btn-primary" type="submit" method="POST">Ajouter le sport</button>
+                <input id="niveau" type="text" /></br>
+                <a href="{{ path('moove_utilisateur_ajouter_sport', {'idSport': sport.id, 'idNiveau': 1}) }}" class="btn btn-primary">Ajouter le sport</a>
             </div>
         </div>
-    </div>
+    </section>
+    
 {% endblock %}
 
+{# block permettant d'afficher le slider #}
 {% block javascripts %}
     <script src="{{ asset('js/ion.rangeSlider.min.js') }}"></script>
     <script type="text/javascript">
-        $("#niveau").ionRangeSlider({
+        var $niveau = $("#niveau");
+        $niveau.ionRangeSlider({
             grid: true,
             from: 0,
             hide_min_max: true,
             hide_from_to: true,
             values: [{% for niveau in niveaux %}{% if loop.last %}"{{ niveau.libelle }}"{% else %}"{{ niveau.libelle}}",{% endif %}{% endfor %}]
-        });    
+        });
+        
+        $niveau.on("change", function () {
+        var $this = $(this),
+        niveauChoisi = $this.prop("niveauChoisi");
+        console.log(niveauChoisi);
+        });
     </script>
 {% endblock %}

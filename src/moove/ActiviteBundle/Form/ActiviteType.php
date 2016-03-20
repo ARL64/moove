@@ -10,9 +10,11 @@ use moove\ActiviteBundle\Validator\Constraints\Adresse;
 
 class ActiviteType extends AbstractType
 {
+
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     * Formulaire d'entité activité
+     * @param $builder <i>FormBuilderInterface<i/> 
+     * @param $options <i>Array</i> 
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -39,15 +41,17 @@ class ActiviteType extends AbstractType
                ->add('dateFermeture', 'datetime', array('label' => 'Date et heure de fermeture  de l\'activité', 'years' => range($annee, ($annee+5))))
                ->add('duree', 'time', array('label' => 'Durée estimée'))
                ->add('nbPlaces','integer', array('label'=> 'Nombre de places total (vous inclus)'))
-               ->add('description', 'textarea', array ('required' => false,'label' => 'Informations'))
+               //->add('description', 'textarea', array ('required' => false,'label' => 'Informations'))
+               ->add('description', 'ckeditor', array ('required' => false, 'label' => 'Informations', 'config_name' => 'config_description'))
                ->add('adresseLieuRDV', 'text', array('constraints' => new Adresse()))
-               ->add('adresseLieuDepart', 'text', array('required' => false, 'constraints' => new Adresse))
-               ->add('adresseLieuArrivee', 'text', array('required' => false, 'constraints' => new Adresse))
+               ->add('adresseLieuDepart', 'text', array('required' => false, 'constraints' => new Adresse()))
+               ->add('adresseLieuArrivee', 'text', array('required' => false, 'constraints' => new Adresse()))
         ;
     }
     
+
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param $resolver <i>OptionsResolverInterface</i> 
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
@@ -55,9 +59,10 @@ class ActiviteType extends AbstractType
             'data_class' => 'moove\ActiviteBundle\Entity\Activite'
         ));
     }
-
+    
     /**
-     * @return string
+     * retourn moove_activitebundle_activite
+     * @return <i>string</i>
      */
     public function getName()
     {

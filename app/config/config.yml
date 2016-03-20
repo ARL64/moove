@@ -128,3 +128,32 @@ sonata_block:
 sonata_admin :
     title : Administration
     title_logo : favicon.png
+    
+    
+fm_bbcode:
+    filter_sets:
+        default:
+          strict: false # if you want to parse attr values without quotes
+          locale: fr
+          xhtml: true
+          filters: [ default ]
+
+
+ivory_ck_editor:
+    plugins:
+        bbcode:
+            path: '/bundles/ivoryckeditor/plugins/bbcode/'
+            filename: 'plugin.js'
+    configs:
+        config_description:
+            toolbar: "toolbar_description"
+            #extraPlugins: 'bbcode'
+    toolbars:
+        configs:
+            toolbar_description: [ "@basicstyles", "-", "@align", "-", "@link", "-", "@styles", "-", "@colors" ]
+        items:
+            basicstyles: [ 'Bold','Italic','Underline','Strike','Subscript','Superscript','-','RemoveFormat' ]
+            link: [ 'Link','Unlink' ]
+            styles: [ 'Styles','Format','Font','FontSize' ]
+            colors: [ 'TextColor','BGColor' ]
+            align: [ 'JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock' ]

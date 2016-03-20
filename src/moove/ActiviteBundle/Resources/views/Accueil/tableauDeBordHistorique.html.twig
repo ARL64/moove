@@ -8,9 +8,9 @@
     <br>
     <div class="table-responsive">
       <table class="table table-striped table-hover ">
-        <!-- nom des colones du tableau -->
+        {# nom des colones du tableau #}
         <thead>
-          <!-- knp_pagination_sortable permet de rendre les colones triables -->
+          {# knp_pagination_sortable permet de rendre les colones triables #}
           <tr>
             <th>{{ knp_pagination_sortable(tabActivites, 'Sport', 'sport') }}{% if tabActivites.isSorted('sport') and tabActivites.direction == 'desc' %}<i class="fa fa-sort-desc"></i>{% elseif tabActivites.isSorted('sport') and tabActivites.direction == 'asc' %}<i class="fa fa-sort-asc"></i>{% else %}<i class="fa fa-sort"></i>{% endif %}</th>
             <th>{{ knp_pagination_sortable(tabActivites, 'Rendez-vous', 'rdv') }}{% if tabActivites.isSorted('rdv') and tabActivites.direction == 'desc' %}<i class="fa fa-sort-desc"></i>{% elseif tabActivites.isSorted('rdv') and tabActivites.direction == 'asc' %}<i class="fa fa-sort-asc"></i>{% else %}<i class="fa fa-sort"></i>{% endif %}</th>
@@ -24,15 +24,15 @@
         </thead>
         <tbody>
           {% for activite in tabActivites %}
-          <!-- On calcul l'index de l'occurence actuel en prenant en compte le fait de ne pas forcément être sur la premier page -->
-          {% set indexResultat = loop.index0 + (tabActivites.currentPageNumber - 1) * nbResultatParPage %}
+          {# On calcul l'index de l'occurence actuel en prenant en compte le fait de ne pas forcément être sur la premier page #}
+          {% set indexResultat = loop.index0 + (tabActivites.currentPageNumber - 1) * nbResultatsParPage %}
           <tr>
             <td>{{ activite.sportPratique.nom }}</td>
             <td>{% if activite.lieuRDV is not null%}{{ activite.lieuRDV.nom }}{% else %}Non spécifié{% endif %}</td>
             <td>{% if activite.lieuDepart is not null%}{{ activite.lieuDepart.nom }}{% else %}Non spécifié{% endif %}</td>
             <td>{% if activite.lieuArrivee is not null%}{{ activite.lieuArrivee.nom }}{% else %}Non spécifié{% endif %}</td>
             <td>{{ activite.dateHeureRDV | date("d/m/y") }}</td>
-            <td>{{ tabNbParticipants[indexResultat] ~ "/" ~ activite.nbPlaces }}</td>
+            <td>{{ tabNbParticipants[loop.index0] ~ "/" ~ activite.nbPlaces }}</td>
             <td>{% if activite.organisateur == app.user %} Moi {% else %}{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}{% endif %}</td>
             <td><a href="{{ path('moove_activite_detailsActivite', {idActivite: activite.id}) }}" class="btn btn-primary btn-xs">Détails</a></td>
           </tr>
@@ -47,5 +47,19 @@
 {% block navTableau %}
   <div class="navigation">
       {{ knp_pagination_render(tabActivites) }}
+  </div>
+  <div class="col-md-3 col-md-offset-9">
+    <label for="selectNbResultatsParPage">Nombre de résultats par page</label>
+    <form class="form-inline" method="GET" action="{{ path('moove_activite_historiqueActivite') }}">
+      <div class="form-group">
+        <select name="nbResultatsParPage" class="form-control" id="selectNnbResultatsParPage">
+          <option {% if app.request.get('nbResultatsParPage') == 1 %}selected{% endif %}>1</option>
+          <option {% if app.request.get('nbResultatsParPage') == 2 %}selected{% endif %}>2</option>
+          <option {% if app.request.get('nbResultatsParPage') == 3 %}selected{% endif %}>3</option>
+          <option {% if app.request.get('nbResultatsParPage') == 4 %}selected{% endif %}>4</option>
+        </select>
+        <button class="btn btn-primary" type="submit">Actualiser</button>
+      </div>
+    </form>
   </div>
 {% endblock %}

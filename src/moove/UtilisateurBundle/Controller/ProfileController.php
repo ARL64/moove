@@ -20,6 +20,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use moove\ActiviteBundle\Entity\Lieu;
 
 /**
  * Controller managing the user profile
@@ -28,18 +29,9 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class ProfileController extends Controller
 {
-    
-    protected function checkAuthorization()
-    {
-        // Vérifie si l'utilisateur est authentifié 
-        if (!$this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')) 
-        { 
-            throw $this->createAccessDeniedException(); 
-        }   
-    }
-    
     /**
      * Show the user
+     * @return <i>Render</i> redirige sur FOSUserBundle:Profile:show.html.twig
      */
     public function showAction()
     {
@@ -83,6 +75,7 @@ class ProfileController extends Controller
 
     /**
      * Edit the user
+     * @return <i>Render</i> redirige sur FOSUserBundle:Profile:edit.html.twig
      */
     public function editAction(Request $request)
     {
@@ -91,7 +84,6 @@ class ProfileController extends Controller
             throw new AccessDeniedException('This user does not have access to this section.');
         }
         
-
         /** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
         $dispatcher = $this->get('event_dispatcher');
 
@@ -117,43 +109,57 @@ class ProfileController extends Controller
             $event = new FormEvent($form, $request);
             $dispatcher->dispatch(FOSUserEvents::PROFILE_EDIT_SUCCESS, $event);
             
+            // On récupère l'adresse les adresses des lieux
+            $adresseLieuResidence = $form->getData()->getAdresseLieuResidence();
+                
+            // On récupère les infos de chaque lieu dans un nouvel objet
+            $lieuResidence = $this->getInfosAdresse($adresseLieuResidence);
+            if(!is_null($lieuResidence))
+            {
+                $em = $this->getDoctrine()->getManager();
+                $user->setLieuResidence($lieuResidence);
+                $em->persist($lieuResidence);
+                $em->flush();
+            }
+            
             $file = $user->getPhoto();
             
+            // si il y a une image déposé
             if(!is_null($file))
             {
                 // Genere un nom unique aléatoire avant d'enregistrer le fichier
                 $fileName = md5(uniqid()).'.'.$file->guessExtension();
-    
+
                 // Move the file to the directory where brochures are stored
                 $photoDir = $this->container->getParameter('kernel.root_dir').'/../web/bundles/mooveutilisateur/images/avatars/';
-                
+                   
                 $dest_x = 0; // Abscisse de la copie (point de début) (pour plus tard, si l'on souhaite recadrer depuis un endroit précis)
                 $dest_y = 0; // Ordonnee de la copie (point de début) (pour plus tard, si l'on souhaite recadrer depuis un endroit précis)
                 $size = 256; // Taille de l'image final (/!\ IMPORTANT /!\ garder la proportionnalité ! 128px la taille original)
-                
+                   
                 $source = $this->imageCreateFromAny($file); // celle qui sera copiée
+
                 $destination = imagecreatetruecolor($size, $size); // on creer une image de la taille du cadre à copier
-                
+                   
                 list($width, $height) = getimagesize($file); // Taille Original de l'image
                 $ratio = $size / ($width<$height? $width:$height); // permet d'obtenir le plus petit ratio pour réduire la taille de l'image
                 $newWidth = $width * $ratio; // normalement, une de ces deux valeur est forcément égale à $size...
                 $newHeight = $height * $ratio;
-                
-                // Première couche : redimension en X*128 ou 128*X
+                                      // Première couche : redimension en X*128 ou 128*X
                 $imgTemps = imagecreatetruecolor($newWidth, $newHeight); // on créer une image temporaire (la même forme que l'original, mais en proportion réduite)
                 imagecopyresized($imgTemps, $source, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height); // on y copie la 
-                
+               
                 // Deuxième couche : recadrage a partir de dest_x et dest_y
                 imagecopy($destination, $imgTemps, $dest_x, $dest_y, 0, 0, $size, $size); // on copie l'image source dans l'image destination du pixel 0 au pixel 127
                 imagepng($destination, $photoDir.$fileName); // on créer l'image final (en png), directement dans le dossier des avatars.
-
-                imagedestroy($imgTemps); // Spécial dédicace à Roose ! :D
-
-                //$file->move($photoDir, $fileName);
     
-                $user->setURLAvatar($fileName);
+                imagedestroy($imgTemps); // Spécial dédicace à Roose ! :D
+    
+                //$file->move($photoDir, $fileName);
+        
+                $user->setURLAvatar($fileName); 
+
             }
-            
             
             $userManager->updateUser($user);
 
@@ -183,9 +189,12 @@ class ProfileController extends Controller
             'tabSport' => $tabSport
         ));
     }
-    
-   
-    
+
+    /**
+     * 
+     * supprime la photo
+     * @return <i>Render</i> redirige sur fos_user_profile_edit
+     */ 
     public function supprimerPhotoAction()
     {
         // On récupère l'utilisateur
@@ -201,13 +210,14 @@ class ProfileController extends Controller
         // On redirige l'utilisateur vers l'édition de son profil
         return $this->redirect($this->generateUrl('fos_user_profile_edit'));
     }
- 
- 
- 
+
     /**
      * @author Matt Squirrell
      * @source http://php.net/manual/fr/function.imagecreatefromjpeg.php
      * @licence none
+     * 
+     * @param <i>String</i> url de l'image
+     * @return <i>Image</i> copie de l'image
      */
     protected function imageCreateFromAny($filepath) 
     { 
@@ -219,7 +229,7 @@ class ProfileController extends Controller
             6   // [] bmp 
         ); 
         if (!in_array($type, $allowedTypes)) 
-            return false; 
+            return "error"; 
         switch ($type) 
         { 
             case 1 : 
@@ -236,5 +246,57 @@ class ProfileController extends Controller
                 break; 
         }    
         return $im;  
+    }
+    
+    /**
+     * Récupère les informations d'un lieu en fonction d'une adresse
+     * @param $adresse <i>string</i> adresse d'un lieu
+     * @return <i>Lieu</i>
+     */
+    private function getInfosAdresse($adresse)
+    {
+        if(!is_null($adresse))
+        {
+            // On créé un objet GoogleMapsGeocoder prenant en paramètre l'adresse du lieu $adresse
+            $geocodeLieu = new \GoogleMapsGeocoder($adresse);
+            // On enregistre le résultat de la requête faite à GoogleMapsAPI pour récupérer les informations du lieu
+            $reponse = $geocodeLieu->geocode();
+            // On récupère les infos sur le lieu
+            $infosLieu = $reponse['results'][0]['address_components'];
+            // On récupère la latitude et longitude sur le lieu
+            $latLngLieu = $reponse['results'][0]['geometry']['location'];
+            
+            if(isset($infosLieu[6])) {
+                $lieu = new Lieu();
+                // On hydrate le lieu avec les données précédemment récupérées
+                $lieu->setNom(null)
+                     ->setNumeroRue($infosLieu[0]['long_name'])
+                     ->setNomRue($infosLieu[1]['long_name'])
+                     ->setComplementAdresse(null)
+                     ->setCodePostal($infosLieu[6]['long_name'])
+                     ->setVille($infosLieu[2]['long_name'])
+                     ->setLatitude($latLngLieu['lat'])
+                     ->setLongitude($latLngLieu['lng'])
+                ;            
+            }
+            else {
+                $lieu = new Lieu();
+                // On hydrate le lieu avec les données précédemment récupérées
+                $lieu->setNom(null)
+                     ->setNumeroRue(null)
+                     ->setNomRue($infosLieu[0]['long_name'])
+                     ->setComplementAdresse(null)
+                     ->setCodePostal($infosLieu[5]['long_name'])
+                     ->setVille($infosLieu[1]['long_name'])
+                     ->setLatitude($latLngLieu['lat'])
+                     ->setLongitude($latLngLieu['lng'])
+                ;               
+            }
+        }
+        else
+        {
+            $lieu = null;
+        }
+        return $lieu;
     }
 }

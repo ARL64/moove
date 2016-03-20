@@ -22,13 +22,18 @@ class RegistrationFormType extends AbstractType
     private $class;
 
     /**
-     * @param string $class The User class name
+     * @param $class <i>String</i> The User class name
      */
     public function __construct($class)
     {
         $this->class = $class;
     }
 
+    /**
+     * Formulaire d'entité User
+     * @param $builder <i>FormBuilderInterface<i/> 
+     * @param $options <i>Array</i> 
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         //////// A OPTIMISER
@@ -115,6 +120,10 @@ class RegistrationFormType extends AbstractType
         ;
     }
 
+    /**
+     * 
+     * @param <i>OptionsResolver</i> $resolver
+     */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
@@ -124,6 +133,7 @@ class RegistrationFormType extends AbstractType
             'intention'  => 'registration',
         ));
     }
+    
     
     // BC for SF < 2.7
     public function setDefaultOptions(OptionsResolverInterface $resolver)
@@ -137,6 +147,10 @@ class RegistrationFormType extends AbstractType
         return $this->getBlockPrefix();
     }
 
+    /**
+     * retourn app_user_registration
+     * @return <i>string</i>
+     */
     public function getBlockPrefix()
     {
         return 'app_user_registration';

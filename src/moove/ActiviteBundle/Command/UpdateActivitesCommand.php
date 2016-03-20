@@ -14,6 +14,11 @@ class UpdateActivitesCommand extends ContainerAwareCommand
         $this->setName('moove:update:activites');
     }
 
+    /**
+     * Commande executé régulièrement par le CRON
+     * @param $input <i>InputInterface</i>
+     * @param $output <i>OutputInterface</i>
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $em = $this->getContainer()->get('doctrine')->getManager();

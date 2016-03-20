@@ -1,0 +1,23 @@
+<div>
+    <div>
+        {{ form_start(form) }}
+            {{ form_widget(form.contenu) }}
+            {{ form_widget(form.publier) }}
+        {{ form_end(form) }}
+    </div>
+    <div style="height:500px; overflow:auto;">
+        {% for commentaire in tabCommentaire %}
+            <div class="{% if commentaire.utilisateur == activite.organisateur %}panel panel-warning{% else %}panel panel-default{% endif %}">
+                <div class="panel-heading">
+                    {{ commentaire.utilisateur.prenom }} {{ commentaire.utilisateur.nom }} a posté le {{ commentaire.posteA | date("d/m/y") }} à {{ commentaire.posteA | date('h\\hi') }}
+                </div>
+                <div class="panel-body">
+                    {{ commentaire.contenu | raw }}
+                    {#{{ commentaire.contenu | bbcode_filter('default') }}#}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+

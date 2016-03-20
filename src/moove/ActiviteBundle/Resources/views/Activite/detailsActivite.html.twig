@@ -9,14 +9,14 @@
 {% block body %}
 
 
-<!-- Titre de la page -->
+{# Titre de la page #}
 <section class="content-header">
   <h1><h2><span class="label label-primary"> {{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }} propose une activité {{ activite.sportPratique.nom | lower }}</span></h2></h1>
 </section>
 
-<!-- Contenu principal -->
+{# Contenu principal #}
 
-<!-- Message flash -->
+{# Message flash #}
 <section class="content">
   <div class="row">
     {% if app.session.flashbag.has('notice') %}
@@ -30,23 +30,25 @@
     </div>
     {% endif %}
     <div class="col-md-12">
-      <!-- affiche la photo de l'organisateur -->
+      {# affiche la photo de l'organisateur #}
       <div class="media">
         <div class="media-left">
           <img class="media-object" src="{{ asset(activite.organisateur.URLAvatar) }}" alt="photo de l'utilisateur" width="75" height="75">
         </div>
-        <!-- Affiche dans l'ordre le prenom concaténé avec le nom, puis le niveau dans le sport de l'activité
-            et la date de publication --> 
+        {# Affiche dans l'ordre le prenom concaténé avec le nom, puis le niveau dans le sport de l'activité
+            et la date de publication #} 
         <div class="media-body">
           <h4 class="media-heading">{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</h4>
           <p>
-            {% if niveauOrganisateur != null %} 
+            {% if niveauOrganisateur is not null %} 
               {% if activite.organisateur.sexe == 'femme' %}
                 {% if niveauOrganisateur != 'intermédiaire' %}
                   {{ niveauOrganisateur ~'e' }}
                 {% else %}
                   {{ niveauOrganisateur }}
                 {% endif %}
+              {% else %}
+                {{ niveauOrganisateur }}
               {% endif %}
             {% else %}
               {% if activite.organisateur.sexe == 'femme' %} 
@@ -63,71 +65,113 @@
   </div>
   <br>
   
-  
   <div class="row">
-    <!-- colone où se trouve les panneaux informations sur l'activité et information -->
+    {# colone où se trouve les panneaux informations sur l'activité et information #}
     <div class="col-md-8">
-      <!-- panel principal avec les informations de l'activité -->
+      {# panel principal avec les informations de l'activité #}
       <div class="panel panel-default">
-        <!-- titre du panel avec les informations-->
+        {# titre du panel avec les informations#}
         <div class="panel-heading">
           <h3 class="panel-title">Informations sur l'activité</h3>
         </div>
-        <!-- Corps du panel -->
+        {# Corps du panel #}
         <div class="panel-body">
-          <!-- Affiche le sport pratiqué -->
+          {# Affiche le sport pratiqué #}
           <div class="infos">
             <p><span class="info-label text-muted">Sport</span><span class="info-valeur"><i class="icon-{{ activite.sportPratique.nomIcone }}"></i>{{ activite.sportPratique.nom }}</span></p>
           </div>
-          <!-- Affiche le niveau requis -->
+          {# Affiche le niveau requis #}
           <div class="infos">
             <p><span class="info-label text-muted">Niveau requis</span><span class="info-valeur"><i class="fa fa-bar-chart"></i>{{ activite.niveauRequis.libelle }}</span></p>
           </div>
-          <!-- Affiche la ville et son code postal-->
+          {# Affiche la ville et son code postal#}
           <div class="infos">
             <p><span class="info-label text-muted">Ville</span><span class="info-valeur"><i class="fa fa-building-o"></i>{{ activite.lieuRDV.ville ~ ", " ~ activite.lieuRDV.codePostal }}</span></p>
           </div>
-          <!-- Affiche le numero(s'il existe) et nom de rue du lieu de rdv-->
-          <div class="infos">
-            <p><span class="info-label text-muted">Lieu de rendez-vous</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#ff9800"></i>{% if activite.lieuRDV.numeroRue != 0 %}{{ activite.lieuRDV.numeroRue ~ ", " }}{% endif %}{{ activite.lieuRDV.nomRue }}</span></p>
-          </div>
-          <!-- si le lieu de départ n'est pas nul -->
+          
+          {# on verifie que le lieu existe #}
+          {% if activite.lieuRDV is not null %}
+          {# on vérifie que ce lieu a un nom de rue non nul #}
+            {% if activite.lieuRDV.nomRue != null %}
+              {# Affiche le numero(s'il existe) et nom de rue du lieu de rdv#}
+              <div class="infos">
+                <p><span class="info-label text-muted">Lieu de rendez-vous</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#ff9800"></i>
+                {% if activite.lieuRDV.numeroRue != 0 %}{{ activite.lieuRDV.numeroRue ~ ", " }}
+                {% endif %}{{ activite.lieuRDV.nomRue }}</span></p>
+              </div>
+            {% else %}
+              {# si le nom de rue est nul #}
+              <div class="infos">
+                <p><span class="info-label text-muted">Lieu de rendez-vous</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#ff9800"></i>Non spécifié</span></p>
+              </div>
+            {% endif %}
+          {# si le lieu est nul #} 
+          {% else %}
+            <div class="infos">
+                <p><span class="info-label text-muted">Lieu de rendez-vous</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#ff9800"></i>Non spécifié</span></p>
+              </div>
+          {% endif %}
+          
+          {# on vérifie que le lieu existe #}
           {% if activite.lieuDepart is not null %}
-          <!-- Affiche le numero(s'il existe) et le nom de rue du lieu de départ -->
-          <div class="infos">
-            <p><span class="info-label text-muted">Lieu de départ</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#4caf50"></i>{% if activite.lieuDepart.numeroRue != 0 %}{{ activite.lieuDepart.numeroRue ~ ", " }}{% endif %}{{ activite.lieuDepart.nomRue }}</span></p>
-          </div>
+            {# si le nom de rue du lieu de départ n'est pas nul #}
+            {% if activite.lieuDepart.nomRue != null %}
+              {# Affiche le numero(s'il existe) et le nom de rue du lieu de départ #}
+              <div class="infos">
+                <p><span class="info-label text-muted">Lieu de départ</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#4caf50"></i>
+                {% if activite.lieuDepart.numeroRue != 0 %}{{ activite.lieuDepart.numeroRue ~ ", " }}
+                {% endif %}{{ activite.lieuDepart.nomRue }}</span></p>
+              </div>
+            {% else %}
+              {# s'il n'y a pas de nom de rue du lieu de départ on affiche non spécifié #}
+              <div class="infos">
+                <p><span class="info-label text-muted">Lieu de départ</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#4caf50"></i>Non spécifié</span></p>
+              </div>
+            {% endif %}
           {% else %}
-          <!-- s'il n'y a pas de lieu de départ on affiche non spécifié -->
-          <div class="infos">
-            <p><span class="info-label text-muted">Lieu de départ</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#4caf50"></i>Non spécifié</span></p>
-          </div>
+              {# s'il n'y a pas de lieu de départ on affiche non spécifié #}
+              <div class="infos">
+                <p><span class="info-label text-muted">Lieu de départ</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#4caf50"></i>Non spécifié</span></p>
+              </div>
           {% endif %}
-          <!-- si le lieu d'arrivée n'est pas nul -->
+          {# on verifie que le lieu d'arrivee existe #}
           {% if activite.lieuArrivee is not null %}
-          <!-- on affiche le numéro(s'il existe) et le nom du lieu d'arrivée-->
-          <div class="infos">
-            <p><span class="info-label text-muted">Lieu d'arrivée</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#e51c23"></i>{% if activite.lieuArrivee.numeroRue != 0 %}{{ activite.lieuArrivee.numeroRue ~ ", "}}{% endif %}{{ activite.lieuArrivee.nomRue }}</span></p>
-          </div>
+            {# si le nom de rue du lieu d'arrivée n'est pas nul #}
+            {% if activite.lieuArrivee.nomRue != null %}
+              {# on affiche le numéro(s'il existe) et le nom du lieu d'arrivée#}
+              <div class="infos">
+                <p><span class="info-label text-muted">Lieu d'arrivée</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#e51c23"></i>
+                {% if activite.lieuArrivee.numeroRue != 0 %}{{ activite.lieuArrivee.numeroRue ~ ", "}}
+                {% endif %}{{ activite.lieuArrivee.nomRue }}</span></p>
+              </div>
+            {% else %}
+              {# s'il n'y a pas de nom de rue du lieu d'arrivée on affiche non spécifié #}
+              <div class="infos">
+                <p><span class="info-label text-muted">Lieu d'arrivée</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#e51c23"></i>Non spécifié</span></p>
+              </div>
+            {% endif %}
           {% else %}
-          <!-- s'il n'y a pas de lieu d'arrivée on affiche non spécifié -->
-          <div class="infos">
-            <p><span class="info-label text-muted">Lieu d'arrivée</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#e51c23"></i>Non spécifié</span></p>
-          </div>
+              {# s'il n'y a pas de lieu d'arrivée on affiche non spécifié #}
+              <div class="infos">
+                <p><span class="info-label text-muted">Lieu d'arrivée</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#e51c23"></i>Non spécifié</span></p>
+              </div>
           {% endif %}
-          <!-- on affiche la daté de départ -->
+          
+          
+          
+          {# on affiche la date de départ #}
           <div class="infos">
             <p><span class="info-label text-muted">Date de départ</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateHeureRDV | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm") }}</span></p>
           </div>
-          <!-- On affiche la date de fin d'inscription à l'activité -->
+          {# On affiche la date de fin d'inscription à l'activité #}
           <div class="infos">
             <p><span class="info-label text-muted">Date de fin d'inscription  l'activité</span><span class="info-valeur"><i class="fa fa-calendar"></i>{{ activite.dateFermeture | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm") }}</span></p>
           </div>
-          <!-- On affiche le temps estimé -->
+          {# On affiche le temps estimé #}
           <div class="infos">
             <p><span class="info-label text-muted">Temps estimé</span><span class="info-valeur"><i class="fa fa-clock-o"></i>{{ activite.duree | localizeddate('none', 'none', null, null, "H 'h' mm") }}</span></p>
           </div>
-          <!-- On affiche le nombre de places limite de l'activité -->
+          {# On affiche le nombre de places limite de l'activité #}
           <div class="infos">
             <p><span class="info-label text-muted">Nombre de places (vous inclus)</span><span class="info-valeur"><i class="fa fa-users"></i>{{ activite.nbPlaces }} places</span></p>
           </div>
@@ -137,37 +181,39 @@
       
       
       
-      <!-- Panel information -->
+      {# Panel information #}
       <div class="panel panel-default">
-        <!-- titre du pannel -->
+        {# titre du pannel #}
         <div class="panel-heading">
           <h3 class="panel-title">Informations</h3>
         </div>
-        <!-- corps du pannel qui affiche la description de l'activité -->
+        {# corps du pannel qui affiche la description de l'activité #}
         <div class="panel-body">
-          {{activite.description}}
+          {#{{activite.description}}#}
+          {{ activite.description | raw }}
+          {# {{ activite.description | bbcode_filter('default') }} #}
         </div>
       </div>
     </div>
     
     
     
-    <!-- Panel participant -->
+    {# Panel participant #}
     <div class="col-md-4">
       <div class="panel panel-default">
-        <!-- titre du panel -->
+        {# titre du panel #}
         <div class="panel-heading">
           <h3 class="panel-title">Participants ({% if activite.nbPlaces - nbParticipants <= 1 %}<span class="text-red">{{ activite.nbPlaces - nbParticipants }}  place restante</span>{% else %}{{ activite.nbPlaces - nbParticipants }}  places restantes{% endif %})</h3>
         </div>
-        <!-- corps du panel -->
+        {# corps du panel #}
         <div class="panel-body">
-          <!-- bouton particpants -->
-          <!-- Button trigger modal -->
+          {# bouton particpants #}
+          {# Button trigger modal #}
           {#<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#modalParticipants">
             Participants
           </button>#}
 
-          <!-- Modal lorsque l'on clique sur le bouton participant -->
+          {# Modal lorsque l'on clique sur le bouton participant #}
           <div class="modal fade" id="modalParticipants" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
             <div class="modal-dialog" role="document">
               <div class="modal-content">
@@ -177,34 +223,34 @@
                 </div>
                 <div class="modal-body">
                   <div>
-                    <!-- Nav tabs correspondant aux deux onglets-->
+                    {# Nav tabs correspondant aux deux onglets#}
                     <ul class="nav nav-tabs" role="tablist">
-                      <!-- Onglet particpants -->
+                      {# Onglet particpants #}
                       <li role="presentation" class="active"><a href="#participantsAcceptes" aria-controls="participant" role="tab" data-toggle="tab">Participants</a></li>
                       {% if estOrganisateur %}
-                        <!-- Onglet en attente -->
+                        {# Onglet en attente #}
                         <li role="presentation"><a href="#participantsEnAttente" aria-controls="enAttente" role="tab" data-toggle="tab">En attente</a></li>
                       {% endif %}
                     </ul>
 
 
-                    <!-- Tab panes -->
-                     <!-- Onglet particiapnts de la boite modale lorsqu'on clique sur participant -->
+                    {# Tab panes #}
+                     {# Onglet participants de la boite modale lorsqu'on clique sur participant #}
                     <div class="tab-content">
                       <div role="tabpanel" class="tab-pane fade in active" id="participantsAcceptes">
                         <br>
                         {% for participationCourant in tabParticipants if participationCourant.estAccepte == 1 %}
-                          <!-- Affiche un block utilisateur prefixButton permet de différencier les bouttons de la liste principal, et de la liste dans un modal. -->
+                          {# Affiche un block utilisateur prefixButton permet de différencier les bouttons de la liste principal, et de la liste dans un modal. #}
                           {% set prefixButton = "ModalAccepter" %}
                           {% include "mooveActiviteBundle:Activite:blockListeUtiisateutDetail.html.twig" %}
                         {% endfor %}
                       </div>
                       
-                      <!-- Onglet en attente de la boite modale lorsqu'on clique sur paticipant -->
+                      {# Onglet en attente de la boite modale lorsqu'on clique sur participant #}
                       <div role="tabpanel" class="tab-pane fade" id="participantsEnAttente">
                         {% for participationCourant in tabParticipants if participationCourant.estAccepte == 0 %}
                           {% set prefixButton = "ModalEnAttente" %}
-                          <!-- Affiche un block utilisateur comme dessus, et y adjoint la modal de refus. -->
+                          {# Affiche un block utilisateur comme ci-dessus, et y adjoint la modal de refus. #}
                           {% include "mooveActiviteBundle:Activite:blockListeUtiisateutDetail.html.twig" %}
                           {% include "mooveActiviteBundle:Activite:blockModalRefuser.html.twig" %}
                         {% else %}
@@ -220,19 +266,19 @@
               </div>
             </div>
           </div>
-          <!-- affichage des particpants -->
-          {% set nbParticipantsAfficher = 3 %} <!-- nombre de participant total a afficher -->
+          {# affichage des participants #}
+          {% set nbParticipantsAfficher = 3 %} {# nombre de participant total a afficher #}
             
           {% for participationCourant in tabParticipants|slice(0, nbParticipantsAfficher) %}
             {% set prefixButton = "ListeRandom" %}
-            <!-- Permet d'affiché une utilisateur de participationCourant, et d'y adjoindre la modal de refus, uniquement si nécessaire. -->
+            {# Permet d'affiché une utilisateur de participationCourant, et d'y adjoindre la modal de refus, uniquement si nécessaire. #}
             {% include "mooveActiviteBundle:Activite:blockListeUtiisateutDetail.html.twig" %}
             {% if estOrganisateur and participationCourant.estAccepte == 0 %}
-              <!-- On ajoute la modal uniquement si nécessaire -->
+              {# On ajoute la modal uniquement si nécessaire #}
               {% include "mooveActiviteBundle:Activite:blockModalRefuser.html.twig" %}
             {% endif %}
           {% endfor %} 
-          <!-- Ajoute le lien vers la modal qui affiche l'intégralité de la liste des participants.-->
+          {# Ajoute le lien vers la modal qui affiche l'intégralité de la liste des participants.#}
           {% if nbParticipantsAfficher < tabParticipants|length %}
             <button type="button" class="list-group-item" data-toggle="modal" data-target="#modalParticipants">
               <center><i>+ {{tabParticipants|length - nbParticipantsAfficher}} participant{% if (tabParticipants|length - nbParticipantsAfficher) > 1 %}s{% endif %}</i></center>
@@ -243,29 +289,29 @@
             {% if ("now" | date("Ymd") > activite.dateHeureRDV | date("Ymd")) %}
               <button type="button" class="btn btn-primary btn-lg disabled">Activité terminée</button>
             {% else %}
-              <button type="button" class="btn btn-primary btn-lg">Modifier l'activité</button>
+              <a href="{{ path('moove_activite_modifier_activite', {'idActivite': activite.id}) }}" class="btn btn-primary btn-lg">Modifier l'activité</a>
               <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#modalSupprimer">Supprimer l'activité</button>
             {% endif %}
-            <!-- Modal de suppression d'activité -->
+            {# Modal de suppression d'activité #}
             {% include "mooveActiviteBundle:Activite:blockModalSupprimer.html.twig" %}
           {% else %} 
-            <!-- Si l'on n'est pas organisateur -->
+            {# Si l'on n'est pas organisateur #}
             {% if ("now" | date("Ymd") > activite.dateFermeture | date("Ymd")) %} 
               {% if estAccepte == 1 %}
                 <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
               {% elseif estAccepte == 2 %}
                 <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
-              {% else %} <!-- estAccepter == 0 -->
+              {% else %} {# estAccepter == 0 #}
                 <button type="button" class="btn btn-warning btn-lg disabled">Activité fermée</button>
               {% endif %} 
             {% else %} 
-              <!-- si l'activite n'est pas fermé -->
+              {# si l'activite n'est pas fermé #}
               {% if estParticipant %} 
                 {% if estAccepte == 1 %}
                   <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#quitterActivite">Quitter l'activité</button>
                 {% elseif estAccepte == 2 %}
                   <button type="button" class="btn btn-danger btn-lg disabled">Vous avez été refusé</button>
-                {% else %} <!-- estAccepter == 0 -->
+                {% else %} {# estAccepter == 0 #}
                   <button type="button" class="btn btn-warning btn-lg disabled">Demande envoyée</button>
                 {% endif %} 
               {% else %}
@@ -273,8 +319,8 @@
                   <button type="button" class="btn btn-primary btn-lg">Je veux participer</button>
                 </a>
               {% endif %} 
-            {% endif %} <!-- fini le si l'activite n'est pas finis -->
-            <!-- Modal -->
+            {% endif %} {# fini le si l'activite n'est pas finis #}
+            {# Modal #}
             <div class="modal fade" id="quitterActivite" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
              <div class="modal-dialog" role="document">
                <div class="modal-content">
@@ -294,19 +340,27 @@
                </div>
              </div>
             </div>
-          {% endif %} <!-- finis le si on est organisateur -->
+          {% endif %} {# finis le si on est organisateur #}
       </div>
-    </div> <!-- fini le panel participant -->
-  </div> <!-- fini le "colone où se trouve les panneaux informations sur l'activité et information" -->
+    </div> {# fini le panel participant #}
+  </div> {# fini le "colone où se trouve les panneaux informations sur l'activité et information" #}
 </div>
+
 <div class="row">
   <div class="col-md-12">
     <h1>Carte</h1>
     <div id="map" style="height: 500px;"></div>
   </div>
 </div>
-</section>
 
+<br>
+<div class="row">
+  <div class="col-md-12">
+    {% include "mooveActiviteBundle:Activite:blockCommentaire.html.twig" %}
+  </div>
+</div>
+
+</section>
 {% endblock %}
 {% block javascripts %}
   <script>

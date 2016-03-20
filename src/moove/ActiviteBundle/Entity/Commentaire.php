@@ -31,7 +31,7 @@ class Commentaire
     /**
      * @var \DateTime
      *
-     * @ORM\Column(name="posteA", type="date")
+     * @ORM\Column(name="posteA", type="datetime")
      */
     private $posteA;
 
@@ -49,7 +49,7 @@ class Commentaire
     private $activite;
 
     /**
-     * @ORM\ManyToOne(targetEntity="moove\UtilisateurBundle\Entity\Utilisateur")
+     * @ORM\ManyToOne(targetEntity="moove\UtilisateurBundle\Entity\Utilisateur", inversedBy="commentaires")
      */
     private $utilisateur;
     

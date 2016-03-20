@@ -7,6 +7,7 @@ use moove\ActiviteBundle\Entity\Lieu;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\ExecutionContextInterface;
 use moove\UtilisateurBundle\Validator\Constraints as mooveAssert;
 
 /**
@@ -72,14 +73,20 @@ class Utilisateur extends BaseUser
      *                cascade={"persist", "remove"})
      */
     private $lieuResidence;
+    
+    private $adresseLieuResidence;
    
     /**
-     * @ORM\OneToMany(targetEntity="moove\ActiviteBundle\Entity\Pratiquer", mappedBy="utilisateur")
-     *
+     * @ORM\OneToMany(targetEntity="moove\ActiviteBundle\Entity\Pratiquer", mappedBy="utilisateur",
+     *                cascade={"remove"})
      */
     private $pratiquer;
     
-    
+    /**
+     * @ORM\OneToMany(targetEntity="moove\ActiviteBundle\Entity\Commentaire", mappedBy="utilisateur",
+     *                cascade={"remove"})
+     */
+    private $commentaires;
     
     /* /!\ Début des get & set /!\ */
      /**
@@ -90,6 +97,25 @@ class Utilisateur extends BaseUser
      * @mooveAssert\Age
      */
     private $dateNaissance;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Utilisateur", mappedBy="mesAmis")
+     */
+    private $amisAvecMoi;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="Utilisateur", inversedBy="amisAvecMoi")
+     * @ORM\JoinTable(name="amisUtilisateur",
+     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+     *      inverseJoinColumns={@ORM\JoinColumn(name="friend_user_id", referencedColumnName="id")}
+     *      )
+     */
+    private $mesAmis;
+    
+    
+    
+    
+    
     
     private $photo;
 
@@ -111,7 +137,7 @@ class Utilisateur extends BaseUser
                             
         //$this->pratiquer = new ArrayCollection();
     }
-
+    
     /**
      * Get id
      *
@@ -318,8 +344,130 @@ class Utilisateur extends BaseUser
         return $this;
     }
     
+    /**
+     * Get adresseLieuResidence
+     *
+     * @return string
+     */
+    public function getAdresseLieuResidence()
+    {
+        return $this->adresseLieuResidence;
+    }
+
+    /**
+     * Set adresseLieuArrivee
+     *
+     * @param string
+     * @return Activite
+     */
+    public function setAdresseLieuResidence($adresseLieuResidence)
+    {
+        $this->adresseLieuResidence = $adresseLieuResidence;
+
+        return $this;
+    }
+    
     public function __toString()
     {
        return $this->prenom . ' ' . $this->nom;
+    }
+
+    /**
+     * Add commentaires
+     *
+     * @param \moove\ActiviteBundle\Entity\Commentaire $commentaires
+     * @return Utilisateur
+     */
+    public function addCommentaire(\moove\ActiviteBundle\Entity\Commentaire $commentaires)
+    {
+        $this->commentaires[] = $commentaires;
+
+        return $this;
+    }
+
+    /**
+     * Remove commentaires
+     *
+     * @param \moove\ActiviteBundle\Entity\Commentaire $commentaires
+     */
+    public function removeCommentaire(\moove\ActiviteBundle\Entity\Commentaire $commentaires)
+    {
+        $this->commentaires->removeElement($commentaires);
+    }
+
+    /**
+     * Get commentaires
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCommentaires()
+    {
+        return $this->commentaires;
+    }
+
+    /**
+     * Add amisAvecMoi
+     *
+     * @param \moove\UtilisateurBundle\Entity\Utilisateur $amisAvecMoi
+     * @return Utilisateur
+     */
+    public function addAmisAvecMoi(\moove\UtilisateurBundle\Entity\Utilisateur $amisAvecMoi)
+    {
+        $this->amisAvecMoi[] = $amisAvecMoi;
+
+        return $this;
+    }
+
+    /**
+     * Remove amisAvecMoi
+     *
+     * @param \moove\UtilisateurBundle\Entity\Utilisateur $amisAvecMoi
+     */
+    public function removeAmisAvecMoi(\moove\UtilisateurBundle\Entity\Utilisateur $amisAvecMoi)
+    {
+        $this->amisAvecMoi->removeElement($amisAvecMoi);
+    }
+
+    /**
+     * Get amisAvecMoi
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAmisAvecMoi()
+    {
+        return $this->amisAvecMoi;
+    }
+
+    /**
+     * Add mesAmis
+     *
+     * @param \moove\UtilisateurBundle\Entity\Utilisateur $mesAmis
+     * @return Utilisateur
+     */
+    public function addMesAmi(\moove\UtilisateurBundle\Entity\Utilisateur $mesAmis)
+    {
+        $this->mesAmis[] = $mesAmis;
+
+        return $this;
+    }
+
+    /**
+     * Remove mesAmis
+     *
+     * @param \moove\UtilisateurBundle\Entity\Utilisateur $mesAmis
+     */
+    public function removeMesAmi(\moove\UtilisateurBundle\Entity\Utilisateur $mesAmis)
+    {
+        $this->mesAmis->removeElement($mesAmis);
+    }
+
+    /**
+     * Get mesAmis
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getMesAmis()
+    {
+        return $this->mesAmis;
     }
 }

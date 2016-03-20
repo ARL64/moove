@@ -47,3 +47,7 @@ moove_activite_supprimer_activite:
     path: /supprimer/{idActivite}/{organisateur}
     defaults: {_controller: mooveActiviteBundle:Activites:supprimerActivite }
 
+moove_activite_modifier_activite:
+    path: /modifier/{idActivite}
+    defaults: {_controller: mooveActiviteBundle:Activites:modifierActivite }
+

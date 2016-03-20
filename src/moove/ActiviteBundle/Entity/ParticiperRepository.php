@@ -13,6 +13,46 @@ use Doctrine\ORM\QueryBuilder;
  */
 class ParticiperRepository extends EntityRepository
 {
+    /**
+     * retourne une liste de l'ensemble des participations aux activité d'un utiliseur, en fonction de l'état des demandes et de l'activité.
+     * 
+     * @param $idOrganisateur <i>Utilisateur</i> id de l'organisateur
+     * @param $accepter <i>Integer</i>=null état de la demande (0:en  cours, 1:accepter, 2:refuser)
+     * @param $terminer <i>boolean</i>=null etat de l'activité (true:finis, false:en cours)
+     * @return <i>Array<Participer></i> retourne la liste de toute les participations aux activité d'un organisateur
+     */ 
+    public function findByActiviteAccepter($idActivite, $accepter, $order='p.id', $type='ASC')
+    {
+        $requete = $this->_em->createQueryBuilder() 
+            ->select('p')
+            ->from($this->_entityName, 'p')
+            ->join('p.activite', 'a')
+            ->addSelect('a')
+            ->join('p.utilisateur', 'u')
+            ->addSelect('u')
+            ->join('a.sportPratique', 's')
+            ->addSelect('s')
+            ->Where('p.activite = :idActivite')
+            ->setParameter('idActivite', $idActivite)
+            ->andWhere('p.estAccepte = :accepter')
+            ->setParameter('accepter', $accepter)
+        ;
+
+
+        // on récupère la commande DQL
+        $query = $requete->getQuery();
+        
+        // on retourne un tableau de résultat
+        return $query->getResult();
+    }    
+    /**
+     * retourne une liste de l'ensemble des participations aux activité d'un utiliseur, en fonction de l'état des demandes et de l'activité.
+     * 
+     * @param $idOrganisateur <i>Utilisateur</i> id de l'organisateur
+     * @param $accepter <i>Integer</i>=null état de la demande (0:en  cours, 1:accepter, 2:refuser)
+     * @param $terminer <i>boolean</i>=null etat de l'activité (true:finis, false:en cours)
+     * @return <i>Array<Participer></i> retourne la liste de toute les participations aux activité d'un organisateur
+     */ 
     public function findByOrganisateur($idOrganisateur, $accepter = null, $terminer = null)
     {
         $requete = $this->_em->createQueryBuilder() 
@@ -22,6 +62,10 @@ class ParticiperRepository extends EntityRepository
             ->addSelect('a')
             ->join('a.organisateur', 'u')
             ->addSelect('u')
+            ->join('a.sportPratique', 's')
+            ->addSelect('s')
+            ->join('a.lieuDepart', 'ld')
+            ->addSelect('ld')
             ->Where('a.organisateur = :organisateur')
             ->setParameter('organisateur', $idOrganisateur)
         ;
@@ -46,14 +90,25 @@ class ParticiperRepository extends EntityRepository
         return $query->getResult();
     }
     
-    
+    /**
+     * retourne une liste de l'ensemble des participations de l'utilisateur passé en paramêtre et correspondant aux valeurs.
+     * 
+     * @param $idUtilisateur <i>Utilisateur</i> id de l'utilisateur
+     * @param $accepter <i>Integer</i>=null état de la demande (0:en  cours, 1:accepter, 2:refuser)
+     * @param $terminer <i>boolean</i>=null etat de l'activité (true:finis, false:en cours)
+     * @return <i>Array<Participer></i> retourne la liste de toute les participations de l'utilisateur correspondant.
+     */ 
     public function findByUtilisateurEstAccepter($idUtilisateur, $terminer = null, $accepter = null)
     {
         $requete = $this->_em->createQueryBuilder() 
             ->select('p')
             ->from($this->_entityName, 'p')
             ->join('p.activite', 'a')
-            
+            ->addSelect('a')
+            ->join('p.utilisateur', 'u')
+            ->addSelect('u')
+            ->join('a.sportPratique', 's')
+            ->addSelect('s')
             ->Where('p.utilisateur = :utilisateur')
             ->setParameter('utilisateur', $idUtilisateur)
         ;
@@ -76,9 +131,16 @@ class ParticiperRepository extends EntityRepository
         $query = $requete->getQuery();
         
         // on retourne un tableau de résultat
-        return $query->execute();    
-        
+        return $query->execute();
     }
+    
+    /**
+     * fait quitter l'activité à un utilisateur précis.
+     * 
+     * @param $idActivite <i>Activite</i>id de l'activité
+     * @param $idUtilisateur <i>Utilisateur</i> id de l'utilisateur
+     * @return <i>Array<Participer></i> retourne la liste de toute les participations de l'utilisateur correspondant.
+     */ 
     public function quitterActivite($idActivite, $idUtilisateur)
     {
         $requete = $this->_em->createQueryBuilder()

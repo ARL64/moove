@@ -30,6 +30,11 @@ use FOS\UserBundle\Model\UserInterface;
  */
 class RegistrationController extends Controller
 {
+    
+    /**
+     * Show the user
+     * @return <i>Render</i> redirige sur FOSUserBundle:Registration:register.html.twig
+     */
     public function registerAction(Request $request)
     {
         /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
@@ -77,6 +82,7 @@ class RegistrationController extends Controller
 
     /**
      * Tell the user to check his email provider
+     * @return <i>Render</i> redirige sur FOSUserBundle:Registration:checkEmail.html.twig
      */
     public function checkEmailAction()
     {
@@ -95,6 +101,9 @@ class RegistrationController extends Controller
 
     /**
      * Receive the confirmation token from user email provider, login the user
+     * @param $request <i>Request</i> 
+     * @param $token <i>Token</i> 
+     * @return <i>Render</i> redirige sur fos_user_registration_confirmed
      */
     public function confirmAction(Request $request, $token)
     {
@@ -130,6 +139,7 @@ class RegistrationController extends Controller
 
     /**
      * Tell the user his account is now confirmed
+     * @return <i>Render</i> redirige sur FOSUserBundle:Registration:confirmed.html.twig
      */
     public function confirmedAction()
     {
@@ -144,6 +154,10 @@ class RegistrationController extends Controller
         ));
     }
 
+    /**
+     * 
+     * @return <i>Render</i> redirige sur heuuu
+     */
     private function getTargetUrlFromSession()
     {
         // Set the SecurityContext for Symfony <2.6

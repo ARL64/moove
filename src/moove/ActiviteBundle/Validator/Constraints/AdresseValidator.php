@@ -18,7 +18,7 @@ class AdresseValidator extends ConstraintValidator
         $Geocoder->setAddress($value);
         // On test la valeur
         $reponse = $Geocoder->geocode();
-        if($reponse['status'] != "OK")
+        if($reponse['status'] != "OK" && !is_null($value))
         {
             $this->context->buildViolation($constraint->message)->addViolation();
         }

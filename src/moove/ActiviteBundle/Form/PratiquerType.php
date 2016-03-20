@@ -9,8 +9,9 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 class PratiquerType extends AbstractType
 {
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     * Formulaire d'entité pratiqué
+     * @param $builder <i>FormBuilderInterface<i/> 
+     * @param $options <i>Array</i> 
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -25,7 +26,7 @@ class PratiquerType extends AbstractType
     }
     
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param <i>OptionsResolverInterface</i> $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
@@ -35,7 +36,8 @@ class PratiquerType extends AbstractType
     }
 
     /**
-     * @return string
+     * retourn moove_activitebundle_pratiquer
+     * @return <i>string</i>
      */
     public function getName()
     {

@@ -31,6 +31,7 @@ class ResettingController extends Controller
 {
     /**
      * Request reset user password: show form
+     * @return <i>Render</i> redirige sur FOSUserBundle:Resetting:request.html.twig
      */
     public function requestAction()
     {
@@ -43,6 +44,7 @@ class ResettingController extends Controller
 
     /**
      * Request reset user password: submit form and send email
+     * @return <i>Render</i> redirige sur FOSUserBundle:Resetting:request.html.twig OU FOSUserBundle:Resetting:passwordAlreadyRequested.html.twig
      */
     public function sendEmailAction(Request $request)
     {
@@ -78,6 +80,7 @@ class ResettingController extends Controller
 
     /**
      * Tell the user to check his email provider
+     * @return <i>Render</i> redirige sur FOSUserBundle:Resetting:checkEmail.html.twig
      */
     public function checkEmailAction(Request $request)
     {
@@ -95,6 +98,7 @@ class ResettingController extends Controller
 
     /**
      * Reset user password
+     * @return <i>Render</i> redirige sur FOSUserBundle:Resetting:checkEmail.html.twig
      */
     public function resetAction(Request $request, $token)
     {
@@ -150,9 +154,8 @@ class ResettingController extends Controller
      *
      * The default implementation only keeps the part following @ in the address.
      *
-     * @param \FOS\UserBundle\Model\UserInterface $user
-     *
-     * @return string
+     * @param <i>UserInterface</i> $user
+     * @return <i>string</i>
      */
     protected function getObfuscatedEmail(UserInterface $user)
     {

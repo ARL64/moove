@@ -1,67 +1,67 @@
 {% form_theme formulaireActivite 'bootstrap_3_layout.html.twig' %}
 {% extends "::vueMere.html.twig" %}
 
-{% block activeProposer %}active{% endblock %}
-{% block title %}Proposer une activité{% endblock %}
+
+{% block title %}Modifier mon activité{% endblock %}
 
 {% block body %} 
     {# Titre de la page #}
     <section class="content-header">
-      <h1>Proposer une activité</h1>
+      <h1>Modifier mon activité</h1>
     </section>
       <section class="content">
         <div class="row">
           <div class="col-md-5">
             <small>Les champs marqués par une * sont obligatoires.</small>
-            <form method="post" novalidate="novalidate" {{ form_enctype(formulaireActivite) }}>
+            <form method="post" {{ form_enctype(formulaireActivite) }}>
               {{form_start(formulaireActivite)}}
               <div>
                 {{ form_label(formulaireActivite.sportPratique) }} *
-                <p class="text-danger">{{ form_errors(formulaireActivite.sportPratique) }}</p>
+                {{ form_errors(formulaireActivite.sportPratique) }}
                 {{ form_widget(formulaireActivite.sportPratique) }}
               </div>
                <div>
                 {{ form_label(formulaireActivite.niveauRequis) }} *
-                <p class="text-danger">{{ form_errors(formulaireActivite.niveauRequis) }}</p>
+                {{ form_errors(formulaireActivite.niveauRequis) }}
                 {{ form_widget(formulaireActivite.niveauRequis) }}
               </div>
               <div>
                 {{ form_label(formulaireActivite.dateHeureRDV) }} 
-                <p class="text-danger">{{ form_errors(formulaireActivite.dateHeureRDV) }}</p>
+                {{ form_errors(formulaireActivite.dateHeureRDV) }}
                 {{ form_widget(formulaireActivite.dateHeureRDV.date) }}
                 {{ form_widget(formulaireActivite.dateHeureRDV.time) }}
               </div>
               <div>
                 {{ form_label(formulaireActivite.dateFermeture) }}
-                <p class="text-danger">{{ form_errors(formulaireActivite.dateFermeture) }}</p>
+                {{ form_errors(formulaireActivite.dateFermeture) }}
                 {{ form_widget(formulaireActivite.dateFermeture.date) }}
                 {{ form_widget(formulaireActivite.dateFermeture.time) }}
               </div>
               <div>
                 {{ form_label(formulaireActivite.duree) }}
-                <p class="text-danger">{{ form_errors(formulaireActivite.duree) }}</p>
+                {{ form_errors(formulaireActivite.duree) }}
                 {{ form_widget(formulaireActivite.duree) }}
               </div>
               <div>
-                {{ form_label(formulaireActivite.nbPlaces) }} * (1 à 500)
-                <p class="text-danger">{{ form_errors(formulaireActivite.nbPlaces) }}</p>
+                {{ form_label(formulaireActivite.nbPlaces) }} *
+                {{ form_errors(formulaireActivite.nbPlaces) }}
                 {{ form_widget(formulaireActivite.nbPlaces) }}
               </div>
               <div>
                 {{ form_label(formulaireActivite.description) }}
-                <p class="text-danger">{{ form_errors(formulaireActivite.description) }}</p>
+                {{ form_errors(formulaireActivite.description) }}
                 {{ form_widget(formulaireActivite.description) }}
               </div></br>
             </div>
             <div class="col-md-6">
                 {{ form_label(formulaireActivite.adresseLieuRDV, 'Adresse du lieu de rendez-vous') }} *
-                <p class="text-danger">{{ form_errors(formulaireActivite.adresseLieuRDV) }}</p>
+                {{ form_errors(formulaireActivite.adresseLieuRDV) }}
                 {{ form_widget(formulaireActivite.adresseLieuRDV) }}
                 {{ form_label(formulaireActivite.adresseLieuDepart, 'Adresse du lieu de départ') }}
-                <p class="text-danger">{{ form_errors(formulaireActivite.adresseLieuDepart) }}</p>
+                {{ form_errors(formulaireActivite.adresseLieuDepart) }}
                 {{ form_widget(formulaireActivite.adresseLieuDepart) }}
                 {{ form_label(formulaireActivite.adresseLieuArrivee, "Adresse du lieu d'arrivée") }}
-                <p class="text-danger">{{ form_errors(formulaireActivite.adresseLieuArrivee) }}</p>
+                {{ form_errors(formulaireActivite.adresseLieuArrivee) }}
                 {{ form_widget(formulaireActivite.adresseLieuArrivee) }} <br>
                 <div id="map" style="height:400px;"></div>
             </div>

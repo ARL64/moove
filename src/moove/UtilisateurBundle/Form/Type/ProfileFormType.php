@@ -17,6 +17,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Security\Core\Validator\Constraints\UserPassword;
+use Symfony\Component\Validator\Constraints\File;
+
+use moove\ActiviteBundle\Validator\Constraints\Adresse;
 
 class ProfileFormType extends AbstractType
 {
@@ -57,6 +60,10 @@ class ProfileFormType extends AbstractType
         return $this->getBlockPrefix();
     }
 
+    /**
+     * retourn app_user_profile
+     * @return <i>string</i>
+     */
     public function getBlockPrefix()
     {
         return 'app_user_profile';
@@ -76,8 +83,22 @@ class ProfileFormType extends AbstractType
             ->add('nom', 'text', array('label' => 'form.nom', 'translation_domain' => 'FOSUserBundle'))
             ->add('prenom', 'text', array('label' => 'form.prenom', 'translation_domain' => 'FOSUserBundle'))
             ->add('dateNaissance', 'birthday', array('label' => 'form.birthday', 'translation_domain' => 'FOSUserBundle'))
-            ->add('photo','file', array('label'=>'form.photo', 'translation_domain'=>'FOSUserBundle','required'=>false))
+            ->add('photo','file', array('label'=>'form.photo', 'translation_domain'=>'FOSUserBundle','required'=>false, 'constraints' => [
+                    new File([
+                        'maxSize' => '2M',
+                        'mimeTypes' => [
+                            'image/png',
+                            'image/jpeg',
+                            'image/jpg',
+                            'image/gif',
+                            'image/bmp'
+                        ],
+                        'mimeTypesMessage' => 'Le type de l\'image est invalide',
+                    ])
+                ]
+            ))
             ->add('sexe','choice',array('label' => 'form.sexe','choices'=>array('homme'=>'homme', 'femme'=>'femme'), 'translation_domain'=>'FOSUserBundle'))
+            ->add('adresseLieuResidence','text',  array('required' => false, 'constraints' => new Adresse()))
         ;
     }
 }

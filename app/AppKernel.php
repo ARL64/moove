@@ -24,14 +24,24 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             
+            // Gesion utilisateur
             new FOS\UserBundle\FOSUserBundle(),
+            
+            // Administration
             new Sonata\CoreBundle\SonataCoreBundle(),
             new Sonata\BlockBundle\SonataBlockBundle(),
-            new Knp\Bundle\MenuBundle\KnpMenuBundle(),
             new Sonata\DoctrineORMAdminBundle\SonataDoctrineORMAdminBundle(),
             new Sonata\AdminBundle\SonataAdminBundle(),
+            
+            // Pagination des tableaux
+            new Knp\Bundle\MenuBundle\KnpMenuBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
             
+            // Editeur de text (commentaire)
+            new Ivory\CKEditorBundle\IvoryCKEditorBundle(),
+            new FM\BbcodeBundle\FMBbcodeBundle(),
+            
+            // Bundle du site
             new moove\ActiviteBundle\mooveActiviteBundle(),
             new moove\UtilisateurBundle\mooveUtilisateurBundle(),
             

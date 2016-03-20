@@ -5,16 +5,16 @@
 {% block title %}Profil{% endblock %}
 
 {% block body %} 
-    <!-- Titre de la page -->
+    {# Titre de la page #}
     <section class="content-header">
       <h1>{% if user.id == app.user.id %}Mon Profil{% else %}{{ user.prenom ~ " " ~ user.nom }}{% endif %} {% if user.id == app.user.id %}
-          <a href="{{ path('fos_user_profile_edit') }}" class="pull-right btn btn-primary">Modifier mon profil</a>
+          <a href="{{ path('fos_user_profile_edit') }}" class="pull-right btn btn-primary">Modifier/Supprimer mon profil</a>
         {#{% else %}
           <a href="{{ path('notForNow_addUser') }}"><button type="button" class="btn btn-primary btn-lg">Envoyer demande ami</button></a>#}
         {% endif %}</h1>
     </section>
     
-    <!-- Contenu principal -->
+    {# Contenu principal #}
     <section class="content">
       <div class="row">
         <div class="col-md-12">

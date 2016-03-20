@@ -12,6 +12,15 @@ use Doctrine\ORM\EntityRepository;
  */
 class NiveauRepository extends EntityRepository
 {
+    
+    /**
+     * Renvois soit un tableau de niveau contenant tous les niveaux de l'utilisateur, 
+     * soit un objet niveau sur le sport concerné
+     * 
+     * @param $idUtilisateur <i>Utilisateur</i> utilisateur concerné
+     * @param $idSport <i>Sport</i>=null sport concerné, si souhaité
+     * @return <i>Array<Niveu></i> liste de tout les niveaux, OU <i>Niveu</i> niveau du sport précisé
+     */
     public function findByUtilisateur($idUtilisateur, $idSport = null)
     {
         // on récupère la query de base de séléction des activités par utilisateur
@@ -23,7 +32,7 @@ class NiveauRepository extends EntityRepository
             $requete->andWhere('pr.sport = :idSport')
                     ->setParameter('idSport', $idSport)
             ;
-           // on récupère la commande DQL
+            // on récupère la commande DQL
             $query = $requete->getQuery();
         
             // on retourne un tableau de résultat
@@ -41,6 +50,11 @@ class NiveauRepository extends EntityRepository
         return $query->getResult();
     }
 
+    /**
+     * 
+     * @param $idUtilisateur <i>Utilisateur</i> utilisateur concerné
+     * @return <i>queryBuilder</i> base de toute querry souhaitant quémander un niveau sur un utilisateur précis.
+     */
     protected function getAllNiveauForUser($idUtilisateur)
     {
         // création de la requete de base

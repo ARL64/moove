@@ -49,9 +49,13 @@ class PeuplerUtilisateur extends AbstractFixture implements FixtureInterface, Co
                     ->setPlainPassword($line[8])
                     ->setSexe($line[9])
                     ->setLieuResidence($this->getReference('lieu-'.$line[10]))
-                    //->setRoles(new array())
                     ;
 		            
+		    if(strcmp($line[11], "yes") == 0)
+		    {
+		        $temps->addRole('ROLE_ADMIN');
+		        $temps->addRole('ROLE_SONATA_ADMIN');
+		    }
             $userManager->updateUser($temps, true);
             $this->addReference("utilisateur-" . $line[0], $temps);
             

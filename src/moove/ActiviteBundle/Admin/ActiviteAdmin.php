@@ -11,7 +11,7 @@ use Sonata\AdminBundle\Show\ShowMapper;
 class ActiviteAdmin extends Admin
 {
     /**
-     * @param DatagridMapper $datagridMapper
+     * @param $datagridMapper <i>DatagridMapper</i>
      */
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
@@ -28,7 +28,7 @@ class ActiviteAdmin extends Admin
     }
 
     /**
-     * @param ListMapper $listMapper
+     * @param $listMapper <i>ListMapper</i>
      */
     protected function configureListFields(ListMapper $listMapper)
     {
@@ -51,7 +51,7 @@ class ActiviteAdmin extends Admin
     }
 
     /**
-     * @param FormMapper $formMapper
+     * @param $formMapper <i>FormMapper</i>
      */
     protected function configureFormFields(FormMapper $formMapper)
     {
@@ -68,7 +68,7 @@ class ActiviteAdmin extends Admin
     }
 
     /**
-     * @param ShowMapper $showMapper
+     * @param $showMapper <i>ShowMapper</i>
      */
     protected function configureShowFields(ShowMapper $showMapper)
     {

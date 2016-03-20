@@ -5,6 +5,7 @@ namespace moove\ActiviteBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\ExecutionContextInterface;
 use moove\ActiviteBundle\Validator\Constraints as mooveAssert;
 
 /**
@@ -45,13 +46,17 @@ class Activite
      * @var integer
      * 
      * @ORM\Column(name="nbPlaces", type="integer")
-
+     * @Assert\Range(
+     *      min = 1,
+     *      max = 500,
+     *      minMessage = "Le nombre de places minimum autorisé est de {{ limit }}.",
+     *      maxMessage = "Le nombre de places maximum autorisé est de {{ limit }}."
+     * )
      */
     private $nbPlaces;
 
     /**
      * @var string
-     * 
      * @ORM\Column(name="description", type="text", nullable=true)
      */
     private $description;
@@ -85,12 +90,14 @@ class Activite
     private $organisateur;
     
     /**
-     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Niveau")
+     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Niveau", cascade={"persist", "remove"})
+     * @Assert\NotBlank
      */
     private $niveauRequis;
 
     /**
-     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Sport")
+     * @ORM\ManyToOne(targetEntity="moove\ActiviteBundle\Entity\Sport", cascade={"persist", "remove"})
+     * @Assert\NotBlank
      */
     private $sportPratique;
 
@@ -129,7 +136,24 @@ class Activite
      */
     private $participer;
 
+    /**
+     * @Assert\Callback
+     * COmmentaires
+     */
+    private function validate(ExecutionContextInterface $context)
+    {
+        if (($this->dateFermeture != '') && 
+               ($this->dateHeureRDV < $this->dateFermeture) ) {
 
+            $context->addViolationAt(
+                'dateFermeture',
+                'La date de fermeture n\'est pas valide. Elle doit être avant la date et heure de rendez-vous.',
+                array(),
+                null
+            );
+
+        }
+    }
 
     /* /!\ Début des get & set /!\ */
     /**
