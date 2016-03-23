@@ -26,7 +26,7 @@
                                             <p>{{ sportNiveau.sport.nom }}</p>
                                             <p>Niveau : {{ sportNiveau.niveau.libelle }}</p>
                                             <div class="col-md-2">
-                                                <a href="#" class="btn btn-primary btn-s">Modifier Niveau</a>
+                                                <a href="{{ path('moove_utilisateur_modifier_niveau_sport', {'idSport': sportNiveau.sport.id}) }}" class="btn btn-primary btn-s">Modifier Niveau</a>
                                             </div>
                                             <div class="col-md-2">
                                                 <a href="#" class="btn btn-danger btn-s" data-toggle="modal" data-target="#myModal">Supprimer ce sport</a>
@@ -51,7 +51,7 @@
                                             </div>
                                             <div class="modal-footer">
                                                 <button type="button" class="btn btn-warning" data-dismiss="modal">Annuler</button>
-                                                <a href={{ path('moove_utilisateur_supprimer_sport', {'idUtilisateur':app.user.id, 'idSport': sportNiveau.sport.id})}}> <button type="button" class="btn btn-danger">Supprimer</button></a>
+                                                <a href={{ path('moove_utilisateur_supprimer_sport', {'idSport': sportNiveau.sport.id})}}> <button type="button" class="btn btn-danger">Supprimer</button></a>
                                             </div>
                                         </div>
                                      </div>

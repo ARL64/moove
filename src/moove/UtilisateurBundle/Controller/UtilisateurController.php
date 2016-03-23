@@ -3,11 +3,8 @@
 namespace moove\UtilisateurBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use moove\ActiviteBundle\Entity\Activite;
-use moove\ActiviteBundle\Entity\Sport;
-use moove\ActiviteBundle\Entity\Lieu;
-use Symfony\Component\HttpFoundation\Request;
 use moove\ActiviteBundle\Entity\Pratiquer;
+use Symfony\Component\HttpFoundation\Request;
 
 class UtilisateurController extends Controller
 {
@@ -106,7 +103,14 @@ class UtilisateurController extends Controller
         $user = $this->getUser();
         //on récupère le répository de pratiquer
         $repPratiquer = $this->getRepository('Pratiquer', 'Activite');
-        $suppressionSport = $repPratiquer->supprimerSport($user, $idSport);
+        $pratiquer = $repPratiquer->findOneBy(['utilisateur' => $user, 'sport' => $idSport]);
+        
+        if($pratiquer) {
+            $em = $this->getDoctrine()->getManager();
+            $em->remove($pratiquer);
+            $em->flush();          
+        }
+        //$suppressionSport = $repPratiquer->supprimerSport($user, $idSport);
         return $this->redirect($this->generateUrl('moove_utilisateur_editer_sports'));
         
     }
@@ -115,18 +119,24 @@ class UtilisateurController extends Controller
      * Ajoute le sport, couplé avec le niveau, le tous passés en paramètre dans la fonction 
      * @return <i>Render</i> redirige sur fos_user_profile_show
      */
-    public function ajouterSportAction($idSport, $idNiveau)
+    public function ajouterSportAction(Request $request, $idSport)
     {
         // on récupère l'utilisateur qui accède à la page
         $user = $this->getUser();
+        
+        // On récupère le libellé du niveau choisi par l'utilsateur ('Intermédiaire, Expert, Confirmé, Débutant')
+        $niveauChoisi = $request->get('niveau');
+         // on récupère le répository de Niveau
+        $repNiveau = $this->getRepository('Niveau', 'Activite');  
+        // on récupère le niveau
+        $niveau = $repNiveau->findOneBy(['libelle' => $niveauChoisi]);
         // on récupère le répository de Pratiquer
         $repPratiquer = $this->getRepository('Pratiquer', 'Activite');
         // on récupère le répository de Sport
         $repSport = $this->getRepository('Sport', 'Activite');
         // on récupère le sport sélectionné par l'utilisateur
-        $sport = $repSport->find($id);
-        // on récupère le niveau entré par l'utilisateur
-        $niveau = $repNiveau->find($id);
+        $sport = $repSport->find($idSport);
+
         // on créé un nouvel objet Pratiquer que l'on hydrate
         $nouveauPratiquer = new Pratiquer();
         $nouveauPratiquer->setUtilisateur($user)
@@ -135,6 +145,7 @@ class UtilisateurController extends Controller
         $em = $this->getDoctrine()->getManager();
         $em->persist($nouveauPratiquer);
         $em->flush();
+        $this->addFlash('success', "Le sport a bien été ajouté à votre compte.");
         
         return $this->redirect($this->generateUrl('fos_user_profile_show'));
     }
@@ -156,7 +167,7 @@ class UtilisateurController extends Controller
         $repSport = $this->getRepository('Sport', 'Activite');
         $sports = $repSport->findAll();
         $nbSports = count($sports);
-        $tabInfoSportNonPratique = $this->RecupSportNonPratique();
+        $tabInfoSportNonPratique = $this->recupSportNonPratique();
         $sportNonPratique = $tabInfoSportNonPratique[0];
         $nbSportUser = $tabInfoSportNonPratique[1];
         return $this->render('mooveUtilisateurBundle:AjouterSport:choisirSport.html.twig', array(
@@ -173,7 +184,7 @@ class UtilisateurController extends Controller
     public function choisirNiveauAction($idSport)
     {
         //On fait appel à la fonction qui va récupérer tout les sports que ne pratique pas l'utilisateur
-        $tabInfoSportNonPratique = $this->RecupSportNonPratique();
+        $tabInfoSportNonPratique = $this->recupSportNonPratique();
         //Cette fonction retourne un tableau de 3 cases contenant dans la 3ème case un tableau d'id des sports non pratiqué par l'utilisateur.
         $sportNonPratique = $tabInfoSportNonPratique[2];
         //On récupère le nombre d'éléments présent dans $sportNonPratique
@@ -196,6 +207,41 @@ class UtilisateurController extends Controller
         return $this->render('mooveUtilisateurBundle:AjouterSport:choisirNiveau.html.twig', 
             ['sport' => $sport,
              'niveaux' => $niveaux]);
+    }
+    
+    /*
+     * Confirme la modification du niveau d'un sport $idSport
+     * @param $idSport <i>Sport</i> id du sport
+     * @return <i>Redirect</i> redirige sur moove_utilisateur_editer_sports
+     */
+    public function confimerModifierNiveauSportAction(Request $request, $idSport)
+    {
+        // on récupère l'utilisateur qui accède à la page
+        $user = $this->getUser();
+        
+        // On récupère le libellé du niveau choisi par l'utilsateur ('Intermédiaire, Expert, Confirmé, Débutant')
+        $niveauChoisi = $request->request->get('niveau');
+         // on récupère le répository de Niveau
+        $repNiveau = $this->getRepository('Niveau', 'Activite');  
+        // on récupère le niveau
+        $nouveauNiveau = $repNiveau->findOneBy(['libelle' => $niveauChoisi]);
+        // on récupère le répository de Pratiquer
+        $repPratiquer = $this->getRepository('Pratiquer', 'Activite');
+        // on récupère le répository de Sport
+        $repSport = $this->getRepository('Sport', 'Activite');
+        // on récupère le sport sélectionné par l'utilisateur
+        $sport = $repSport->find($idSport);
+
+        // on récupère l'ancien Pratiquer
+        $pratiquerAModifier = $repPratiquer->findOneBy(['utilisateur' => $user, 'sport' => $sport]);
+        // on modifie le niveau du sport
+        $pratiquerAModifier->setNiveau($nouveauNiveau);
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($pratiquerAModifier);
+        $em->flush();
+        $this->addFlash('success', "Votre niveau a bien été modifié !");
+        
+        return $this->redirect($this->generateUrl('fos_user_profile_show'));   
     }
     
         
@@ -234,7 +280,7 @@ class UtilisateurController extends Controller
                 {
                     //sinon on regarde si la demande de l'utilisateur est en attente ou refusée 
                     // auquel cas on la passe a accepté pour qu'il puisse quitter l'activité
-                    if ($participation->getEstAccepte()==0 || $participation->getEstAccepte()==2 )
+                    if ($participation->getEstAccepte() == 0 || $participation->getEstAccepte() == 2 )
                     {
                         $participation->setEstAccepte(1);
                         $quitterActivite = $repParticiper->quitterActivite($participation->getActivite()->getId(), $user->getId());
@@ -263,6 +309,44 @@ class UtilisateurController extends Controller
             $this->addFlash('notice', "Vous ne pouvez pas faire ça !");
             return $this->redirect($this->generateUrl('moove_activite_tableauDeBord'));
         }
+    }
+    
+    public function modifierNiveauSportAction($idSport)
+    {
+        $repSport = $this->getRepository('Sport','Activite');
+        $repPratiquer = $this->getRepository('Pratiquer', 'Activite');
+        $user = $this->getUser();
+        $pratiquer = $repPratiquer->findOneBy([
+            'sport' => $idSport,
+            'utilisateur' => $user
+        ]);
+        
+        // Si on ne trouve pas le sport, il n'est pas pratiqué par l'utilisateur, on le redigire donc vers ses sports
+        if(!$pratiquer) {
+            return $this->redirect($this->generateUrl('moove_utilisateur_editer_sports'));
+        }
+        
+        // on récupère l'ancien niveau
+        $ancienNiveau = $pratiquer->getNiveau()->getLibelle();
+
+        // Si l'ancien niveau est débutant, on initialise le slider de la vue à Débutant
+        if($ancienNiveau === "Débutant") $fromNiveau = 0;
+        // Si l'ancien niveau est intermédiaire, on initialise le slider de la vue à Intermédiaire
+        else if($ancienNiveau === "Intermédiaire") $fromNiveau = 1;
+        // Si l'ancien niveau est confirmé, on initialise le slider de la vue à Confirmé
+        else if($ancienNiveau === "Confirmé") $fromNiveau = 2;
+        // Si l'ancien niveau est expert, on initialise le slider de la vue à Expert
+        else if($ancienNiveau === "Expert") $fromNiveau = 3;
+        // on récupère le sport
+        $sport = $repSport->find($idSport);
+        // on récupère tous les niveaux
+        $niveaux = $this->getRepository('Niveau', 'Activite')->findAll();
+        
+            //
+        return $this->render('mooveUtilisateurBundle:EditerSports:modifierNiveau.html.twig', 
+            ['sport' => $sport,
+             'niveaux' => $niveaux,
+             'fromNiveau' => $fromNiveau]);
     }
     
     // /!\ Fonction à partir d'ici 
@@ -303,7 +387,7 @@ class UtilisateurController extends Controller
      * La troisième case est un array contenant les id de tous les sport non pratiqué
      * @return Array<Array<Sport>, int, Array<int>> retourn un tableau contenant la liste des sports, le nombre total de sport correspondant, et l'id des sport ?
      */  
-    private function RecupSportNonPratique()
+    private function recupSportNonPratique()
     {
         $user = $this->getUser();
         //On récupère le manager & le repository de pratiquer, d'activité et de participer

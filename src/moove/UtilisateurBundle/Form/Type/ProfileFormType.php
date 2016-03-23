@@ -86,6 +86,7 @@ class ProfileFormType extends AbstractType
             ->add('photo','file', array('label'=>'form.photo', 'translation_domain'=>'FOSUserBundle','required'=>false, 'constraints' => [
                     new File([
                         'maxSize' => '2M',
+                        'maxSyzeMessage' => 'Le poid de l'image est trop grand, il ne doit pas dépasser 2 MB',
                         'mimeTypes' => [
                             'image/png',
                             'image/jpeg',
@@ -93,7 +94,7 @@ class ProfileFormType extends AbstractType
                             'image/gif',
                             'image/bmp'
                         ],
-                        'mimeTypesMessage' => 'Le type de l\'image est invalide',
+                        'mimeTypesMessage' => 'Le type de l\'image n\'est pas supporté, veuillez choisir une image ayant pour extension : .png, .jpeg, .jpg, .gif ou .bmp.',
                     ])
                 ]
             ))

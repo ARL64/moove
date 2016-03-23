@@ -7,7 +7,6 @@ use moove\ActiviteBundle\Entity\Lieu;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\ExecutionContextInterface;
 use moove\UtilisateurBundle\Validator\Constraints as mooveAssert;
 
 /**

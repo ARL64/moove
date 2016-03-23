@@ -11,7 +11,7 @@ class AgeValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         $now = new \DateTime();
-        if($value == null)
+        if($value === null)
             $value = new \Datetime();
         $age = $now->diff($value);
         if($age->y < 13)

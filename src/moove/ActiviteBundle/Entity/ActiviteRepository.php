@@ -3,7 +3,6 @@
 namespace moove\ActiviteBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
 
 
 /**
@@ -86,6 +85,10 @@ class ActiviteRepository extends EntityRepository
                     ->addSelect('n')
                     ->join('a.lieuRDV', 'lrdv')
                     ->addSelect('lrdv')
+                    ->leftJoin('a.lieuDepart', 'ld')
+                    ->addSelect('ld')
+                    ->leftJoin('a.lieuArrivee', 'la')
+                    ->addSelect('la')
                     ->andWhere('a.estTerminee = 0')
                     ->andWhere('p.estAccepte = 1')
                     //->andWhere('p.estAccepte <> 1')

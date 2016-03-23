@@ -19,7 +19,7 @@
     <section class="content">
         <div class="row">
             <div class="col-md-12">
-                <form name="base" class="form-inline">
+                <form name="base" method="POST" class="form-inline">
                     <input id="autocomplete" type="text" class="form-control" placeholder="Entrez une ville..." {% if app.request.get('ville') %}value="{{ app.request.get('ville') }}"{% endif %} name="ville">
                     <div class="input-group date">
                       <input type="text" placeholder="Date de l'activité" {% if app.request.get('date') %}value="{{ app.request.get('date') }}"{% endif %} class="form-control" name="date"><span class="input-group-addon" ><i class="fa fa-calendar"></i></span>
@@ -32,10 +32,23 @@
                       <option value="sport" {% if app.request.get('order') == "sport" %}selected{% endif %}>Sport</option>
                       {#<option value="ville">Ville</option>#}
                     </select>
+                    <select name="nbResultatsParPage" class="form-control" id="selectNnbResultatsParPage">
+                      <option>Résultats par page</option>
+                      <option {% if app.request.get('nbResultatsParPage') == 1 %}selected{% endif %}>1</option>
+                      <option {% if app.request.get('nbResultatsParPage') == 2 %}selected{% endif %}>2</option>
+                      <option {% if app.request.get('nbResultatsParPage') == 3 %}selected{% endif %}>3</option>
+                      <option {% if app.request.get('nbResultatsParPage') == 4 %}selected{% endif %}>4</option>
+                    </select>
                     {# On utilise ici la fonction sumbit() du 2nd formulaire pour envoyer le résultat. On dois donc rajouté majDate() car on ne clique pas sur le bouton.#}
                     <button type="button" class="btn btn-default" onclick="javascript:majDate();document.filtre.submit()">Rechercher</button>
                 </form>
-                <p>{{ nbActivites }} résultats</p>
+                <p>
+                    {% if tabActivites.getTotalItemCount > 1 %} 
+                        {{ tabActivites.getTotalItemCount }} résultats
+                    {% else %}
+                        {{ tabActivites.getTotalItemCount }} résultat
+                    {% endif %}
+                </p>
             </div>
             <div class="col-lg-12">
                 <div class="col-lg-4 col-md-12  col-xs-12">
@@ -43,17 +56,18 @@
                         <h2>Filtres de recherche</h2>
                         
                         <form name="filtre" method="post">
-                        {# le formulaire doit ressembler a ca
-                                                heure de départ & arriver (un double)
-                                                case à cocher sports | case à cocher niveaux
-                                                bouton radio avec photo  |  spinner (order by)
-                                                nbPlace max (de 0 a 20)
-                                                nbPlaceRestante (un double avec min et max)
+                        {# le formulaire doit ressembler à ça
+                                                heure de départ & arrivée (un double)
+                                                cases à cocher sports | cases à cocher niveaux
+                                                boutons radio avec photo  |  select (order by)
+                                                nbPlace max (de 0 a 20) slider
+                                                nbPlaceRestante (un double avec min et max) slider
                                                 distance max du pts (qu'on a pas regler du tout)#}
                         {# hidden (mise a jour par javascript a partir de l'autre formulaire #}
                         <input type="hidden" name="ville" value="">
                         <input type="hidden" name="date" value="">
                         <input type="hidden" name="order" value="">
+                        <input type="hidden" name="nbResultatsParPage" value="">
         
                         <label for="heure">Heure de départ</label><br>
                         <input id="heure" name="heure" type="text"/><br><br>
@@ -101,10 +115,11 @@
                 		</form>
                     </div>
                 </div>
-                <div class="col-lg-8 col-md-6 col-xs-12">
+                <div class="col-lg-8 col-md-12 col-xs-12">
                     {% for activite in tabActivites %}
                     <a class="list-group-item" href="{{ path('moove_activite_detailsActivite', {idActivite: activite.id}) }}">
                         <article class="row">
+                            <center><h4 class="list-group-item-heading"><strong><i style="font-size:20px;" class="icon-{{ activite.sportPratique.nomIcone }}"></i> Activité {{ activite.sportPratique.nom | lower }} - {{ activite.niveauRequis.libelle }}</strong></h4></center>
                             <div class="col-lg-4">
                                 <div class="media">
                                     <div class="media-left">
@@ -112,7 +127,8 @@
                                     </div>
                                     <div class="media-body">
                                         <h4 class="media-heading">{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</h4>
-                                        <p>{{ ('now'|date('Y') - activite.organisateur.dateNaissance|date('Y') - 1) + ('now'|date('2010-m-d')|date('U') - activite.organisateur.dateNaissance|date('2010-m-d')|date('U') >= 0 ? 1 : 0) }} ans<br>Niveau organisateur</vr></p>
+                                        <p>{{ ('now'|date('Y') - activite.organisateur.dateNaissance|date('Y') - 1) + ('now'|date('2010-m-d')|date('U') - activite.organisateur.dateNaissance|date('2010-m-d')|date('U') >= 0 ? 1 : 0) }} ans<br>
+                                        {% for pratiquer in activite.organisateur.pratiquer %}{% if pratiquer.sport == activite.sportPratique %}Niveau organisateur : {{ pratiquer.niveau.libelle }}{% endif %}{% endfor %}</p>
                                     </div>
                                 </div>
                             </div>
@@ -120,34 +136,37 @@
                                 <div class="media">
                                     <div class="media-body">
                                         <h4 class="media-heading">{{ activite.dateHeureRDV | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm")|capitalize }}</h4>
-                                        <p><i data-toggle="tooltip" data-placement="top" title="Ville correspondante au lieu de rendez-vous" class="fa fa-circle-o" style="color:#ff9800"></i> {{ activite.lieuRDV.ville }}<br>
+                                        <p><i data-toggle="tooltip" data-placement="top" title="Ville correspondante au lieu de rendez-vous" class="fa fa-circle-o" style="color:#ff9800"></i> Ville de départ : {{ activite.lieuRDV.ville }}<br>
                                         {# si le lieu d'arrivée a été spécifié on affiche la ville du lieu d'arrivée #}
                                         {% if activite.lieuArrivee is not null %}
-                                            <i data-toggle="tooltip" data-placement="top" title="Ville correspondante au lieu d'arrivée" class="fa fa-circle-o" style="color:#e51c23"></i> {{ activite.lieuArrivee.ville }}<br>
+                                            <i data-toggle="tooltip" data-placement="top" title="Ville correspondante au lieu d'arrivée" class="fa fa-circle-o" style="color:#e51c23"></i> Ville d'arrivée : {{ activite.lieuArrivee.ville }}<br>
                                         {# sinon on affiche "Non spécifié" #}
                                         {% else %}
                                             <i data-toggle="tooltip" data-placement="top" title="Ville correspondante au lieu d'arrivée" class="fa fa-circle-o" style="color:#e51c23"></i> Non spécifié<br>
                                         {% endif %}
-                                        <i class="icon-{{ activite.sportPratique.nomIcone }}"></i> {{ activite.sportPratique.nom }}</p>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-lg-3">
                                 <div class="media">
                                     <div class="media-body">
-                                        <h4 class="media-heading">xx participants</h4>
-                                        <p><i class="fa fa-users"></i> {{ activite.nbPlaces }} {% if activite.nbPlaces > 1 %} places restantes {% else %} place restante {% endif %}<br><i class="fa fa-bar-chart"></i> {{ activite.niveauRequis.libelle }}</p>
+                                        <h4 class="media-heading">{{ activite.nbParticipants }} participant{% if activite.nbParticipants == 1 %}{% else %}s{% endif %}</h4>
+                                        <p><i class="fa fa-users"></i> {{ activite.nbPlaces - activite.nbParticipants }} {% if activite.nbPlaces > 1 %} places restantes {% else %} place restante {% endif %}</p>
+                                    </div>
                                 </div>
                             </div>
                         </article>
                     </a>
                     {% else %}
-                        <h4>Aucune activité</h4>
+                        <center><h4>Aucune activité trouvée.</h4></center>
                     {% endfor %}
+                    <div class="col-md-5 col-md-offset-7">
+                        <div class="navigation">
+                            {{ knp_pagination_render(tabActivites) }}
+                        </div>
+                    </div>
                 </div>
-                
             </div>
-        </div>
     </section>
     
 {% endblock %}
@@ -228,6 +247,7 @@
             document.filtre.date.value = document.base.date.value;
             document.filtre.ville.value = document.base.ville.value;
             document.filtre.order.value = document.base.order.value;
+            document.filtre.nbResultatsParPage.value = document.base.nbResultatsParPage.value;
         }
     
     	function checkSport()
@@ -251,35 +271,3 @@
     	}
     </script>
 {% endblock %}
-
-{#
-                <div class="list-group">
-                    {% for activite in tabActivites %}
-                      <a href="{{ path('moove_activite_detailsActivite', {idActivite: activite.id}) }}" class="list-group-item">
-                        <div class="col-sm-2 media">
-                            <div class="media-left">
-                                <img class="media-object img-rounded img-responsive"  src="{{ asset(activite.organisateur.URLAvatar) }}" alt="Photo de l'organisateur" >
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <p>{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}</p>
-                            <p>{{ ('now'|date('Y') - activite.organisateur.dateNaissance|date('Y') - 1) + ('now'|date('2010-m-d')|date('U') - activite.organisateur.dateNaissance|date('2010-m-d')|date('U') >= 0 ? 1 : 0) }} ans</p>
-                            <p>Niveau organisateur</p>
-                        </div>
-                        <div class="col-md-4">
-                            <h4 class="list-group-item-heading">{{ activite.dateHeureRDV | localizeddate('none', 'none', null, null, "cccc d LLLL yyyy à H'h'mm")}}</h4>
-                            <p>Lieu RDV : {{ activite.lieuRDV.ville }}</p>
-                            <p>Sport : {{ activite.sportPratique.nom }}</p>
-                        </div>
-                        <div class="col-md-3">
-                            <h4 class="list-group-item-heading">  participants </h4>
-                            <p> {{ activite.nbPlaces }} {% if activite.nbPlaces > 1 %} places restantes {% else %} place restante {% endif %}</p>
-                            <p>Niveau : {{ activite.niveauRequis.libelle }}</p>
-                        </div>
-                      </a>
-
-                    {% else %}
-                        Aucune activité
-                    {% endfor %}
-                </div>
-#}

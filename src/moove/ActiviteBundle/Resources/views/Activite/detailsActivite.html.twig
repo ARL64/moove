@@ -203,7 +203,7 @@
       <div class="panel panel-default">
         {# titre du panel #}
         <div class="panel-heading">
-          <h3 class="panel-title">Participants ({% if activite.nbPlaces - nbParticipants <= 1 %}<span class="text-red">{{ activite.nbPlaces - nbParticipants }}  place restante</span>{% else %}{{ activite.nbPlaces - nbParticipants }}  places restantes{% endif %})</h3>
+          <h3 class="panel-title">Participants ({% if activite.nbPlaces - activite.nbParticipants == 1 %}<span class="text-red">{{ activite.nbPlaces - activite.nbParticipants }}  place restante</span>{% else %}{{ activite.nbPlaces - activite.nbParticipants }}  places restantes{% endif %})</h3>
         </div>
         {# corps du panel #}
         <div class="panel-body">

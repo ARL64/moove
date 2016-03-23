@@ -1,16 +1,11 @@
 <?php
-
 namespace moove\ActiviteBundle\Controller;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use moove\ActiviteBundle\Entity\Activite;
-use moove\ActiviteBundle\Entity\Sport;
 use moove\ActiviteBundle\Entity\Lieu;
 use moove\ActiviteBundle\Entity\Participer;
 use Symfony\Component\HttpFoundation\Request;
-use \GeocodeMapsGeocoder;
 use moove\ActiviteBundle\Form\ActiviteType;
-
 use moove\ActiviteBundle\Entity\Commentaire;
 
 require_once __DIR__ . '/../../../../vendor/jstayton/google-maps-geocoder/src/GoogleMapsGeocoder.php';
@@ -78,8 +73,6 @@ class ActivitesController extends Controller
         $repParticiper = $this->getRepository('Participer');
         /** Repository de Activite */
         $repActivite = $this->getRepository('Activite');
-        /** Repository de Utilisateur */
-        $repUtilisateur = $this->getRepository('Utilisateur', 'Utilisateur');
         /** Repository de Pratiquer */
         $repPratiquer = $this->getRepository('Pratiquer');
         /** Repository de Niveau */
@@ -127,7 +120,6 @@ class ActivitesController extends Controller
 
         if ($formulaireCommentaire->isSubmitted() && $formulaireCommentaire->isValid())
         {
-            var_dump($resultat);
             //$resultat = $formulaireCommentaire->getCommentaire();
             $resultat   //->setContenu($formulaireCommentaire)
                         ->setPosteA(new \DateTime("NOW"))
@@ -165,7 +157,6 @@ class ActivitesController extends Controller
         // On récupère l'utilisateur
         $utilisateur = $this->getUser(); 
         
-        $request = Request::createFromGlobals();
         // on obtiet ici les valeurs des variables de l'URL (situer apres ".php?")
         $order = $this->getOrderBy($request->query->get('order'));
         $type = $request->query->get('type');
@@ -173,11 +164,8 @@ class ActivitesController extends Controller
             $type = "DESC";
         // définis le nombre de résultat affiché par page
         $nbResultatsParPage = $request->query->get('nbResultatsParPage');
-        if(is_null($nbResultatsParPage)) {
-            $nbResultatsParPage = 10;
-        }
-        else {
-            $nbResultatsParPage = $request->query->get('nbResultatsParPage');
+        if(!preg_match("#^[0-9]{1,3}$#", $nbResultatsParPage)) {
+            $nbResultatsParPage = 2;
         }
         // On récupère le repository Activite
         $repActivite = $this->getRepository('Activite');
@@ -185,11 +173,8 @@ class ActivitesController extends Controller
         $findTabActivites = $repActivite->findByUtilisateurAccepter($utilisateur->getId(), 1, true, $order, $type);
         // On récupère les activités pagninées avec 2 éléments par page
         $tabActivites  = $this->get('knp_paginator')->paginate($findTabActivites, $request->query->getInt('page', 1), $nbResultatsParPage);
-        /** Liste du nombre de participations */
-        $tabNbParticipants = $this->getNbParticipantsParActivite($tabActivites);
         return $this->render('mooveActiviteBundle:Accueil:tableauDeBordHistorique.html.twig', array(
                                     'tabActivites' => $tabActivites, 
-                                    'tabNbParticipants' => $tabNbParticipants,
                                     'nbResultatsParPage' => $nbResultatsParPage));
     }
     
@@ -205,22 +190,15 @@ class ActivitesController extends Controller
         /** liste des activités de l'utilisateur courrant*/
         $utilisateur = $this->getUser();
         
-        $request = Request::createFromGlobals();
-        
-        
         // on obtiet ici les valeurs des variables de l'URL (situer apres ".php?")
         $order = $this->getOrderBy($request->query->get('order'));
         $type = $request->query->get('type');
         if(is_null($type))
             $type = "DESC";
         // définis le nombre de résultat affiché par page
-        
         $nbResultatsParPage = $request->query->get('nbResultatsParPage');
-        if(is_null($nbResultatsParPage)) {
-            $nbResultatsParPage = 10;
-        }
-        else {
-            $nbResultatsParPage = $request->query->get('nbResultatsParPage');
+        if(!preg_match("#^[0-9]{1,3}$#", $nbResultatsParPage)) {
+            $nbResultatsParPage = 2;
         }
         // On récupère le repository Activite
         $repActivite = $this->getRepository('Activite');
@@ -252,9 +230,8 @@ class ActivitesController extends Controller
      * Renvoie à la page "http://moove-arl64.c9users.io/web/app_dev.php/rechercher"
      * @return <i>Render</i> redirige sur mooveActiviteBundle:Activite:rechercherActivites.html.twig
      */
-    public function rechercherActiviteAction()
+    public function rechercherActiviteAction(Request $request)
     {
-        $request = Request::createFromGlobals();
         
         // On obtient la liste des sport (pour la génération de la liste des sports, donc trié dans l'ordre ASC)
         $repSport = $this->getRepository('Sport');
@@ -264,16 +241,16 @@ class ActivitesController extends Controller
         $repNiveau = $this->getRepository('Niveau');
         $tabNiveau = $repNiveau->findBy(array(), array('libelle'=>'asc'));
         
-        if(!empty($_POST))
+        if(!empty($request->request->all()))
         {
             // l'information d'un slider est recu sous la forme d'un string avec les deux valeur
             // on explode donc notre string et on récupère les tableau correspondant avec [0] = 1er valeur (min) et [1] = 2nd valeur (max)
-            $tabHeure = explode(";", $_POST['heure']);
-            $nbPlaceTab = explode(";", $_POST['nbPlaces']);
+            $tabHeure = explode(";", $request->request->get('heure'));
+            $nbPlaceTab = explode(";", $request->request->get('nbPlaces'));
             // on vérifie que la date est étais remplis. (étant donnée qu'elle peu ne pas être renseigné.)
-            if($_POST['date'] != "")
+            if($request->request->get('date') != "")
             { 
-                $tabDate = explode("/", $_POST['date']);
+                $tabDate = explode("/", $request->request->get('date'));
                 $datePrecise = $tabDate[2] . "-" . $tabDate[1] . "-" . $tabDate[0];
             }
             else
@@ -294,7 +271,7 @@ class ActivitesController extends Controller
             foreach($tabSport as $sport)
             {
                 // si la valeur existe dans la variable $_POST, alors elle cela signfie qu'elle est coché, et donc que l'utilisateur la demande.
-                if(array_key_exists('name_'.$sport->getNom(), $_POST))
+                if(array_key_exists('name_'.$sport->getNom(), $request->request->all()))
                 {
                     $arraySport .= $sport->getNom() . ",";
                     // si l'on a trouver au moins un sport on change notre varaible a true pour éviter de mettre a null notre variable
@@ -313,7 +290,7 @@ class ActivitesController extends Controller
             $arrayNiveau = "[";
             foreach($tabNiveau as $niveau)
             {
-               if(array_key_exists('name_'.$niveau->getLibelle(), $_POST)) // cette condition bug
+               if(array_key_exists('name_'.$niveau->getLibelle(), $request->request->all())) // cette condition bug
                {
                    $arrayNiveau .= $niveau->getLibelle() . ",";
                    $niveauSelected = true;
@@ -326,18 +303,18 @@ class ActivitesController extends Controller
             $niveau = $arrayNiveau;
             
             // on récupère l'information de photo. la valeurs est accorder directement dans le html dans la baslie "value"
-            $photo = $_POST['photo'];
+            $photo = $request->request->get('photo');
             // on définis ici les place ne fonction des slider. 
             // dans le premier cas, le slider a une seul valeurs donc 
-            $nbPlaceRestante = intval($_POST['nbPlacesRestantes']);
+            $nbPlaceRestante = intval($request->request->get('nbPlacesRestantes'));
             // ici, on récupère les valeurs depuis  le tableau déjà créer avant
             $nbPlaceMin = intval($nbPlaceTab[0]);
             $nbPlaceMax = intval($nbPlaceTab[1]);
             // comme premier cas
-            $distanceMax = intval($_POST['rayonRecherche']);
+            $distanceMax = intval($request->request->get('rayonRecherche'));
             
             // on passe par la fonction getOrder by qui convertie notre mot clé en syntaxe de base de donnée
-            $order = $this->getOrderBy($_POST['order']);
+            $order = $this->getOrderBy($request->request->get('order'));
             $type = null;//$request->query->get('type'); // TODO
             if(is_null($type))
                 $type = "ASC";
@@ -361,18 +338,18 @@ class ActivitesController extends Controller
                 $type = "ASC";
         }
         
+        $nbResultatsParPage = $request->request->get('nbResultatsParPage');
+        if(!preg_match("#^[0-9]{1,3}$#", $nbResultatsParPage)) {
+            $nbResultatsParPage = 2;
+        }
         // On récupère le repository Activite
         $repActivite = $this->getRepository('Activite');
         // On récupère toutes les activités dans $tabActivites
-        //$tabActivites = $repActivite->findAll();
         $tabActivites = $repActivite->findWhitCondition($datePrecise, $heureMin, $heureMax, $sport, $niveau, $photo, $nbPlaceRestante, $nbPlaceMin, $nbPlaceMax, $distanceMax, $order, $type);
-        
-        // On compte combien il y a d'activités
-        $nbActivites = count($tabActivites);
+        $tabActivites  = $this->get('knp_paginator')->paginate($tabActivites, $request->query->getInt('page', 1), $nbResultatsParPage);
         
         return $this->render('mooveActiviteBundle:Activite:rechercherActivites.html.twig', array(
             'tabActivites' => $tabActivites,
-            'nbActivites' => $nbActivites,
             'tabSport' => $tabSport,
             'tabNiveau' => $tabNiveau
         ));
@@ -399,6 +376,7 @@ class ActivitesController extends Controller
                     ->setDateFermeture(new \Datetime())
                     ->setDateHeureRDV(new \Datetime())
                     ->setEstTerminee(false)
+                    ->setNbParticipants(1)
                 ;
         // On crée le formulaire permettant de saisir un livre
         $formulaireActivite = $this->createForm(new ActiviteType, $activite);
@@ -470,9 +448,18 @@ class ActivitesController extends Controller
     public function accepterDemandeParticipationActiviteAction($idActivite, $idUtilisateur)
     {
         $estAccepte = $this->demandeParticipation($idActivite, $idUtilisateur, 1);
-        if($estAccepte)
+        if($estAccepte) {
+            // On récupère le repository Activite
+            $repActivite = $this->getRepository('Activite');
+            $activite = $repActivite->find($idActivite);
+            $activite->setNbParticipants($activite->getNbParticipants()+1);
+            // On appelle le gestionnaire d'entité
+            $gestionnaireEntite = $this->getDoctrine()->getManager();
+            $gestionnaireEntite->persist($activite);
+            $gestionnaireEntite->flush();
             // On ajoute un message flash à la session afin de notifier l'utilisateur
             $this->addFlash('notice', "L'utilisateur a bien été accepté !");
+        }
         else
             $this->addFlash('notice', "La data limite d'inscription est dépassée ou il n'y a plus de places disponibles dans l'activité.");
         
@@ -517,7 +504,7 @@ class ActivitesController extends Controller
         $dateAujourdhui = new \Datetime();
             
         // On vérifié que l'activité n'est pas remplie et que l'activité n'est pas terminée
-        if($activite->getNbPlaces() > $nbParticipants && $dateAujourdhui < $activite->getDateFermeture() && !$activite->getEstTerminee())
+        if($activite->getNbPlaces() > $activite->getNbParticipants() && $dateAujourdhui < $activite->getDateFermeture() && !$activite->getEstTerminee())
         {
             // On récupère le repository Activite
             $repParticiper = $this->getRepository('Participer');
@@ -528,6 +515,7 @@ class ActivitesController extends Controller
             $participer->setActivite($activite)
                        ->setUtilisateur($this->getUser())
                        ->setEstAccepte(0);
+
             // On appelle le gestionnaire d'entité
             $gestionnaireEntite = $this->getDoctrine()->getManager();
             
@@ -557,7 +545,19 @@ class ActivitesController extends Controller
         // On récupère l'utilisateur connecté
         $utilisateur = $this->getUser();
         
-        // if($utilisateur->getId() == $idUtilisateur)
+        // On récupère le repository Activite
+        $repActivite = $this->getRepository('Activite');
+
+        // On récupère l'activité
+        $activite = $repActivite->find($idActivite);
+        $activite->setNbParticipants($activite->getNbParticipants()-1);
+        
+        // On appelle le gestionnaire d'entité
+        $gestionnaireEntite = $this->getDoctrine()->getManager();
+        $gestionnaireEntite->persist($activite);
+        
+        // On enregistre la modification en base de données
+        $gestionnaireEntite->flush();
         
         // On récupère le repository participer
         $repParticiper = $this->getRepository('Participer');
@@ -654,10 +654,7 @@ class ActivitesController extends Controller
         }
     }
 
-    // /!\ Fin actions métier
-    
-    
-    
+    // /!\ Fin actions métiers
  
     
     // /!\ Fonction à partir d'ici 
@@ -879,7 +876,7 @@ class ActivitesController extends Controller
      * @param $order <i>(String)</i> mot clé définissant la strucuture
      * @return <i>String</i> chemin d'acces à la donnée dans la base.
      */
-    public function getOrderBy($order)
+    private function getOrderBy($order)
     {
         // Afin d'évité d'afficher la strucuture de la base dans l'url, on transmet un mot clé.
         switch ($order) 
@@ -928,3 +925,4 @@ class ActivitesController extends Controller
     }
     
 } // fin de "class ActivitesController extends Controller"
+?>

@@ -6,6 +6,23 @@
     <br>
     <h3>Liste de toutes les activités auxquelles vous avez participées ou que vous avez organisées.</h3>
     <br>
+    <div class="row">
+      <div class="col-md-3 col-md-offset-9">
+        <label for="selectNbResultatsParPage">Nombre de résultats par page</label>
+        <form class="form-inline" method="GET" action="{{ path('moove_activite_historiqueActivite') }}">
+          <div class="form-group">
+            <select name="nbResultatsParPage" class="form-control" id="selectNnbResultatsParPage">
+              <option {% if app.request.get('nbResultatsParPage') == 1 %}selected{% endif %}>1</option>
+              <option {% if app.request.get('nbResultatsParPage') == 2 %}selected{% endif %}>2</option>
+              <option {% if app.request.get('nbResultatsParPage') == 3 %}selected{% endif %}>3</option>
+              <option {% if app.request.get('nbResultatsParPage') == 4 %}selected{% endif %}>4</option>
+            </select>
+            <button class="btn btn-primary" type="submit">Actualiser</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <br>
     <div class="table-responsive">
       <table class="table table-striped table-hover ">
         {# nom des colones du tableau #}
@@ -32,7 +49,7 @@
             <td>{% if activite.lieuDepart is not null%}{{ activite.lieuDepart.nom }}{% else %}Non spécifié{% endif %}</td>
             <td>{% if activite.lieuArrivee is not null%}{{ activite.lieuArrivee.nom }}{% else %}Non spécifié{% endif %}</td>
             <td>{{ activite.dateHeureRDV | date("d/m/y") }}</td>
-            <td>{{ tabNbParticipants[loop.index0] ~ "/" ~ activite.nbPlaces }}</td>
+            <td>{{ activite.nbParticipants ~ "/" ~ activite.nbPlaces }}</td>
             <td>{% if activite.organisateur == app.user %} Moi {% else %}{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}{% endif %}</td>
             <td><a href="{{ path('moove_activite_detailsActivite', {idActivite: activite.id}) }}" class="btn btn-primary btn-xs">Détails</a></td>
           </tr>
@@ -47,19 +64,5 @@
 {% block navTableau %}
   <div class="navigation">
       {{ knp_pagination_render(tabActivites) }}
-  </div>
-  <div class="col-md-3 col-md-offset-9">
-    <label for="selectNbResultatsParPage">Nombre de résultats par page</label>
-    <form class="form-inline" method="GET" action="{{ path('moove_activite_historiqueActivite') }}">
-      <div class="form-group">
-        <select name="nbResultatsParPage" class="form-control" id="selectNnbResultatsParPage">
-          <option {% if app.request.get('nbResultatsParPage') == 1 %}selected{% endif %}>1</option>
-          <option {% if app.request.get('nbResultatsParPage') == 2 %}selected{% endif %}>2</option>
-          <option {% if app.request.get('nbResultatsParPage') == 3 %}selected{% endif %}>3</option>
-          <option {% if app.request.get('nbResultatsParPage') == 4 %}selected{% endif %}>4</option>
-        </select>
-        <button class="btn btn-primary" type="submit">Actualiser</button>
-      </div>
-    </form>
   </div>
 {% endblock %}

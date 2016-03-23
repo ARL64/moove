@@ -6,7 +6,7 @@ moove_utilisateur_profileUtilisateur:
         idUtilisateur: \d+
         
 moove_utilisateur_supprimer_sport:
-    path: /utilisateur/supprimerSport/{idUtilisateur}/{idSport}
+    path: /utilisateur/supprimerSport/{idSport}
     defaults: { _controller: mooveUtilisateurBundle:Utilisateur:supprimerSport }
     
 moove_utilisateur_supprimer_photo:
@@ -18,7 +18,7 @@ moove_utilisateur_editer_sports:
     defaults: { _controller: mooveUtilisateurBundle:Utilisateur:editerSports }
     
 moove_utilisateur_ajouter_sport:
-    path: /utilisateur/ajouter/sport/{idSport}/{idNiveau}
+    path: /utilisateur/ajouter/sport/niveau/{idSport}
     defaults: { _controller: mooveUtilisateurBundle:Utilisateur:ajouterSport }
 
 moove_utilisateur_choisir_sport:
@@ -32,3 +32,11 @@ moove_utilisateur_choisir_niveau:
 moove_utilisateur_supprimer_utilisateur:
     path: /utilisateur/supprimerUtilisateur/{idUtilisateur}
     defaults: { _controller: mooveUtilisateurBundle:Utilisateur:supprimerUtilisateur }
+
+moove_utilisateur_modifier_niveau_sport:
+    path: /utilisateur/modifier/sport/{idSport}
+    defaults: { _controller: mooveUtilisateurBundle:Utilisateur:modifierNiveauSport }
+    
+moove_utilisateur_modifier_niveau_sport_confirm:
+    path: /utilisateur/modifier/sport/confirmer/{idSport}
+    defaults: { _controller: mooveUtilisateurBundle:Utilisateur:confimerModifierNiveauSport }

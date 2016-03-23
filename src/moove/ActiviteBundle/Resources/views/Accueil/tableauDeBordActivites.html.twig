@@ -4,7 +4,24 @@
 {% block bodyTableau %}
     <br>
     <h3>Liste de toutes les activités auxquelles vous participez ou que vous organisez.</h3>
-    <br><br>
+    <br>
+    <div class="row">
+      <div class="col-md-3 col-md-offset-9">
+        <label for="selectNbResultatsParPage">Nombre de résultats par page</label>
+        <form class="form-inline" method="GET" action="{{ path('moove_activite_enCoursActivite') }}">
+          <div class="form-group">
+            <select name="nbResultatsParPage" class="form-control" id="selectNnbResultatsParPage">
+              <option {% if app.request.get('nbResultatsParPage') == 1 %}selected{% endif %}>1</option>
+              <option {% if app.request.get('nbResultatsParPage') == 2 %}selected{% endif %}>2</option>
+              <option {% if app.request.get('nbResultatsParPage') == 3 %}selected{% endif %}>3</option>
+              <option {% if app.request.get('nbResultatsParPage') == 4 %}selected{% endif %}>4</option>
+            </select>
+            <button class="btn btn-primary" type="submit">Actualiser</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <br>
     <div class="table-responsive">
       <table class="table table-striped table-hover">
         {# nom des colones du tableau #}
@@ -37,7 +54,7 @@
               <td>{{ activite.dateHeureRDV | date("d/m/y") }}</td>
               {# le nombre de participant est situer sur un 2nd tableau. Chaque case de ce tableau coincide les cases des autres tableaux. 
                   Ainsi, la case situer a "indexResultat" correspond au nombre de participation dans l'activité actuel. #}
-              <td>{{ tabNbParticipants[indexResultat] ~ "/" ~ activite.nbPlaces }}</td>
+              <td>{{ activite.nbParticipants ~ "/" ~ activite.nbPlaces }}</td>
               <td>{% if activite.organisateur == app.user %} Moi {% else %}{{ activite.organisateur.prenom ~ " " ~ activite.organisateur.nom }}{% endif %}</td>
               {# On applique ici le même résonnement que pour le tableau du nombres de participation #}
               {% if tabEstAccepte[indexResultat] == 1 %}
@@ -60,19 +77,5 @@
 {% block navTableau %}
   <div class="navigation pull-right">
       {{ knp_pagination_render(tabActivites) }}
-  </div>
-  <div class="col-md-3 col-md-offset-9">
-    <form class="form-inline" method="GET" action="{{ path('moove_activite_enCoursActivite') }}">
-      <div class="form-group">
-        <label for="selectNbResultatsParPage">Nombre de résultats par page</label>
-        <select name="nbResultatsParPage" class="form-control" id="selectNnbResultatsParPage">
-          <option {% if app.request.get('nbResultatsParPage') == 1 %}selected{% endif %}>1</option>
-          <option {% if app.request.get('nbResultatsParPage') == 2 %}selected{% endif %}>2</option>
-          <option {% if app.request.get('nbResultatsParPage') == 3 %}selected{% endif %}>3</option>
-          <option {% if app.request.get('nbResultatsParPage') == 4 %}selected{% endif %}>4</option>
-        </select>
-        <button class="btn btn-primary" type="submit">Actualiser</button>
-      </div>
-    </form>
   </div>
 {% endblock %}

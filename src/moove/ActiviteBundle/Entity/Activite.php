@@ -56,6 +56,13 @@ class Activite
     private $nbPlaces;
 
     /**
+     * @var integer
+     * 
+     * @ORM\Column(name="nbParticipants", type="integer")
+     */
+    private $nbPartipants;
+
+    /**
      * @var string
      * @ORM\Column(name="description", type="text", nullable=true)
      */
@@ -130,6 +137,9 @@ class Activite
      */
     private $adresseLieuArrivee;
 
+    /*
+     * 
+     */
 
     /**
      * @ORM\OneToMany(targetEntity="moove\ActiviteBundle\Entity\Participer", mappedBy="activite")
@@ -138,7 +148,8 @@ class Activite
 
     /**
      * @Assert\Callback
-     * COmmentaires
+     * Permet de vérifier dans un même formualaire que la date de fermeture de l'activité se trouve avant la date de rendez-vous
+     * Permet de vérifier que le nombre de participants d'une activité est inférieur ou égal au nombre de places totales de l'activité
      */
     private function validate(ExecutionContextInterface $context)
     {
@@ -152,6 +163,15 @@ class Activite
                 null
             );
 
+        }
+        
+        if($this->nbParticipants > $this->nbPlaces) {
+            $context->addViolationAt(
+                'nbParticipants',
+                'L\'activité est déjà pleine, vous ne pouvez pas la rejoindre.',
+                [],
+                null
+            );
         }
     }
 
@@ -233,6 +253,29 @@ class Activite
     public function getNbPlaces()
     {
         return $this->nbPlaces;
+    }
+    
+    /**
+     * Set nbParticipants
+     *
+     * @param integer $nbParticipants
+     * @return Activite
+     */
+    public function setNbParticipants($nbPartipants)
+    {
+        $this->nbPartipants = $nbPartipants;
+
+        return $this;
+    }
+
+    /**
+     * Get nbPartipants
+     *
+     * @return integer 
+     */
+    public function getNbParticipants()
+    {
+        return $this->nbPartipants;
     }
 
     /**

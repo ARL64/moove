@@ -4,12 +4,12 @@
     <link rel="stylesheet" href="{{ asset('css/slider/ion.rangeSlider.css') }}">
     <link rel="stylesheet" href="{{ asset('css/slider/ion.rangeSlider.skinFlat.css') }}">
 {% endblock %} 
-{% block title %}Ajouter un sport{% endblock %}
+{% block title %}Modifier un sport{% endblock %}
 
 {% block body %}
     {# Titre de la page #}
     <section class="content-header">
-      <h1>Ajouter un sport</h1>
+      <h1>Modifier un sport</h1>
     </section>
     
     <section class="content">
@@ -17,9 +17,9 @@
             <div class="col-md-1"></div>
             <div class="col-md-10">
                 <p><i class="icon-{{ sport.nomIcone }}"></i> Choisissez votre niveau pour le {{ sport.nom }}</p>
-                <form methode="POST" action="{{ path('moove_utilisateur_ajouter_sport', {'idSport': sport.id }) }}">
+                <form method="POST" action="{{ path('moove_utilisateur_modifier_niveau_sport_confirm', {'idSport': sport.id }) }}">
                     <input id="niveau" name="niveau" type="text" /></br>
-                    <button type="submit" class="btn btn-primary">Ajouter le sport</button>
+                    <button type="submit" class="btn btn-primary">Modifier le niveau</button>
                 </form>
             </div>
         </div>
@@ -34,7 +34,7 @@
         var $niveau = $("#niveau");
         $niveau.ionRangeSlider({
             grid: true,
-            from: 0,
+            from: {{ fromNiveau }},
             hide_min_max: true,
             hide_from_to: true,
             values: [{% for niveau in niveaux %}{% if loop.last %}"{{ niveau.libelle }}"{% else %}"{{ niveau.libelle}}",{% endif %}{% endfor %}]

@@ -53,6 +53,7 @@ class PeuplerActivite extends AbstractFixture implements FixtureInterface, Order
 		            ->setSportPratique($this->getReference('sport-' . $line[8]))
 		            ->setLieuRDV($this->getReference('lieu-' . $line[9]))
 		            ->setDescription($line[12])
+		            ->setNbParticipants($line[13])
 
 		            ;
 		         
