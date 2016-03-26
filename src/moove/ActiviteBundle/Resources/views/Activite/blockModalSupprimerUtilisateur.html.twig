@@ -1,0 +1,33 @@
+{# Modal Refuser #}
+<div class="modal fade" id="modalSupprimerUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Fermer"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Confirmation</h4>
+      </div>
+      
+      
+      <div class="modal-body">
+       <p>
+         Êtes-vous sur de vouloir refuser la participation de 
+         <a href="{{ path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}" >
+            {{ participationCourant.utilisateur.prenom ~ " " ~ participationCourant.utilisateur.nom }} 
+         </a>
+         à votre activité 
+         <a href="{{ path('moove_activite_detailsActivite', {idActivite: participationCourant.activite.id}) }}" >
+            {{ participationCourant.activite.sportPratique.nom | lower }} du {{ participationCourant.activite.dateHeureRDV | date("d/m/y") }}
+         </a> 
+        </p>
+      </div>
+      
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Annuler</button>
+        <a href="{{ path('moove_activite_supprimer_participation_utilisateur', {'idActivite': participationCourant.activite.id, 'idUtilisateur': participationCourant.utilisateur.id, 'organisateur': app.user.id}) }}">
+          <button type="button" class="btn btn-danger">Oui, supprimer</button>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

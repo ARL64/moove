@@ -123,7 +123,7 @@ class ActivitesController extends Controller
             //$resultat = $formulaireCommentaire->getCommentaire();
             $resultat   //->setContenu($formulaireCommentaire)
                         ->setPosteA(new \DateTime("NOW"))
-                        ->setType("")
+                        ->setType("utilisateurs")
                         ->setActivite($activite)
                         ->setUtilisateur($utilisateur)
             ;
@@ -393,6 +393,7 @@ class ActivitesController extends Controller
             $adresseLieuDepart = $formulaireActivite->getData()->getAdresseLieuDepart();
             $adresseLieuArrivee = $formulaireActivite->getData()->getAdresseLieuArrivee();
             
+            
             // On récupère les infos de chaque lieu dans un nouvel objet
             $lieuRDV = $this->getInfosAdresse($adresseLieuRDV);
             
@@ -491,46 +492,54 @@ class ActivitesController extends Controller
      */
     public function demandeParticipationActiviteAction($idActivite, $idUtilisateur)
     {
-        // On récupère le repository Activite
-        $repActivite = $this->getRepository('Activite');
-
-        // On récupère l'activité
-        $activite = $repActivite->find($idActivite);
-        
-        // On récupère le nombre de participants de l'activité
-        $nbParticipants = $this->getNbParticipantsActivite($idActivite);
-        
-        // On récupère la date du jour
-        $dateAujourdhui = new \Datetime();
-            
-        // On vérifié que l'activité n'est pas remplie et que l'activité n'est pas terminée
-        if($activite->getNbPlaces() > $activite->getNbParticipants() && $dateAujourdhui < $activite->getDateFermeture() && !$activite->getEstTerminee())
+        if($idUtilisateur == $this->getUser())
         {
             // On récupère le repository Activite
-            $repParticiper = $this->getRepository('Participer');
+            $repActivite = $this->getRepository('Activite');
+    
+            // On récupère l'activité
+            $activite = $repActivite->find($idActivite);
             
-            // On récupère l'objet Participer de l'utilisateur ayant demandé la participation avec l'id $idUtilisateur
-            $participer = new Participer();
-            // On accepte l'utilisateur dans l'activité
-            $participer->setActivite($activite)
-                       ->setUtilisateur($this->getUser())
-                       ->setEstAccepte(0);
-
-            // On appelle le gestionnaire d'entité
-            $gestionnaireEntite = $this->getDoctrine()->getManager();
+            // On récupère le nombre de participants de l'activité
+            $nbParticipants = $this->getNbParticipantsActivite($idActivite);
             
-            // On persiste la participation dans la base de données
-            $gestionnaireEntite->persist($participer);
-            
-            // On enregistre la modification en base de données
-            $gestionnaireEntite->flush();
-            
-            // On ajoute un message flash à la session afin de notifier l'utilisateur que la demande a été envoyée
-            $this->addFlash('notice', "Votre demande de participation a été envoyée ! L'organisateur doit accepter votre demande pour que vous participiez à l'activité.");
-            return $this->redirect($this->generateUrl('moove_activite_detailsActivite', ['idActivite' => $activite->getId()]));
+            // On récupère la date du jour
+            $dateAujourdhui = new \Datetime();
+                
+            // On vérifié que l'activité n'est pas remplie et que l'activité n'est pas terminée
+            if($activite->getNbPlaces() > $activite->getNbParticipants() && $dateAujourdhui < $activite->getDateFermeture() && !$activite->getEstTerminee())
+            {
+                // On récupère le repository Activite
+                $repParticiper = $this->getRepository('Participer');
+                
+                // On récupère l'objet Participer de l'utilisateur ayant demandé la participation avec l'id $idUtilisateur
+                $participer = new Participer();
+                // On accepte l'utilisateur dans l'activité
+                $participer->setActivite($activite)
+                           ->setUtilisateur($this->getUser())
+                           ->setEstAccepte(0);
+    
+                // On appelle le gestionnaire d'entité
+                $gestionnaireEntite = $this->getDoctrine()->getManager();
+                
+                // On persiste la participation dans la base de données
+                $gestionnaireEntite->persist($participer);
+                
+                // On enregistre la modification en base de données
+                $gestionnaireEntite->flush();
+                
+                // On ajoute un message flash à la session afin de notifier l'utilisateur que la demande a été envoyée
+                $this->addFlash('notice', "Votre demande de participation a été envoyée ! L'organisateur doit accepter votre demande pour que vous participiez à l'activité.");
+            }
+            else
+            {
+                $this->addFlash('notice', "La data limite d'inscription est dépassée ou il n'y a plus de places disponibles dans l'activité.");
+            }
         }
-        
-        $this->addFlash('notice', "La data limite d'inscription est dépassée ou il n'y a plus de places disponibles dans l'activité.");
+        else
+        {
+            $this->addFlash('notice', "Vous ne pouvez pas inscrire quelqu'un d'autre que vous même.");
+        }
         return $this->redirect($this->generateUrl('moove_activite_detailsActivite', ['idActivite' => $activite->getId()]));
     }
       
@@ -564,8 +573,8 @@ class ActivitesController extends Controller
         $quitterActivite = $repParticiper->quitterActivite($idActivite, $utilisateur);
         return $this->redirect($this->generateUrl('moove_activite_detailsActivite', array ('idActivite'=> $idActivite)));
     }
-    
-    /**
+ 
+     /**
      * Supprime l'activité si, et uniquement si, l'utilisateur qui a engendrer a requête est l'organisateur
      * @param <i>(Activite)</i> id de l'activite courrante
      * @param <i>(Utilisateur)</i> id de l'organisateur
@@ -583,6 +592,37 @@ class ActivitesController extends Controller
             $supprimerActivite = $repActivite->supprimerActivite($idActivite, $organisateur);
             $this->addFlash('notice', "Votre activité a bien été supprimée");
             return $this->redirect($this->generateUrl('moove_activite_tableauDeBord'));
+        }
+        else
+        {
+           $this->addFlash('notice', "Vous ne pouvez pas faire ça !");
+            return $this->redirect($this->generateUrl('moove_activite_tableauDeBord'));
+        }
+    }
+    
+    /**
+     * Supprime l'utilisateur de l'activité si, et uniquement si la personne supprimé, n'est pas l'organisateur
+     * @param <i>(Activite)</i> id de l'activite courrante
+     * @param <i>(Utilisateur)</i> id de l'utilisateur a exclure
+     * @param <i>(Utilisateur)</i> id de l'organisateur a exclure
+     * @return <i>Render</i> redirige sur moove_activite_tableauDeBord
+     */
+    public function supprimerParticipationActiviteAction($idActivite, $idUtilisateur ,$organisateur)
+    {
+        $orga = $this->getUser()->getId();
+        if($organisateur == $orga && $organisateur != $idUtilisateur)
+        {
+            //On récupère le répository d'Activité
+            $repParticiper = $this->getRepository('Participer');
+            $repActivite = $this->getRepository('Activite');
+            //on passe a 2 l'utilisateur courrant
+            $participation = $repParticiper->findOneBy(array('activite' => $idActivite, 'utilisateur' => $idUtilisateur));
+            $participation->setEstAccepte(2);
+            $activite = $repActivite->find($idActivite);
+            $activite->setNbParticipants($activite->getNbParticipants() - 1);
+            $this->getDoctrine()->getManager()->flush();
+            $this->addFlash('notice', "L'utilisateur à bien été supprimé.");
+            return $this->redirect($this->generateUrl('moove_activite_detailsActivite', array('idActivite' => $idActivite)));
         }
         else
         {
@@ -656,6 +696,7 @@ class ActivitesController extends Controller
 
     // /!\ Fin actions métiers
  
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     
     // /!\ Fonction à partir d'ici 
     
@@ -803,18 +844,27 @@ class ActivitesController extends Controller
                 
                 // On récupère l'objet Participer de l'utilisateur ayant demandé la participation avec l'id $idUtilisateur
                 $participer = $repParticiper->findOneBy(['utilisateur' => $idUtilisateur, 'activite' => $idActivite]);
-                // On accepte l'utilisateur dans l'activité
-                $participer->setEstAccepte($accepte);
-                // On appelle le gestionnaire d'entité
-                $gestionnaireEntite = $this->getDoctrine()->getManager();
-                
-                // On persiste la participation dans la base de données
-                $gestionnaireEntite->persist($participer);
-                
-                // On enregistre la modification en base de données
-                $gestionnaireEntite->flush();
-                
-                return true;
+                if(!is_null($participer))
+                {
+                    // On accepte l'utilisateur dans l'activité
+                    $participer->setEstAccepte($accepte);
+                    // On appelle le gestionnaire d'entité
+                    $gestionnaireEntite = $this->getDoctrine()->getManager();
+                    
+                    // On persiste la participation dans la base de données
+                    $gestionnaireEntite->persist($participer);
+                    
+                    // On enregistre la modification en base de données
+                    $gestionnaireEntite->flush();
+                    
+                    return true;
+                }
+                else
+                {
+                    $this->addFlash('notice', "Vous ne pouvez modifier une participation innexistante.");
+                    return false;
+                }
+
             }
             return false;
         }
@@ -829,7 +879,7 @@ class ActivitesController extends Controller
      */
     private function getInfosAdresse($adresse)
     {
-        
+
         // On créé un objet GoogleMapsGeocoder prenant en paramètre l'adresse du lieu $adresse
         $geocodeLieu = new \GoogleMapsGeocoder($adresse);
         // On enregistre le résultat de la requête faite à GoogleMapsAPI pour récupérer les informations du lieu
@@ -843,30 +893,29 @@ class ActivitesController extends Controller
             $lieu = new Lieu();
             // On hydrate le lieu avec les données précédemment récupérées
             $lieu->setNom(null)
-                 ->setNumeroRue($infosLieu[0]['long_name'])
-                 ->setNomRue($infosLieu[1]['long_name'])
-                 ->setComplementAdresse(null)
-                 ->setCodePostal($infosLieu[6]['long_name'])
-                 ->setVille($infosLieu[2]['long_name'])
-                 ->setLatitude($latLngLieu['lat'])
-                 ->setLongitude($latLngLieu['lng'])
+                ->setNumeroRue($infosLieu[0]['long_name'])
+                ->setNomRue($infosLieu[1]['long_name'])
+                ->setComplementAdresse(null)
+                ->setCodePostal($infosLieu[6]['long_name'])
+                ->setVille($infosLieu[2]['long_name'])
+                ->setLatitude($latLngLieu['lat'])
+                ->setLongitude($latLngLieu['lng'])
             ;            
         }
-        else {
+        else 
+        {
             $lieu = new Lieu();
             // On hydrate le lieu avec les données précédemment récupérées
             $lieu->setNom(null)
-                 ->setNumeroRue(null)
-                 ->setNomRue($infosLieu[0]['long_name'])
-                 ->setComplementAdresse(null)
-                 ->setCodePostal($infosLieu[5]['long_name'])
-                 ->setVille($infosLieu[1]['long_name'])
-                 ->setLatitude($latLngLieu['lat'])
-                 ->setLongitude($latLngLieu['lng'])
+                ->setNumeroRue(null)
+                ->setNomRue($infosLieu[0]['long_name'])
+                ->setComplementAdresse(null)
+                ->setCodePostal($infosLieu[5]['long_name'])
+                ->setVille($infosLieu[1]['long_name'])
+                ->setLatitude($latLngLieu['lat'])
+                ->setLongitude($latLngLieu['lng'])
             ;               
         }
-        
-
         return $lieu;
     }
 

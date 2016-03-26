@@ -243,6 +243,9 @@
                           {# Affiche un block utilisateur prefixButton permet de différencier les bouttons de la liste principal, et de la liste dans un modal. #}
                           {% set prefixButton = "ModalAccepter" %}
                           {% include "mooveActiviteBundle:Activite:blockListeUtiisateutDetail.html.twig" %}
+                          {% if participationCourant.utilisateur != app.user %}
+                            {% include "mooveActiviteBundle:Activite:blockModalSupprimerUtilisateur.html.twig" %}
+                          {% endif %}
                         {% endfor %}
                       </div>
                       
@@ -273,9 +276,13 @@
             {% set prefixButton = "ListeRandom" %}
             {# Permet d'affiché une utilisateur de participationCourant, et d'y adjoindre la modal de refus, uniquement si nécessaire. #}
             {% include "mooveActiviteBundle:Activite:blockListeUtiisateutDetail.html.twig" %}
-            {% if estOrganisateur and participationCourant.estAccepte == 0 %}
-              {# On ajoute la modal uniquement si nécessaire #}
-              {% include "mooveActiviteBundle:Activite:blockModalRefuser.html.twig" %}
+            {% if estOrganisateur %}
+              {% if participationCourant.estAccepte == 0 %}
+                {# On ajoute la modal uniquement si nécessaire #}
+                {% include "mooveActiviteBundle:Activite:blockModalRefuser.html.twig" %}
+              {% elseif participationCourant.estAccepte == 1 %} 
+                {% include "mooveActiviteBundle:Activite:blockModalSupprimerUtilisateur.html.twig" %}
+              {% endif %}
             {% endif %}
           {% endfor %} 
           {# Ajoute le lien vers la modal qui affiche l'intégralité de la liste des participants.#}
@@ -356,6 +363,7 @@
 <br>
 <div class="row">
   <div class="col-md-12">
+    <h1>Commentaires</h1>
     {% include "mooveActiviteBundle:Activite:blockCommentaire.html.twig" %}
   </div>
 </div>

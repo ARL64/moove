@@ -76,11 +76,9 @@ doctrine:
 # Swiftmailer Configuration
 swiftmailer:
     transport: "%mailer_transport%"
-    host:      "%mailer_host%"
     username:  "%mailer_user%"
     password:  "%mailer_password%"
-    port: 1025
-    spool:     { type: memory }
+    port: 465
 
 fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
@@ -95,7 +93,7 @@ fos_user:
         confirmation:
             enabled: true
             from_email:
-                address:        inscription@moove.com
+                address:        contactmoovec9@gmail.com
                 sender_name:    Moove
     profile:
         form:
@@ -103,7 +101,7 @@ fos_user:
     resetting:
         email:
             from_email:
-                address:        reset@moove.com
+                address:        contactmoovec9@gmail.com
                 sender_name:    Moove
                 
 knp_paginator:

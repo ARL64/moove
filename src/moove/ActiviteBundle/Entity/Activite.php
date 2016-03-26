@@ -137,10 +137,6 @@ class Activite
      */
     private $adresseLieuArrivee;
 
-    /*
-     * 
-     */
-
     /**
      * @ORM\OneToMany(targetEntity="moove\ActiviteBundle\Entity\Participer", mappedBy="activite")
      */
@@ -151,7 +147,7 @@ class Activite
      * Permet de vérifier dans un même formualaire que la date de fermeture de l'activité se trouve avant la date de rendez-vous
      * Permet de vérifier que le nombre de participants d'une activité est inférieur ou égal au nombre de places totales de l'activité
      */
-    private function validate(ExecutionContextInterface $context)
+    public function validate(ExecutionContextInterface $context)
     {
         if (($this->dateFermeture != '') && 
                ($this->dateHeureRDV < $this->dateFermeture) ) {
@@ -165,7 +161,7 @@ class Activite
 
         }
         
-        if($this->nbParticipants > $this->nbPlaces) {
+        if($this->nbPartipants > $this->nbPlaces) {
             $context->addViolationAt(
                 'nbParticipants',
                 'L\'activité est déjà pleine, vous ne pouvez pas la rejoindre.',

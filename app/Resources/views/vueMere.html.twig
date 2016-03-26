@@ -109,6 +109,9 @@
               <p>{{ app.user.prenom ~ " " ~ app.user.nom }}</p>
               <span>{{ app.user.lieuResidence.ville }}</span>
             </div>
+            <div class="pull-right edit-profile">
+               <a href="{{ path('fos_user_profile_edit') }}"><i class="pull-right fa fa-pencil"></i></a>
+            </div>
           </div>
           <ul class="sidebar-menu">
             <li class="header">MENU</li>

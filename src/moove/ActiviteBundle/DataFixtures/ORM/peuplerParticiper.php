@@ -41,26 +41,28 @@ class PeuplerParticiper extends AbstractFixture implements FixtureInterface, Ord
             
             // le try catch est sencé vérifier justement cette condition, mais sa ne veux pas...
             // ducoup, pour le moment incrémenté juste cette variable du nombre d'activité + 1...
-            if($i == (12 + 1))
+            if($i == (11 + 1))
                 break;
         }
         
+        $index = 1;
         $file = fopen(__DIR__ . "/peuplerParticiper.csv", "r");
 
         while(true)
         {
+            $index++;
             $line = fgetcsv($file, 0, ';');
             if(empty($line) || is_null($line))
                 break;
             $temps = new Participer();
-            $temps  ->setUtilisateur($this->getReference('utilisateur-'.$line[1]))
-                    ->setActivite($this->getReference('activite-' . $line[2]))
-		            ->setEstAccepte($line[3])
+            $temps  ->setUtilisateur($this->getReference('utilisateur-'.$line[0]))
+                    ->setActivite($this->getReference('activite-' . $line[1]))
+		            ->setEstAccepte($line[2])
 		            ;
 
 		            
             $manager->persist($temps);
-            $this->addReference("participer-" . $line[0], $temps);
+            $this->addReference("participer-" . $index++, $temps);
             
         }
         fclose($file);

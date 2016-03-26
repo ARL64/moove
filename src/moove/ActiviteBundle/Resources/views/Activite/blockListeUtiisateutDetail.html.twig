@@ -30,29 +30,45 @@
             {% endif %} 
         {% endfor %}
         
-        {% if estOrganisateur and participationCourant.estAccepte == 0 %}
-         <p>
-           {# Lorsque la souris passe sur un des deux bouton, on désactive celui situé dessous. Lorsque la souris en quitte un des deux, alors on le ré-active. #}
-                
-           {# action correspondant au bouton accepté #}
-           <button onMouseOver='javascripts:document.getElementById("lienUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}").removeAttribute("href");' 
-                   onMouseOut='javascripts:document.getElementById("lienUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}").setAttribute("href","{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}");'
-                   onClick='self.location.href="{{ path('moove_activite_accepter_demande_participation', {'idActivite': participationCourant.activite.id, 'idUtilisateur': participationCourant.utilisateur.id}) }}"'
-                   type=button 
-                   class="btn btn-success btn-xs">
-             Accepter
-           </button>
-                
-           {# action correspondant au bouton refusé #}
-           <button onMouseOver='javascripts:document.getElementById("lienUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}").removeAttribute("href");' 
-                   onMouseOut='javascripts:document.getElementById("lienUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}").setAttribute("href","{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}");' 
-                   type="mini-button" 
-                   class="btn btn-danger btn-xs" 
-                   data-toggle="modal" 
-                   data-target="#modalRefus-{{prefixButton}}{{participationCourant.utilisateur.id}}">
-             Refuser
-           </button>
-         </p>
+        {% if estOrganisateur %}
+            {% if participationCourant.estAccepte == 0 %}
+                <p>
+                    {# Lorsque la souris passe sur un des deux bouton, on désactive celui situé dessous. Lorsque la souris en quitte un des deux, alors on le ré-active. #}
+                    
+                    {# action correspondant au bouton accepté #}
+                    <button onMouseOver='javascripts:document.getElementById("lienUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}").removeAttribute("href");' 
+                           onMouseOut='javascripts:document.getElementById("lienUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}").setAttribute("href","{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}");'
+                           onClick='self.location.href="{{ path('moove_activite_accepter_demande_participation', {'idActivite': participationCourant.activite.id, 'idUtilisateur': participationCourant.utilisateur.id}) }}"'
+                           type=button 
+                           class="btn btn-success btn-xs">
+                        Accepter
+                    </button>
+                        
+                    {# action correspondant au bouton refusé #}
+                    <button onMouseOver='javascripts:document.getElementById("lienUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}").removeAttribute("href");' 
+                           onMouseOut='javascripts:document.getElementById("lienUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}").setAttribute("href","{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}");' 
+                           type="mini-button" 
+                           class="btn btn-danger btn-xs" 
+                           data-toggle="modal" 
+                           data-target="#modalRefus-{{prefixButton}}{{participationCourant.utilisateur.id}}">
+                        Refuser
+                </button>
+                </p>
+            {% elseif participationCourant.estAccepte == 1 and participationCourant.utilisateur != app.user %}
+                <p>
+                    {# Lorsque la souris passe sur un des deux bouton, on désactive celui situé dessous. Lorsque la souris en quitte un des deux, alors on le ré-active. #}
+
+                    {# action correspondant au bouton supprimer #}
+                    <button onMouseOver='javascripts:document.getElementById("lienUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}").removeAttribute("href");' 
+                           onMouseOut='javascripts:document.getElementById("lienUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}").setAttribute("href","{{path('moove_utilisateur_profileUtilisateur', {idUtilisateur: participationCourant.utilisateur.id}) }}");' 
+                           type="mini-button" 
+                           class="btn btn-danger btn-xs" 
+                           data-toggle="modal" 
+                           data-target="#modalSupprimerUtilisateur-{{prefixButton}}{{participationCourant.utilisateur.id}}">
+                        Supprimer
+                </button>
+                </p>
+            {% endif %}
         {% endif %}
   </div>
 </a>

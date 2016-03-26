@@ -1011,3 +1011,7 @@ a:focus {
     padding-top: 0!important;
   }
 }
+
+.edit-profile {
+  margin-top: 1em;
+}

@@ -32,6 +32,7 @@ class PeuplerActivite extends AbstractFixture implements FixtureInterface, Order
     
     public function load(ObjectManager $manager)
     {
+        $index = 1;
         $dateActuel = new \DateTime('NOW');
 
         $file = fopen(__DIR__ . "/peuplerActivite.csv", "r");
@@ -42,30 +43,30 @@ class PeuplerActivite extends AbstractFixture implements FixtureInterface, Order
             if(empty($line) || is_null($line))
                 break;
             $temps = new Activite();
-            $temps  ->setDateHeureRDV($this->getTime($line[1]))
-		            ->setDateFermeture($this->getTime($line[2]))
+            $temps  ->setDateHeureRDV($this->getTime($line[0]))
+		            ->setDateFermeture($this->getTime($line[1]))
 		            ->setDateCreation($dateActuel)
-		            ->setDuree(new \DateTime($line[3]))
-		            ->setNbPLaces(intval($line[4]))
-		            ->setEstTerminee($line[5])
-		            ->setOrganisateur($this->getReference('utilisateur-' . $line[6]))
-		            ->setNiveauRequis($this->getReference('niveau-' . $line[7]))
-		            ->setSportPratique($this->getReference('sport-' . $line[8]))
-		            ->setLieuRDV($this->getReference('lieu-' . $line[9]))
-		            ->setDescription($line[12])
-		            ->setNbParticipants($line[13])
+		            ->setDuree(new \DateTime($line[2]))
+		            ->setNbPLaces(intval($line[3]))
+		            ->setEstTerminee($line[4])
+		            ->setOrganisateur($this->getReference('utilisateur-' . $line[5]))
+		            ->setNiveauRequis($this->getReference('niveau-' . $line[6]))
+		            ->setSportPratique($this->getReference('sport-' . $line[7]))
+		            ->setLieuRDV($this->getReference('lieu-' . $line[8]))
+		            ->setDescription($line[11])
+		            ->setNbParticipants($line[12])
 
 		            ;
 		         
-    
-		if($line[10] != "")
-		    $temps->setLieuDepart($this->getReference('lieu-' . $line[10]));
-		if($line[11] != "")
-		    $temps->setLieuArrivee($this->getReference('lieu-' . $line[11]));
-		  
-        $manager->persist($temps);
-        $this->addReference("activite-" . $line[0], $temps);
-            
+        
+    		if($line[9] != "")
+    		    $temps->setLieuDepart($this->getReference('lieu-' . $line[9]));
+    		if($line[10] != "")
+    		    $temps->setLieuArrivee($this->getReference('lieu-' . $line[10]));
+    		  
+            $manager->persist($temps);
+            $this->addReference("activite-" . $index, $temps);
+            $index++;
         }
         fclose($file);
         

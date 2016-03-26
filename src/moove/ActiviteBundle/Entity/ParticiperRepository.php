@@ -107,6 +107,8 @@ class ParticiperRepository extends EntityRepository
             ->addSelect('a')
             ->join('p.utilisateur', 'u')
             ->addSelect('u')
+            ->join('a.organisateur', 'o')
+            ->addSelect('o')
             ->join('a.sportPratique', 's')
             ->addSelect('s')
             ->Where('p.utilisateur = :utilisateur')

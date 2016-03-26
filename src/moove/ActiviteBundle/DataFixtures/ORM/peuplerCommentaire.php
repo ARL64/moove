@@ -32,6 +32,7 @@ class PeuplerCommentaire extends AbstractFixture implements FixtureInterface, Or
     
     public function load(ObjectManager $manager)
     {
+        $index = 1;
         $dateActuel = new \DateTime('NOW');
 
         $file = fopen(__DIR__ . "/peuplerCommentaire.csv", "r");
@@ -42,16 +43,16 @@ class PeuplerCommentaire extends AbstractFixture implements FixtureInterface, Or
             if(empty($line) || is_null($line))
                 break;
             $temps = new Commentaire();
-            $temps  ->setContenu($line[1])
-		            ->setPosteA($this->getTime($line[2]))
-		            ->setType("")
-		            ->setActivite($this->getReference('activite-' . $line[3]))
-		            ->setUtilisateur($this->getReference('utilisateur-' . $line[4]))
+            $temps  ->setContenu($line[0])
+		            ->setPosteA($this->getTime($line[1]))
+		            ->setType("utilisateurs")
+		            ->setActivite($this->getReference('activite-' . $line[2]))
+		            ->setUtilisateur($this->getReference('utilisateur-' . $line[3]))
 		            ;
 		         
             $manager->persist($temps);
-            $this->addReference("commentaires-" . $line[0], $temps);
-            
+            $this->addReference("commentaires-" . $index, $temps);
+            $index++;
         }
         fclose($file);
       

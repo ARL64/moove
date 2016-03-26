@@ -86,7 +86,7 @@ class ProfileFormType extends AbstractType
             ->add('photo','file', array('label'=>'form.photo', 'translation_domain'=>'FOSUserBundle','required'=>false, 'constraints' => [
                     new File([
                         'maxSize' => '2M',
-                        'maxSyzeMessage' => 'Le poid de l'image est trop grand, il ne doit pas dépasser 2 MB',
+                        'maxSizeMessage' => 'Le poid de l\'image est trop grand, il ne doit pas dépasser {{ limit }} {{ sufix }}.',
                         'mimeTypes' => [
                             'image/png',
                             'image/jpeg',
