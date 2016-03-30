@@ -1,5 +1,5 @@
 {% extends "::vueMere.html.twig" %}
-{% block title %}Détails activité {{activite.id}} {% endblock %} 
+{% block title %}Détails activité {{activite.sportPratique.nom}} {% endblock %} 
 
 {% block stylesheets %}
 <link rel="stylesheet" href="{{ asset('bundles/mooveactivite/css/details/style.css') }}">
@@ -82,7 +82,7 @@
           </div>
           {# Affiche le niveau requis #}
           <div class="infos">
-            <p><span class="info-label text-muted">Niveau requis</span><span class="info-valeur"><i class="fa fa-bar-chart"></i>{{ activite.niveauRequis.libelle }}</span></p>
+            <p><span class="info-label text-muted">Niveau conseillé</span><span class="info-valeur"><i class="fa fa-bar-chart"></i>{{ activite.niveauRequis.libelle }}</span></p>
           </div>
           {# Affiche la ville et son code postal#}
           <div class="infos">
@@ -96,7 +96,8 @@
               {# Affiche le numero(s'il existe) et nom de rue du lieu de rdv#}
               <div class="infos">
                 <p><span class="info-label text-muted">Lieu de rendez-vous</span><span class="info-valeur"><i class="fa fa-circle-o" style="color:#ff9800"></i>
-                {% if activite.lieuRDV.numeroRue != 0 %}{{ activite.lieuRDV.numeroRue ~ ", " }}
+                {% if activite.lieuRDV.numeroRue != 0 %}
+                {{ activite.lieuRDV.numeroRue ~ ", " ~ activite.lieuRDV.ville }}
                 {% endif %}{{ activite.lieuRDV.nomRue }}</span></p>
               </div>
             {% else %}

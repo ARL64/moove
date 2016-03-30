@@ -250,53 +250,51 @@ class ProfileController extends Controller
     
     /**
      * Récupère les informations d'un lieu en fonction d'une adresse
-     * @param $adresse <i>string</i> adresse d'un lieu
-     * @return <i>Lieu</i>
+     * @param $adresse <i>(string)</i> adresse d'un lieu
+     * @return <i>moove\ActiviteBundle\Entity\Lieu</i>
      */
     private function getInfosAdresse($adresse)
     {
-        if(!is_null($adresse))
-        {
-            // On créé un objet GoogleMapsGeocoder prenant en paramètre l'adresse du lieu $adresse
-            $geocodeLieu = new \GoogleMapsGeocoder($adresse);
-            // On enregistre le résultat de la requête faite à GoogleMapsAPI pour récupérer les informations du lieu
-            $reponse = $geocodeLieu->geocode();
-            // On récupère les infos sur le lieu
-            $infosLieu = $reponse['results'][0]['address_components'];
-            // On récupère la latitude et longitude sur le lieu
-            $latLngLieu = $reponse['results'][0]['geometry']['location'];
+
+        // On créé un objet GoogleMapsGeocoder prenant en paramètre l'adresse du lieu $adresse
+        $geocodeLieu = new \GoogleMapsGeocoder($adresse);
+        // On enregistre le résultat de la requête faite à GoogleMapsAPI pour récupérer les informations du lieu
+        
+        $reponse = $geocodeLieu->geocode();
+        // On récupère les infos sur le lieu
+        $infosLieu = $reponse['results'][0]['address_components'];
+        // On récupère la latitude et longitude sur le lieu
+        $latLngLieu = $reponse['results'][0]['geometry']['location'];
+        
+        // On créer un nouveau Lieu à partir des informations de Google
+        $lieu = new Lieu();
+        // On remplis certaine information non disponible via Google
+        $lieu   ->setNom(null)
+                ->setComplementAdresse(null)
+                ->setLatitude($latLngLieu['lat'])
+                ->setLongitude($latLngLieu['lng']);
             
-            if(isset($infosLieu[6])) {
-                $lieu = new Lieu();
-                // On hydrate le lieu avec les données précédemment récupérées
-                $lieu->setNom(null)
-                     ->setNumeroRue($infosLieu[0]['long_name'])
-                     ->setNomRue($infosLieu[1]['long_name'])
-                     ->setComplementAdresse(null)
-                     ->setCodePostal($infosLieu[6]['long_name'])
-                     ->setVille($infosLieu[2]['long_name'])
-                     ->setLatitude($latLngLieu['lat'])
-                     ->setLongitude($latLngLieu['lng'])
-                ;            
-            }
-            else {
-                $lieu = new Lieu();
-                // On hydrate le lieu avec les données précédemment récupérées
-                $lieu->setNom(null)
-                     ->setNumeroRue(null)
-                     ->setNomRue($infosLieu[0]['long_name'])
-                     ->setComplementAdresse(null)
-                     ->setCodePostal($infosLieu[5]['long_name'])
-                     ->setVille($infosLieu[1]['long_name'])
-                     ->setLatitude($latLngLieu['lat'])
-                     ->setLongitude($latLngLieu['lng'])
-                ;               
-            }
-        }
-        else
+        foreach($infosLieu as $value)
         {
-            $lieu = null;
+            if(strcmp($value['types'][0], 'street_number') == 0)
+            {
+                $lieu->setNumeroRue($value['long_name']);
+            }
+            elseif(strcmp($value['types'][0], 'route') == 0)
+            {
+                $lieu->setNomRue($value['long_name']);
+            }
+            elseif(strcmp($value['types'][0], 'locality') == 0)
+            {
+                $lieu->setVille($value['long_name']);
+            }
+            elseif(strcmp($value['types'][0], 'postal_code') == 0)
+            {
+                $lieu->setCodePostal($value['long_name']);
+            }
+            
         }
+        
         return $lieu;
     }
 }

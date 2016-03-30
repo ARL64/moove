@@ -16,7 +16,6 @@ class UtilisateurAdmin extends Admin
     protected function configureDatagridFilters(DatagridMapper $datagridMapper)
     {
         $datagridMapper
-            ->add('id')
             ->add('username')
             ->add('prenom')
             ->add('nom')
@@ -25,9 +24,6 @@ class UtilisateurAdmin extends Admin
             ->add('dateNaissance')
             ->add('enabled')
             ->add('lastLogin')
-            ->add('locked')
-            ->add('expired')
-            ->add('passwordRequestedAt')
             ->add('roles')
         ;
     }
@@ -39,15 +35,14 @@ class UtilisateurAdmin extends Admin
     {
         $listMapper
             ->add('id')
-            ->add('username')
-            ->add('prenom')
+            ->add('username', 'text', array('label' => 'Nom d\'utilisateur'))
+            ->add('prenom', 'text', array('label' => 'Prénom'))
             ->add('nom')
-            ->add('email')
-            ->add('sexe')
-            ->add('dateNaissance')
+            ->add('email', 'text', array('label' => 'Adresse email'))
+            ->add('sexe', 'text', array('label' => 'Genre'))
+            ->add('dateNaissance', 'date', array('label' => 'Date de naissance', 'format' => 'd/m/y'))
             ->add('enabled')
-            ->add('lastLogin')
-            ->add('passwordRequestedAt')
+            ->add('lastLogin', 'date', array('label' => 'Dernière connexion'))
             ->add('roles')
             ->add('_action', 'actions', array(
                 'actions' => array(
@@ -65,13 +60,12 @@ class UtilisateurAdmin extends Admin
     protected function configureFormFields(FormMapper $formMapper)
     {
         $formMapper
-            ->add('username')
-            ->add('prenom')
+            ->add('username', 'text', array('label' => 'Nom d\'utilisateur'))
+            ->add('prenom', 'text', array('label' => 'Prénom'))
             ->add('nom')
-            ->add('email')
-            ->add('sexe')
-            ->add('dateNaissance')
-            ->add('enabled')
+            ->add('email', 'text', array('label' => 'Adresse email'))
+            ->add('sexe', 'text', array('label' => 'Genre'))
+            ->add('dateNaissance', 'date', array('label' => 'Date de naissance', 'format' => 'd/M/y'))
             ->add('roles')
         ;
     }
@@ -82,28 +76,24 @@ class UtilisateurAdmin extends Admin
     protected function configureShowFields(ShowMapper $showMapper)
     {
         $showMapper
-            ->add('username')
-            ->add('usernameCanonical')
+            ->add('id')
+            ->add('username', null, array('label' => 'Nom d\'utilisateur'))
+            ->add('nom')
+            ->add('prenom', null, array('label' => 'Prénom'))
             ->add('email')
-            ->add('emailCanonical')
+            ->add('URLAvatar', null, array('label' => 'URL de l\'avatar'))
+            ->add('sexe', null, array('label' => 'Genre'))
+            ->add('dateNaissance', 'date', array('label' => 'Date de naissance', 'format' => 'd/m/y'))
             ->add('enabled')
-            ->add('salt')
-            ->add('password')
             ->add('lastLogin')
             ->add('locked')
             ->add('expired')
             ->add('expiresAt')
-            ->add('confirmationToken')
             ->add('passwordRequestedAt')
             ->add('roles')
             ->add('credentialsExpired')
             ->add('credentialsExpireAt')
-            ->add('id')
-            ->add('nom')
-            ->add('prenom')
-            ->add('URLAvatar')
-            ->add('sexe')
-            ->add('dateNaissance')
+
         ;
     }
 }

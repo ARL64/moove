@@ -41,7 +41,7 @@ class PeuplerParticiper extends AbstractFixture implements FixtureInterface, Ord
             
             // le try catch est sencé vérifier justement cette condition, mais sa ne veux pas...
             // ducoup, pour le moment incrémenté juste cette variable du nombre d'activité + 1...
-            if($i == (11 + 1))
+            if($i == (16 + 1))
                 break;
         }
         

@@ -13,55 +13,54 @@
     <div class="container">
         <div class="row">
                 <div class="col-md-12">
-                            {% for sportNiveau in tabSportNiveau %}
-                                <div class="col-md-12">
-                                    <div class="media">
-                                        <div class="media-left">
-                                            </br>
-                                            <img class="media-object" src="{{ asset(sportNiveau.sport.urlPictogramme) }}" alt="Photo du sport" width="75" height="75">
-                                            </br>
-                                        </div>
-                                        <div class="media-body">
-                                            </br>
-                                            <p>{{ sportNiveau.sport.nom }}</p>
-                                            <p>Niveau : {{ sportNiveau.niveau.libelle }}</p>
-                                            <div class="col-md-2">
-                                                <a href="{{ path('moove_utilisateur_modifier_niveau_sport', {'idSport': sportNiveau.sport.id}) }}" class="btn btn-primary btn-s">Modifier Niveau</a>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <a href="#" class="btn btn-danger btn-s" data-toggle="modal" data-target="#myModal">Supprimer ce sport</a>
-                                            </div>
-                                        </div>
-                                               
+                    {% for sportNiveau in tabSportNiveau %}
+                        <div class="col-md-12">
+                            <div class="media">
+                                <div class="media-left">
+                                    </br>
+                                    <img class="media-object" src="{{ asset(sportNiveau.sport.urlPictogramme) }}" alt="Photo du sport" width="75" height="75">
+                                    </br>
+                                </div>
+                                <div class="media-body">
+                                    </br>
+                                    <p>{{ sportNiveau.sport.nom }}</p>
+                                    <p>Niveau : {{ sportNiveau.niveau.libelle }}</p>
+                                    <div class="col-md-2">
+                                        <a href="{{ path('moove_utilisateur_modifier_niveau_sport', {'idSport': sportNiveau.sport.id}) }}" class="btn btn-primary btn-s">Modifier Niveau</a>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <a href="#" class="btn btn-danger btn-s" data-toggle="modal" data-target="#myModal">Supprimer ce sport</a>
                                     </div>
                                 </div>
-                                
-                                    
-                                    
-                                
-                                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                <h4 class="modal-title" id="myModalLabel">Confirmez</h4>
-                                            </div>
-                                            <div class="modal-body">
-                                                Voulez-vous vraiment supprimer ce sport ? (Vous pourrez le rajouter à tout moment en cliquant sur ajouter un sport)
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-warning" data-dismiss="modal">Annuler</button>
-                                                <a href={{ path('moove_utilisateur_supprimer_sport', {'idSport': sportNiveau.sport.id})}}> <button type="button" class="btn btn-danger">Supprimer</button></a>
-                                            </div>
-                                        </div>
-                                     </div>
+                                       
+                            </div>
+                        </div>
+                        
+                            
+                            
+                        
+                        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                        <h4 class="modal-title" id="myModalLabel">Confirmez</h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        Voulez-vous vraiment supprimer ce sport ? (Vous pourrez le rajouter à tout moment en cliquant sur ajouter un sport)
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-warning" data-dismiss="modal">Annuler</button>
+                                        <a href={{ path('moove_utilisateur_supprimer_sport', {'idSport': sportNiveau.sport.id})}}> <button type="button" class="btn btn-danger">Supprimer</button></a>
+                                    </div>
                                 </div>
-                            {% else %}
-                                <p>Vous n'avez pas ajouté de sport !</p>
-                            {% endfor %}
+                             </div>
+                        </div>
+                    {% else %}
+                        <p>Vous n'avez pas ajouté de sport !</p>
+                    {% endfor %}
                     
-                    </div>
                 </div>
             </div>
-        
+    </div>
 {% endblock %}

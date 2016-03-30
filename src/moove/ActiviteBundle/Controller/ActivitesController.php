@@ -239,10 +239,11 @@ class ActivitesController extends Controller
 
         // On obtient la liste des niveaux (pour la génération de la liste des sports, donc trié dans l'ordre ASC)
         $repNiveau = $this->getRepository('Niveau');
-        $tabNiveau = $repNiveau->findBy(array(), array('libelle'=>'asc'));
+        $tabNiveau = $repNiveau->findAll();//findBy(array(), array('libelle'=>'asc'));
         
         if(!empty($request->request->all()))
         {
+            $arg = "?";
             // l'information d'un slider est recu sous la forme d'un string avec les deux valeur
             // on explode donc notre string et on récupère les tableau correspondant avec [0] = 1er valeur (min) et [1] = 2nd valeur (max)
             $tabHeure = explode(";", $request->request->get('heure'));
@@ -252,6 +253,8 @@ class ActivitesController extends Controller
             { 
                 $tabDate = explode("/", $request->request->get('date'));
                 $datePrecise = $tabDate[2] . "-" . $tabDate[1] . "-" . $tabDate[0];
+                $arg .= 'date=' . $datePrecise . '&';
+
             }
             else
             {
@@ -261,8 +264,7 @@ class ActivitesController extends Controller
             // on ajoute l'heure selon le format définis dans la fonction de recherche
             $heureMin = $tabHeure[0]. "h00";
             $heureMax = $tabHeure[1]. "h00";
-            
-            //var_dump($heureMin);
+            $arg .= 'hMin=' . $heureMin . '&hMax=' . $heureMax;
 
             // on initialise un boolean a false. Si on ne trouve pas de sport, notre variable passera a null pour éviter d'ajouter une condition inutile.
             $sportSelected = false;
@@ -280,9 +282,14 @@ class ActivitesController extends Controller
             }
             // en fonction du boolean on définis alors la suit. Si true, alors on ferme notre array string, sinon on met a null.
             if($sportSelected)
+            {
                 $arraySport = substr($arraySport, 0, strlen($arraySport)-1) . "]";
-            else 
+                $arg .= '&sport=' . $arraySport;
+            }
+            else
+            {
                 $arraySport = null;
+            }
             $sport = $arraySport;
             
             // idem pour les niveau
@@ -297,27 +304,50 @@ class ActivitesController extends Controller
                }
             }
             if($niveauSelected)
+            {
                 $arrayNiveau = substr($arrayNiveau, 0, strlen($arrayNiveau)-1) . "]";
-            else 
+                $arg .= '&niveau=' . $arrayNiveau;
+            }
+            else
+            {
                 $arrayNiveau = null;
+            }
             $niveau = $arrayNiveau;
             
             // on récupère l'information de photo. la valeurs est accorder directement dans le html dans la baslie "value"
             $photo = $request->request->get('photo');
+            $arg .= '&photo=' . $photo;
             // on définis ici les place ne fonction des slider. 
             // dans le premier cas, le slider a une seul valeurs donc 
             $nbPlaceRestante = intval($request->request->get('nbPlacesRestantes'));
             // ici, on récupère les valeurs depuis  le tableau déjà créer avant
             $nbPlaceMin = intval($nbPlaceTab[0]);
             $nbPlaceMax = intval($nbPlaceTab[1]);
+            
+            
+            $arg .= '&nbPlace=' . $nbPlaceRestante;
+            $arg .= '&placeRestanteMin=' . $nbPlaceMin;
+            $arg .= '&placeRestanteMax=' . $nbPlaceMax;
             // comme premier cas
             $distanceMax = intval($request->request->get('rayonRecherche'));
             
             // on passe par la fonction getOrder by qui convertie notre mot clé en syntaxe de base de donnée
-            $order = $this->getOrderBy($request->request->get('order'));
+            $order = $request->request->get('order');
+            $arg .= '&order=' . $order;
+            
             $type = null;//$request->query->get('type'); // TODO
             if(is_null($type))
                 $type = "ASC";
+            $arg .= '&type=' . $type;
+            
+            $nbResultatsParPage = $request->request->get('nbResultatsParPage');
+            $arg .= '&nbResult=' . $nbResultatsParPage;
+
+            
+            // on remplace tout les caractère bugguer ('é' et 'è') par 'e'.
+            $arg = str_replace('é', 'e', str_replace('è', 'e', $arg));
+            // on redirige vers l'adresse avec les informations disponible dans l'url
+            return $this->redirect($this->generateUrl('moove_activite_rechercher') . $arg);   
         }
         else 
         {
@@ -331,16 +361,18 @@ class ActivitesController extends Controller
             $nbPlaceMin = $request->query->get('placeRestanteMin');         // format : 2  (int)
             $nbPlaceMax = $request->query->get('placeRestanteMax');         // format : 7  (int)
             $distanceMax = $request->query->get('distance');                // format : 10  NON DISPONIBLE
-            
+
+            $nbResultatsParPage = $request->query->get('nbResult');                // format : 10  NON DISPONIBLE
+
             $order = $this->getOrderBy($request->query->get('order'));
             $type = $request->query->get('type');
             if(is_null($type))
                 $type = "ASC";
         }
         
-        $nbResultatsParPage = $request->request->get('nbResultatsParPage');
+        //$nbResultatsParPage = $request->request->get('nbResultatsParPage');
         if(!preg_match("#^[0-9]{1,3}$#", $nbResultatsParPage)) {
-            $nbResultatsParPage = 2;
+            $nbResultatsParPage = 4;
         }
         // On récupère le repository Activite
         $repActivite = $this->getRepository('Activite');
@@ -492,7 +524,7 @@ class ActivitesController extends Controller
      */
     public function demandeParticipationActiviteAction($idActivite, $idUtilisateur)
     {
-        if($idUtilisateur == $this->getUser())
+        if($idUtilisateur == $this->getUser()->getId())
         {
             // On récupère le repository Activite
             $repActivite = $this->getRepository('Activite');
@@ -883,39 +915,42 @@ class ActivitesController extends Controller
         // On créé un objet GoogleMapsGeocoder prenant en paramètre l'adresse du lieu $adresse
         $geocodeLieu = new \GoogleMapsGeocoder($adresse);
         // On enregistre le résultat de la requête faite à GoogleMapsAPI pour récupérer les informations du lieu
+        
         $reponse = $geocodeLieu->geocode();
         // On récupère les infos sur le lieu
         $infosLieu = $reponse['results'][0]['address_components'];
         // On récupère la latitude et longitude sur le lieu
         $latLngLieu = $reponse['results'][0]['geometry']['location'];
         
-        if(isset($infosLieu[6])) {
-            $lieu = new Lieu();
-            // On hydrate le lieu avec les données précédemment récupérées
-            $lieu->setNom(null)
-                ->setNumeroRue($infosLieu[0]['long_name'])
-                ->setNomRue($infosLieu[1]['long_name'])
+        // On créer un nouveau Lieu à partir des informations de Google
+        $lieu = new Lieu();
+        // On remplis certaine information non disponible via Google
+        $lieu   ->setNom(null)
                 ->setComplementAdresse(null)
-                ->setCodePostal($infosLieu[6]['long_name'])
-                ->setVille($infosLieu[2]['long_name'])
                 ->setLatitude($latLngLieu['lat'])
-                ->setLongitude($latLngLieu['lng'])
-            ;            
-        }
-        else 
+                ->setLongitude($latLngLieu['lng']);
+        
+        foreach($infosLieu as $value)
         {
-            $lieu = new Lieu();
-            // On hydrate le lieu avec les données précédemment récupérées
-            $lieu->setNom(null)
-                ->setNumeroRue(null)
-                ->setNomRue($infosLieu[0]['long_name'])
-                ->setComplementAdresse(null)
-                ->setCodePostal($infosLieu[5]['long_name'])
-                ->setVille($infosLieu[1]['long_name'])
-                ->setLatitude($latLngLieu['lat'])
-                ->setLongitude($latLngLieu['lng'])
-            ;               
+            if(strcmp($value['types'][0], 'street_number') == 0)
+            {
+                $lieu->setNumeroRue($value['long_name']);
+            }
+            elseif(strcmp($value['types'][0], 'route') == 0)
+            {
+                $lieu->setNomRue($value['long_name']);
+            }
+            elseif(strcmp($value['types'][0], 'locality') == 0)
+            {
+                $lieu->setVille($value['long_name']);
+            }
+            elseif(strcmp($value['types'][0], 'postal_code') == 0)
+            {
+                $lieu->setCodePostal($value['long_name']);
+            }
+            
         }
+        
         return $lieu;
     }
 

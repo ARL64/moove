@@ -7,9 +7,31 @@
 {% block fos_user_content %}
 <div class="alert alert-dismissible alert-warning">
     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <p>{{ 'registration.confirmed'|trans({'%prenom%': user.prenom}) }} Commencez par compléter votre <strong><a href="{{ path('fos_user_profile_edit') }}">profil</a></strong>.</p>
-    {% if targetUrl %}
+    <p>{{ 'registration.confirmed'|trans({'%prenom%': user.prenom}) }} Commencez par <strong><a href="{{ path('moove_utilisateur_choisir_sport') }}">ajouter un sport à votre compte</a></strong>.</p>
+    {#{% if targetUrl %}
     <p><a href="{{ targetUrl }}">{{ 'registration.back'|trans }}</a></p>
     {% endif %}
+    #}
+</div>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Bienvenue sur Moove !</h4>
+      </div>
+      <div class="modal-body">
+        <h2>Vous êtes maintenant inscrit sur Moove !</h2>
+        <p>Pour pouvoir participer ou proposer une activité vous devez ajouter un sport. Nous vous invitons à le faire en cliquant sur le lien suivant : <a href="{{ path('moove_utilisateur_choisir_sport') }}">ajouter des sports</a>.</p>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock fos_user_content %}
+{% block javascripts %}
+    <script type="text/javascript">
+        $('#myModal').modal('show');
+    </script>
+
+{% endblock %}

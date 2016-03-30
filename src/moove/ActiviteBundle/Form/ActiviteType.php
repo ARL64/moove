@@ -31,7 +31,7 @@ class ActiviteType extends AbstractType
                             'multiple' => false,
                             'expanded' => false))
                 ->add('niveauRequis', 'entity',
-                      array('label' => 'Niveau requis',
+                      array('label' => 'Niveau conseillé',
                             'empty_value' => 'Sélectionez un niveau',
                             'class' => 'mooveActiviteBundle:Niveau',
                             'property' => 'libelle',

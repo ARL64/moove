@@ -26,7 +26,7 @@ class UpdateActivitesCommand extends ContainerAwareCommand
         $repParticiper = $em->getRepository('mooveActiviteBundle:Participer');
         $repActivite = $em->getRepository('mooveActiviteBundle:Activite');
         //On récupère toutes les activités
-        $listeActivite = $repActivite->findAll();
+        $listeActivite = $repActivite->findByEstTerminee(false);
        //On récupère la date du jour
         $dateHeureDuJour = new \DateTime("now");
         //On parcours toutes les activités

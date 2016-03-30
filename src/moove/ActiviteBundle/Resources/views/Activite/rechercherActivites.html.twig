@@ -20,24 +20,24 @@
         <div class="row">
             <div class="col-md-12">
                 <form name="base" method="POST" class="form-inline">
-                    <input id="autocomplete" type="text" class="form-control" placeholder="Entrez une ville..." {% if app.request.get('ville') %}value="{{ app.request.get('ville') }}"{% endif %} name="ville">
+                    <input id="autocomplete" type="text" class="form-control" placeholder="Entrez une ville..." {% if app.request.query.get('ville') %}value="{{ app.request.query.get('ville') }}"{% endif %} name="ville">
                     <div class="input-group date">
-                      <input type="text" placeholder="Date de l'activité" {% if app.request.get('date') %}value="{{ app.request.get('date') }}"{% endif %} class="form-control" name="date"><span class="input-group-addon" ><i class="fa fa-calendar"></i></span>
+                      <input type="text" placeholder="Date de l'activité" {% if app.request.query.get('date') %}value="{{ app.request.query.get('date') |date('d/m/Y') }}"{% endif %} class="form-control" name="date"><span class="input-group-addon" ><i class="fa fa-calendar"></i></span>
                     </div>
                     <select name="order" class="form-control" id="select">
-                      <option>Trier par</option>
-                      <option value="dateHeureRDV" {% if app.request.get('order') == "dateHeureRDV" %}selected{% endif %}>Date</option>
+                      <option value="">Trier par</option>
+                      <option value="dateHeureRDV" {% if app.request.query.get('order') == "dateHeureRDV" %}selected{% endif %}>Date</option>
                       {#<option value="date">Date</option>#}
-                      <option value="niveau" {% if app.request.get('order') == "niveau" %}selected{% endif %}>Niveau</option>
-                      <option value="sport" {% if app.request.get('order') == "sport" %}selected{% endif %}>Sport</option>
+                      <option value="niveau" {% if app.request.query.get('order') == "niveau" %}selected{% endif %}>Niveau</option>
+                      <option value="sport" {% if app.request.query.get('order') == "sport" %}selected{% endif %}>Sport</option>
                       {#<option value="ville">Ville</option>#}
                     </select>
                     <select name="nbResultatsParPage" class="form-control" id="selectNnbResultatsParPage">
-                      <option>Résultats par page</option>
-                      <option {% if app.request.get('nbResultatsParPage') == 1 %}selected{% endif %}>1</option>
-                      <option {% if app.request.get('nbResultatsParPage') == 2 %}selected{% endif %}>2</option>
-                      <option {% if app.request.get('nbResultatsParPage') == 3 %}selected{% endif %}>3</option>
-                      <option {% if app.request.get('nbResultatsParPage') == 4 %}selected{% endif %}>4</option>
+                      <option value="">Résultats par page</option>
+                      <option {% if app.request.query.get('nbResult') == 1 %}selected{% endif %}>1</option>
+                      <option {% if app.request.query.get('nbResult') == 2 %}selected{% endif %}>2</option>
+                      <option {% if app.request.query.get('nbResult') == 3 %}selected{% endif %}>3</option>
+                      <option {% if app.request.query.get('nbResult') == 4 %}selected{% endif %}>4</option>
                     </select>
                     {# On utilise ici la fonction sumbit() du 2nd formulaire pour envoyer le résultat. On dois donc rajouté majDate() car on ne clique pas sur le bouton.#}
                     <button type="button" class="btn btn-default" onclick="javascript:majDate();document.filtre.submit()">Rechercher</button>
@@ -55,14 +55,7 @@
                     <div>
                         <h2>Filtres de recherche</h2>
                         
-                        <form name="filtre" method="post">
-                        {# le formulaire doit ressembler à ça
-                                                heure de départ & arrivée (un double)
-                                                cases à cocher sports | cases à cocher niveaux
-                                                boutons radio avec photo  |  select (order by)
-                                                nbPlace max (de 0 a 20) slider
-                                                nbPlaceRestante (un double avec min et max) slider
-                                                distance max du pts (qu'on a pas regler du tout)#}
+                        <form name="filtre" method="POST">
                         {# hidden (mise a jour par javascript a partir de l'autre formulaire #}
                         <input type="hidden" name="ville" value="">
                         <input type="hidden" name="date" value="">
@@ -77,7 +70,8 @@
                             <input type="checkbox" name="name_allSport" id="name_allSport" onChange='javascript:checkSport()' value=""/> Tous les sports<br/>
                             {% for sport in tabSport %}
                                 {% set nameSport = "name_" ~ sport.nom %}
-                                {% if app.request.get(nameSport) %}
+                          
+                                {% if sport.nom|replace({'é': 'e', 'è' : 'e'}) in app.request.query.get('sport') %}
                                     <input type="checkbox" name="name_{{ sport.nom }}" id="id_{{ sport.nom }}" value="{{ sport.nom }}" checked/> {{ sport.nom }}<br/>
                                 {% else %}
                                     <input type="checkbox" name="name_{{ sport.nom }}" id="id_{{ sport.nom }}" value="{{ sport.nom }}" /> {{ sport.nom }}<br/>
@@ -90,7 +84,7 @@
                             <input type="checkbox" name="name_allNiveau" id="name_allNiveau" onChange='javascript:checkNiveau()' value=""/> Tous les niveaux<br/>
                             {% for niveau in tabNiveau %}
                                 {% set nameNiveau = "name_" ~ niveau.libelle %}
-                                {% if app.request.get(nameNiveau) %}
+                                {% if niveau.libelle|replace({'é': 'e', 'è' : 'e'}) in app.request.query.get('niveau') %}
                                     <input type="checkbox" name="name_{{ niveau.libelle }}" id="id_{{ niveau.libelle }}" checked/> {{ niveau.libelle }}<br/>
                                 {% else %}
                                     <input type="checkbox" name="name_{{ niveau.libelle }}" id="id_{{ niveau.libelle }}" /> {{ niveau.libelle }}<br/>
@@ -100,16 +94,18 @@
                         <br>
                         {# Radio groupe des photos #}
                             <label> Photo </label></br>
-                            <input type="radio" name="photo" id="tous" value="all" {% if app.request.get('photo') %}{% if app.request.get('photo') == "all" %}checked{% endif %}{% else %}checked{% endif %}> Tous<br/>
-                            <input type="radio" name="photo" id="avec" value="yes" {% if app.request.get('photo') == "yes" %}checked{% endif %}> Avec photo<br/><br>
+                            <input type="radio" name="photo" id="tous" value="all" {% if app.request.query.get('photo') %}{% if app.request.query.get('photo') == "all" %}checked{% endif %}{% else %}checked{% endif %}> Tous<br/>
+                            <input type="radio" name="photo" id="avec" value="yes" {% if app.request.query.get('photo') == "yes" %}checked{% endif %}> Avec photo<br/><br>
                             {#<input type="radio" name="photo" id="sans" value="no" >Sans photo<br/>#}
         
                             <label for="nbPlaces">Nombres de places</label>
                             <input id="nbPlaces" name="nbPlaces" type="text"/><br>
                             <label for="nbPlacesRestantes">Nombres de places restantes</label>
                             <input id="nbPlacesRestantes" name="nbPlacesRestantes" type="text"/><br>
+                            {# Pas fini distance entre deux lieux
                             <label for="rayonRecherche">Rayon de recherche en km</label>
                             <input id="rayonRecherche" name="rayonRecherche" type="text"/><br>
+                            #}
                             {# Avec la fonction onClick, on copie la valeur des champs du 1er formulaire dans le 2nd car on ne pue pas submit deux form en une fois. #}
                             {#<button name= "filtrer" type="submit" class="btn btn-primary" onclick="javascript:majDate()">Filtrer</button>#}
                 		</form>
@@ -179,24 +175,26 @@
           $('[data-toggle="tooltip"]').tooltip()
         })
         $("#heure").ionRangeSlider({
-            {% set heure = app.request.get('heure')|split(';') %}
+            {% set heureMin = app.request.query.get('hMin')|split('h') %}
+            {% set heureMax = app.request.query.get('hMax')|split('h') %}
             type: "double",
             grid: true,
             min: 0,
             max: 24,
-            from: {% if app.request.get('heure') %}{{ heure[0] }}{% else %}0{% endif %},
-            to: {% if app.request.get('heure') %}{{ heure[1] }}{% else %}24{% endif %},
+            from: {% if app.request.query.get('hMin') %}{{ heureMin[0] }}{% else %}0{% endif %},
+            to: {% if app.request.query.get('hMax') %}{{ heureMax[0] }}{% else %}24{% endif %},
             postfix: 'h'
         });
         
         $("#nbPlaces").ionRangeSlider({
-            {% set nbPlaces = app.request.get('nbPlaces')|split(';') %}
+            {% set nbPlaceMin = app.request.query.get('placeRestanteMin') %}
+            {% set nbPlaceMax = app.request.query.get('placeRestanteMax') %}
             type: "double",
             grid: true,
             min: 1,
             max: 19,
-            from: {% if app.request.get('nbPlaces') %}{{ nbPlaces[0] }}{% else %}0{% endif %},
-            to: {% if app.request.get('nbPlaces') %}{{ nbPlaces[1] }}{% else %}19{% endif %},
+            from: {% if app.request.query.get('placeRestanteMin') %}{{ nbPlaceMin }}{% else %}0{% endif %},
+            to: {% if app.request.query.get('placeRestanteMax') %}{{ nbPlaceMax }}{% else %}19{% endif %},
             postfix: ' places'
         });
 
@@ -204,19 +202,20 @@
             grid: true,
             min: 1,
             max: 19,
-            from: {% if app.request.get('nbPlacesRestantes') %}{{ app.request.get('nbPlacesRestantes') }}{% else %}1{% endif %},
+            from: {% if app.request.query.get('nbPlace') %}{{ app.request.query.get('nbPlace') }}{% else %}1{% endif %},
             postfix: ' places restantes',
             prefix: 'Au moins '
         });
         
+        {# Distance entre deux lieux non terminée
         $("#rayonRecherche").ionRangeSlider({
             grid: true,
             min: 1,
             max: 99,
-            from: {% if app.request.get('rayonRecherche') %}{{ app.request.get('rayonRecherche') }}{% else %}1{% endif %},
+            from: {% if app.request.query.get('rayonRecherche') %}{{ app.request.query.get('rayonRecherche') }}{% else %}1{% endif %},
             postfix: ' km',
             prefix: 'Rayon de '
-        });
+        });#}
         
         $('.input-group.date').datepicker({
           format: "dd/mm/yyyy",

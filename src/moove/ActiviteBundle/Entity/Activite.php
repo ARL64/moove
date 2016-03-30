@@ -628,6 +628,6 @@ class Activite
     
     public function __toString()
     {
-       return 'Activité du ' . $this->dateHeureRDV->format('d/m/Y');
+       return (isset($this->dateHeureRDV))? 'Activité du ' . $this->dateHeureRDV->format('d/m/Y') : null;
     }
 }
