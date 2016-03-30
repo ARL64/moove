@@ -7,7 +7,6 @@ use moove\ActiviteBundle\Entity\Lieu;
 use FOS\UserBundle\Model\User as BaseUser;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\ExecutionContextInterface;
 use moove\UtilisateurBundle\Validator\Constraints as mooveAssert;
 
 /**
@@ -98,24 +97,7 @@ class Utilisateur extends BaseUser
      */
     private $dateNaissance;
     
-    /**
-     * @ORM\ManyToMany(targetEntity="Utilisateur", mappedBy="mesAmis")
-     */
-    private $amisAvecMoi;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Utilisateur", inversedBy="amisAvecMoi")
-     * @ORM\JoinTable(name="amisUtilisateur",
-     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="friend_user_id", referencedColumnName="id")}
-     *      )
-     */
-    private $mesAmis;
-    
-    
-    
-    
-    
     
     private $photo;
 
@@ -404,4 +386,5 @@ class Utilisateur extends BaseUser
     {
         return $this->commentaires;
     }
+
 }

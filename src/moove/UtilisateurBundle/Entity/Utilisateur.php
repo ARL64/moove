@@ -97,24 +97,7 @@ class Utilisateur extends BaseUser
      */
     private $dateNaissance;
     
-    /**
-     * @ORM\ManyToMany(targetEntity="Utilisateur", mappedBy="mesAmis")
-     */
-    private $amisAvecMoi;
 
-    /**
-     * @ORM\ManyToMany(targetEntity="Utilisateur", inversedBy="amisAvecMoi")
-     * @ORM\JoinTable(name="amisUtilisateur",
-     *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="friend_user_id", referencedColumnName="id")}
-     *      )
-     */
-    private $mesAmis;
-    
-    
-    
-    
-    
     
     private $photo;
 
@@ -404,69 +387,4 @@ class Utilisateur extends BaseUser
         return $this->commentaires;
     }
 
-    /**
-     * Add amisAvecMoi
-     *
-     * @param \moove\UtilisateurBundle\Entity\Utilisateur $amisAvecMoi
-     * @return Utilisateur
-     */
-    public function addAmisAvecMoi(\moove\UtilisateurBundle\Entity\Utilisateur $amisAvecMoi)
-    {
-        $this->amisAvecMoi[] = $amisAvecMoi;
-
-        return $this;
-    }
-
-    /**
-     * Remove amisAvecMoi
-     *
-     * @param \moove\UtilisateurBundle\Entity\Utilisateur $amisAvecMoi
-     */
-    public function removeAmisAvecMoi(\moove\UtilisateurBundle\Entity\Utilisateur $amisAvecMoi)
-    {
-        $this->amisAvecMoi->removeElement($amisAvecMoi);
-    }
-
-    /**
-     * Get amisAvecMoi
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getAmisAvecMoi()
-    {
-        return $this->amisAvecMoi;
-    }
-
-    /**
-     * Add mesAmis
-     *
-     * @param \moove\UtilisateurBundle\Entity\Utilisateur $mesAmis
-     * @return Utilisateur
-     */
-    public function addMesAmi(\moove\UtilisateurBundle\Entity\Utilisateur $mesAmis)
-    {
-        $this->mesAmis[] = $mesAmis;
-
-        return $this;
-    }
-
-    /**
-     * Remove mesAmis
-     *
-     * @param \moove\UtilisateurBundle\Entity\Utilisateur $mesAmis
-     */
-    public function removeMesAmi(\moove\UtilisateurBundle\Entity\Utilisateur $mesAmis)
-    {
-        $this->mesAmis->removeElement($mesAmis);
-    }
-
-    /**
-     * Get mesAmis
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getMesAmis()
-    {
-        return $this->mesAmis;
-    }
 }
